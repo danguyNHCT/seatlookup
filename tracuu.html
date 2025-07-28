@@ -1,0 +1,1441 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tra cứu ghế theo Username</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            max-width: 1200px;
+            width: 100%;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header .event-title {
+            color: #d12525;
+            margin-bottom: 15px;
+            font-size: 1.4em;
+            font-weight: 700;
+            line-height: 1.3;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .header h1 {
+            color: #d12525;
+            margin-bottom: 10px;
+            font-size: 1.5em;
+            font-weight: 600;
+        }
+
+        .search-section {
+            margin-bottom: 30px;
+        }
+
+        .input-tooltip {
+            background: linear-gradient(135deg, #e0f2fe 0%, #b3e5fc 100%);
+            color: #01579b;
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            border-left: 4px solid #0277bd;
+            font-size: 14px;
+            font-weight: 500;
+            box-shadow: 0 2px 4px rgba(2, 119, 189, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .input-tooltip::before {
+            content: "💡";
+            font-size: 16px;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .input-container {
+            flex: 1;
+            position: relative;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 12px 50px 12px 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+            box-sizing: border-box;
+        }
+
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #dc2626;
+        }
+
+        .input-actions {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            gap: 5px;
+            align-items: center;
+        }
+
+        .clear-btn {
+            background: rgba(255, 107, 107, 0.1);
+            color: #ff6b6b;
+            border: none;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .clear-btn:hover {
+            background: rgba(255, 107, 107, 0.2);
+            transform: scale(1.1);
+        }
+
+        .search-btn {
+            background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 500;
+            white-space: nowrap;
+        }
+
+        .search-btn:hover {
+            background: linear-gradient(135deg, #b91c1c 0%, #991b1b 100%);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);
+        }
+
+        .search-btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .result-section {
+            margin-bottom: 30px;
+        }
+
+        .seat-info {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 4px solid #dc2626;
+            margin-bottom: 20px;
+        }
+
+        .seat-info h3 {
+            color: #7c2d12;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .seat-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .detail-item {
+            background: white;
+            padding: 10px;
+            border-radius: 6px;
+            text-align: center;
+            border: 1px solid #fed7aa;
+        }
+
+        .detail-label {
+            font-weight: bold;
+            color: #a16207;
+            font-size: 0.9em;
+        }
+
+        .detail-value {
+            color: #7c2d12;
+            font-size: 1.1em;
+            margin-top: 5px;
+            font-weight: 600;
+        }
+
+        .seating-chart {
+            background: linear-gradient(135deg, #fefce8 0%, #fef3c7 100%);
+            padding: 20px;
+            border-radius: 10px;
+            overflow-x: auto;
+            border: 1px solid #fed7aa;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+        }
+
+        .chart-title {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #7c2d12;
+            font-size: 1.2em;
+            font-weight: bold;
+            flex-shrink: 0;
+            width: 100%;
+        }
+
+        .stage {
+            background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+            color: white;
+            text-align: center;
+            padding: 10px;
+            margin: 0 0 20px 0;
+            border-radius: 8px;
+            width: calc(24 * 38px + 23 * 3px + 30px);
+            font-weight: bold;
+            box-shadow: 0 2px 8px rgba(220, 38, 38, 0.3);
+            flex-shrink: 0;
+        }
+
+        .rows {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            align-items: flex-start;
+            width: calc(24 * 38px + 23 * 3px + 30px);
+            flex-shrink: 0;
+        }
+
+        .row {
+            display: flex;
+            align-items: center;
+            gap: 3px;
+            flex-wrap: nowrap;
+        }
+
+        .seat {
+            width: 38px;
+            height: 30px;
+            border: 2px solid #fed7aa;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            font-weight: bold;
+            transition: all 0.3s;
+            background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
+            color: #a16207;
+            flex-shrink: 0;
+            user-select: none;
+        }
+
+        .seat.selected {
+            background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+            color: white;
+            border-color: #991b1b;
+            transform: scale(1.1);
+            box-shadow: 0 4px 12px rgba(220, 38, 38, 0.4);
+        }
+
+        .seat.vip-area {
+            background: linear-gradient(135deg, #fde047 0%, #facc15 100%);
+            color: #713f12;
+            border-color: #eab308;
+            font-weight: 900;
+            animation: vipGlow 2s ease-in-out infinite alternate;
+            box-shadow: 0 2px 8px rgba(234, 179, 8, 0.4);
+        }
+
+        .error-message {
+            background: #fecaca;
+            color: #991b1b;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-left: 4px solid #dc2626;
+            animation: slideIn 0.5s ease;
+        }
+
+        .username-suggestion {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 15px;
+            margin: 5px 0;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 8px;
+            border: 1px solid #fed7aa;
+            transition: all 0.3s ease;
+        }
+
+        .username-suggestion:hover {
+            background: rgba(255, 255, 255, 1);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(220, 38, 38, 0.1);
+        }
+
+        .username-text {
+            flex: 1;
+            text-align: left;
+            font-size: 14px;
+            color: #333;
+            margin-right: 10px;
+        }
+
+        .copy-btn {
+            background: rgba(220, 38, 38, 0.1);
+            color: #dc2626;
+            border: 1px solid rgba(220, 38, 38, 0.3);
+            border-radius: 6px;
+            padding: 6px 12px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+
+        .copy-btn:hover {
+            background: rgba(220, 38, 38, 0.2);
+            transform: scale(1.05);
+        }
+
+        .suggestions-container {
+            margin-top: 15px;
+        }
+
+        .loading {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid #f3f3f3;
+            border-top: 2px solid #dc2626;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 8px;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .processing-info {
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+            color: #0c4a6e;
+            padding: 10px 15px;
+            border-radius: 6px;
+            margin-bottom: 10px;
+            border-left: 3px solid #0284c7;
+            font-size: 13px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            animation: slideIn 0.3s ease;
+        }
+
+        .processing-info::before {
+            content: "⚙️";
+            font-size: 14px;
+        }
+
+        /* Debug console for mobile */
+        .debug-console {
+            position: fixed;
+            bottom: 10px;
+            left: 10px;
+            right: 10px;
+            background: rgba(0, 0, 0, 0.9);
+            color: #00ff00;
+            padding: 10px;
+            border-radius: 8px;
+            font-family: monospace;
+            font-size: 12px;
+            max-height: 150px;
+            overflow-y: auto;
+            z-index: 10000;
+            display: none;
+        }
+
+        .debug-toggle {
+            position: fixed;
+            bottom: 10px;
+            right: 10px;
+            background: #dc2626;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            cursor: pointer;
+            font-size: 12px;
+            z-index: 10001;
+            display: none;
+        }
+
+        /* Admin Button Styles */
+        .admin-button {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+            padding: 12px 20px;
+            background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 14px;
+            box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: none;
+        }
+
+        .admin-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(220, 38, 38, 0.4);
+            color: white;
+            text-decoration: none;
+        }
+
+        @keyframes vipGlow {
+            0% { box-shadow: 0 2px 8px rgba(234, 179, 8, 0.4); }
+            100% { box-shadow: 0 4px 16px rgba(234, 179, 8, 0.6); }
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 1250px) {
+            .container { max-width: 95%; padding: 15px; }
+        }
+
+        @media (max-width: 768px) {
+            .container { padding: 20px; }
+            .header .event-title { font-size: 1.2em; }
+            .header h1 { font-size: 1.3em; }
+            .input-tooltip { padding: 10px 12px; font-size: 13px; }
+            .input-group { flex-direction: column; }
+            .seat { width: 32px; height: 25px; font-size: 9px; }
+            .stage { width: calc(24 * 32px + 23 * 3px + 30px); }
+            .rows { width: calc(24 * 32px + 23 * 3px + 30px); }
+            .seating-chart { padding: 15px; align-items: flex-start; }
+            .username-suggestion { padding: 8px 12px; }
+            .username-text { font-size: 13px; }
+            .copy-btn { padding: 4px 8px; font-size: 11px; }
+            .admin-button { top: 10px; right: 10px; padding: 8px 12px; font-size: 12px; }
+            .debug-toggle { display: block; }
+        }
+
+        @media (max-width: 480px) {
+            .header .event-title { font-size: 1em; }
+            .header h1 { font-size: 1.1em; }
+            .input-tooltip { padding: 8px 10px; font-size: 12px; }
+            .seat { width: 28px; height: 22px; font-size: 8px; }
+            .stage { width: calc(24 * 28px + 23 * 2px + 20px); font-size: 14px; }
+            .rows { width: calc(24 * 28px + 23 * 2px + 20px); gap: 4px; }
+            .row { gap: 2px; }
+            .seating-chart { padding: 10px; }
+            .seat:nth-child(6) { margin-right: 10px !important; }
+            .seat:nth-child(18) { margin-right: 10px !important; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="event-title">
+                ĐẠI HỘI ĐẠI BIỂU ĐẢNG BỘ NHCTVN LẦN THỨ XI,<br>
+                NHIỆM KỲ 2025 - 2030
+            </div>
+            <h1>Chương trình tra cứu chỗ ngồi đại biểu tham dự Đại hội</h1>
+        </div>
+
+        <div class="search-section">
+            <div class="input-tooltip">
+                Đại biểu vui lòng nhập số điện thoại hoặc username email để tra cứu chỗ ngồi
+            </div>
+            <div class="input-group">
+                <div class="input-container">
+                    <input type="text" id="searchInput" placeholder="Đại biểu nhập tại đây..." />
+                    <div class="input-actions">
+                        <button class="clear-btn" id="clearBtn" onclick="clearInput()">✕</button>
+                    </div>
+                </div>
+                <button class="search-btn" onclick="searchSeat()" id="searchBtn">Tra cứu</button>
+            </div>
+        </div>
+
+        <div id="errorMessage" class="error-message hidden"></div>
+
+        <div id="resultSection" class="result-section hidden">
+            <div class="seat-info">
+                <h3>Thông tin ghế của đại biểu:</h3>
+                <div class="seat-details">
+                    <div class="detail-item">
+                        <div class="detail-label">Họ và tên</div>
+                        <div class="detail-value" id="fullName"></div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">Số ghế</div>
+                        <div class="detail-value" id="seatNumber"></div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">Hàng</div>
+                        <div class="detail-value" id="rowNumber"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="seating-chart">
+            <div class="chart-title">Sơ đồ chỗ ngồi</div>
+            <div class="stage">SÂN KHẤU</div>
+            <div class="rows" id="seatingRows"></div>
+        </div>
+    </div>
+
+    <!-- Debug Console for Mobile -->
+    <button class="debug-toggle" onclick="toggleDebugConsole()">🐛</button>
+    <div class="debug-console" id="debugConsole"></div>
+
+    <script>
+        // ==================== ENHANCED DEBUG SYSTEM ====================
+        let debugMessages = [];
+        let debugEnabled = false;
+
+        function debugLog(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString('vi-VN');
+            const logMessage = `[${timestamp}] ${type.toUpperCase()}: ${message}`;
+            
+            debugMessages.push(logMessage);
+            console.log(logMessage);
+            
+            // Keep only last 50 messages
+            if (debugMessages.length > 50) {
+                debugMessages = debugMessages.slice(-50);
+            }
+            
+            updateDebugConsole();
+        }
+
+        function updateDebugConsole() {
+            const debugConsole = document.getElementById('debugConsole');
+            if (debugConsole && debugEnabled) {
+                debugConsole.innerHTML = debugMessages.slice(-10).join('<br>');
+                debugConsole.scrollTop = debugConsole.scrollHeight;
+            }
+        }
+
+        function toggleDebugConsole() {
+            debugEnabled = !debugEnabled;
+            const debugConsole = document.getElementById('debugConsole');
+            debugConsole.style.display = debugEnabled ? 'block' : 'none';
+            
+            if (debugEnabled) {
+                updateDebugConsole();
+            }
+        }
+
+        // ==================== ENHANCED STORAGE FUNCTIONS ====================
+        function safeLocalStorageSet(key, value) {
+            try {
+                const stringValue = JSON.stringify(value);
+                localStorage.setItem(key, stringValue);
+                debugLog(`✅ LocalStorage SET successful: ${key}`, 'success');
+                return true;
+            } catch (error) {
+                debugLog(`❌ LocalStorage SET failed: ${key} - ${error.message}`, 'error');
+                console.error('LocalStorage error:', error);
+                
+                // Fallback to sessionStorage
+                try {
+                    sessionStorage.setItem(key, JSON.stringify(value));
+                    debugLog(`⚠️ Fallback to SessionStorage: ${key}`, 'warning');
+                    return true;
+                } catch (sessionError) {
+                    debugLog(`❌ SessionStorage also failed: ${sessionError.message}`, 'error');
+                    return false;
+                }
+            }
+        }
+
+        function safeLocalStorageGet(key) {
+            try {
+                let value = localStorage.getItem(key);
+                if (value === null) {
+                    // Try sessionStorage as fallback
+                    value = sessionStorage.getItem(key);
+                    if (value !== null) {
+                        debugLog(`📱 Using SessionStorage fallback: ${key}`, 'info');
+                    }
+                }
+                
+                if (value === null) {
+                    debugLog(`📝 Key not found: ${key}`, 'info');
+                    return null;
+                }
+                
+                const parsed = JSON.parse(value);
+                debugLog(`✅ LocalStorage GET successful: ${key}`, 'success');
+                return parsed;
+            } catch (error) {
+                debugLog(`❌ LocalStorage GET failed: ${key} - ${error.message}`, 'error');
+                console.error('LocalStorage parse error:', error);
+                return null;
+            }
+        }
+
+        // ==================== DATA STRUCTURES ====================
+        const delegates = new Map();
+        const phoneIndex = new Map();
+        const usernameIndex = new Map();
+        const usernameList = [];
+        
+        function initializeDelegateData() {
+            debugLog('🔄 Initializing delegate data...', 'info');
+            
+            const realDelegates = [
+                { id: 1, username: "binhtm", phone: "0987654321", fullName: "Trần Minh Bình", seatNumber: "A18", row: "A", position: 18 },
+                { id: 2, username: "nh.quang", phone: "0912345678", fullName: "Nguyễn Hoàng Quang", seatNumber: "C6", row: "C", position: 6 },
+                { id: 3, username: "xuanbtt", phone: "0923456789", fullName: "Bùi Thị Thu Xuân", seatNumber: "B19", row: "B", position: 19 },
+            ];
+
+            // ⚠️ XÓA TOÀN BỘ PHẦN TẠO DỮ LIỆU GIẢ BÊN DƯỚI KHI DÙNG DỮ LIỆU THẬT
+            // Tạo dữ liệu mẫu
+            const names = ["Nguyễn", "Trần", "Lê", "Phạm", "Hoàng", "Phan", "Vũ", "Võ", "Đặng", "Bùi"];
+            const firstNames = ["Văn", "Thị", "Minh", "Hương", "Quang", "Hải", "Thu", "Phúc", "Đức", "Hoàng"];
+            const lastNames = ["An", "Bình", "Cường", "Dung", "Em", "Giang", "Hạnh", "Khánh", "Linh", "Minh"];
+            
+            const rows = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N'];
+            const seatsPerRow = 24;
+            let seatCounter = 6;
+            
+            for (let i = 4; i <= 300; i++) {
+                const name = names[i % names.length];
+                const firstName = firstNames[i % firstNames.length];
+                const lastName = lastNames[i % lastNames.length];
+                
+                const rowIndex = Math.floor(seatCounter / seatsPerRow);
+                const seatInRow = (seatCounter % seatsPerRow) + 1;
+                const row = rows[rowIndex] || 'N';
+                
+                realDelegates.push({
+                    id: i,
+                    username: `user${i.toString().padStart(3, '0')}`,
+                    phone: `09${(10000000 + i).toString().slice(1)}`,
+                    fullName: `${name} ${firstName} ${lastName}`,
+                    seatNumber: `${row}${seatInRow}`,
+                    row: row,
+                    position: seatInRow
+                });
+                
+                seatCounter++;
+            }
+            // === HẾT PHẦN TẠO DỮ LIỆU GIẢ ===
+
+            realDelegates.forEach(delegate => {
+                delegates.set(delegate.id, delegate);
+                phoneIndex.set(delegate.phone, delegate.id);
+                usernameIndex.set(delegate.username.toLowerCase(), delegate.id);
+                usernameList.push(delegate.username);
+            });
+            
+            debugLog(`✅ Loaded ${realDelegates.length} delegates successfully`, 'success');
+        }
+
+        // ==================== ENHANCED LOGGING SYSTEM ====================
+        function logSearchActivity(searchTerm, delegate, found = true) {
+            debugLog(`🔍 Attempting to log search: "${searchTerm}" - Found: ${found}`, 'info');
+            
+            try {
+                const STORAGE_KEY = 'seatSearchLogs';
+                
+                // Test storage capability first
+                const testKey = 'storageTest_' + Date.now();
+                const testData = { test: true };
+                
+                if (!safeLocalStorageSet(testKey, testData)) {
+                    debugLog('❌ Storage test failed, aborting log', 'error');
+                    return false;
+                }
+                
+                // Clean up test
+                try {
+                    localStorage.removeItem(testKey);
+                    sessionStorage.removeItem(testKey);
+                } catch (e) {
+                    debugLog('⚠️ Could not clean test key', 'warning');
+                }
+                
+                // Get existing logs
+                const existingLogs = safeLocalStorageGet(STORAGE_KEY) || [];
+                debugLog(`📚 Found ${existingLogs.length} existing logs`, 'info');
+                
+                // Create new log entry
+                const logEntry = {
+                    id: Date.now() + Math.random(),
+                    timestamp: new Date().toISOString(),
+                    searchTerm: searchTerm,
+                    found: found,
+                    delegate: found ? {
+                        fullName: delegate.fullName,
+                        seatNumber: delegate.seatNumber,
+                        row: delegate.row,
+                        username: delegate.username,
+                        phone: delegate.phone
+                    } : null,
+                    userAgent: navigator.userAgent.substring(0, 100),
+                    sessionId: getOrCreateSessionId(),
+                    pageUrl: window.location.href,
+                    viewport: {
+                        width: window.innerWidth,
+                        height: window.innerHeight
+                    },
+                    isMobile: /Mobi|Android/i.test(navigator.userAgent)
+                };
+                
+                debugLog(`📝 Created log entry with ID: ${logEntry.id}`, 'info');
+                
+                // Add to beginning of array
+                existingLogs.unshift(logEntry);
+                
+                // Limit storage (keep last 1000)
+                if (existingLogs.length > 1000) {
+                    existingLogs.splice(1000);
+                    debugLog('🧹 Trimmed old logs to maintain limit', 'info');
+                }
+                
+                // Save logs
+                if (safeLocalStorageSet(STORAGE_KEY, existingLogs)) {
+                    debugLog(`✅ Successfully logged search activity`, 'success');
+                    
+                    // Update general stats
+                    updateGeneralStats();
+                    return true;
+                } else {
+                    debugLog('❌ Failed to save log to storage', 'error');
+                    return false;
+                }
+                
+            } catch (error) {
+                debugLog(`❌ Critical error in logging: ${error.message}`, 'error');
+                console.error('Critical logging error:', error);
+                return false;
+            }
+        }
+
+        // Enhanced session management
+        function getOrCreateSessionId() {
+            try {
+                let sessionId = sessionStorage.getItem('searchSessionId');
+                if (!sessionId) {
+                    sessionId = 'session_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+                    sessionStorage.setItem('searchSessionId', sessionId);
+                    debugLog(`🆔 Created new session: ${sessionId}`, 'info');
+                } else {
+                    debugLog(`🆔 Using existing session: ${sessionId}`, 'info');
+                }
+                return sessionId;
+            } catch (error) {
+                debugLog(`❌ Session ID error: ${error.message}`, 'error');
+                return 'fallback_' + Date.now();
+            }
+        }
+
+        // Enhanced stats update
+        function updateGeneralStats() {
+            try {
+                debugLog('📊 Updating general statistics...', 'info');
+                
+                const STATS_KEY = 'generalStats';
+                const stats = safeLocalStorageGet(STATS_KEY) || {};
+                
+                const today = new Date().toISOString().split('T')[0];
+                const hour = new Date().getHours();
+                
+                // Update stats
+                stats.totalSearches = (stats.totalSearches || 0) + 1;
+                stats.lastActivity = new Date().toISOString();
+                
+                // Daily stats
+                if (!stats.dailyStats) stats.dailyStats = {};
+                stats.dailyStats[today] = (stats.dailyStats[today] || 0) + 1;
+                
+                // Hourly stats
+                if (!stats.hourlyStats) stats.hourlyStats = {};
+                stats.hourlyStats[hour] = (stats.hourlyStats[hour] || 0) + 1;
+                
+                // Device stats
+                if (!stats.deviceStats) stats.deviceStats = { mobile: 0, desktop: 0 };
+                const isMobile = /Mobi|Android/i.test(navigator.userAgent);
+                stats.deviceStats[isMobile ? 'mobile' : 'desktop']++;
+                
+                // Save stats
+                if (safeLocalStorageSet(STATS_KEY, stats)) {
+                    debugLog(`✅ Stats updated - Total: ${stats.totalSearches}`, 'success');
+                } else {
+                    debugLog('❌ Failed to save stats', 'error');
+                }
+                
+            } catch (error) {
+                debugLog(`❌ Error updating stats: ${error.message}`, 'error');
+                console.error('Stats error:', error);
+            }
+        }
+
+        // Enhanced page view tracking
+        function trackPageView() {
+            try {
+                debugLog('👁️ Tracking page view...', 'info');
+                
+                const PAGE_STATS_KEY = 'pageViewStats';
+                const stats = safeLocalStorageGet(PAGE_STATS_KEY) || {};
+                
+                const today = new Date().toISOString().split('T')[0];
+                const currentTime = new Date().toISOString();
+                
+                // Update stats
+                stats.totalViews = (stats.totalViews || 0) + 1;
+                stats.lastVisit = currentTime;
+                stats.firstVisit = stats.firstVisit || currentTime;
+                
+                // Daily views
+                if (!stats.dailyViews) stats.dailyViews = {};
+                stats.dailyViews[today] = (stats.dailyViews[today] || 0) + 1;
+                
+                // Session tracking
+                if (!stats.sessions) stats.sessions = [];
+                const sessionId = getOrCreateSessionId();
+                
+                if (!stats.sessions.includes(sessionId)) {
+                    stats.sessions.push(sessionId);
+                    
+                    if (stats.sessions.length > 100) {
+                        stats.sessions.splice(0, stats.sessions.length - 100);
+                    }
+                }
+                
+                // Device info
+                const isMobile = /Mobi|Android/i.test(navigator.userAgent);
+                if (!stats.deviceInfo) stats.deviceInfo = { mobile: 0, desktop: 0 };
+                stats.deviceInfo[isMobile ? 'mobile' : 'desktop']++;
+                
+                if (safeLocalStorageSet(PAGE_STATS_KEY, stats)) {
+                    debugLog(`✅ Page view tracked - Total: ${stats.totalViews}`, 'success');
+                } else {
+                    debugLog('❌ Failed to track page view', 'error');
+                }
+                
+            } catch (error) {
+                debugLog(`❌ Error tracking page view: ${error.message}`, 'error');
+                console.error('Page tracking error:', error);
+            }
+        }
+
+        // Admin access system
+        function initAdminSystem() {
+            try {
+                debugLog('🔧 Initializing admin system...', 'info');
+                
+                const isAdmin = safeLocalStorageGet('isAdmin') === true || 
+                               new URLSearchParams(window.location.search).get('admin') === 'true';
+                
+                if (isAdmin) {
+                    createAdminButton();
+                    debugLog('✅ Admin access granted', 'success');
+                }
+                
+                // Hotkey for admin access (Ctrl + Shift + A)
+                document.addEventListener('keydown', function(e) {
+                    if (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === 'a') {
+                        e.preventDefault();
+                        requestAdminAccess();
+                    }
+                });
+                
+            } catch (error) {
+                debugLog(`❌ Admin system error: ${error.message}`, 'error');
+            }
+        }
+
+        function requestAdminAccess() {
+            try {
+                const adminCode = prompt('🔐 Nhập mã truy cập quản trị:');
+                if (adminCode === 'DAIHOI2025' || adminCode === 'admin') {
+                    safeLocalStorageSet('isAdmin', true);
+                    alert('✅ Đã cấp quyền quản trị!');
+                    createAdminButton();
+                    debugLog('✅ Admin access granted via prompt', 'success');
+                } else if (adminCode !== null) {
+                    alert('❌ Mã không đúng!');
+                    debugLog('❌ Invalid admin code entered', 'warning');
+                }
+            } catch (error) {
+                debugLog(`❌ Admin access error: ${error.message}`, 'error');
+            }
+        }
+
+        function createAdminButton() {
+            if (document.getElementById('adminButton')) return;
+            
+            try {
+                const adminBtn = document.createElement('a');
+                adminBtn.id = 'adminButton';
+                adminBtn.className = 'admin-button';
+                adminBtn.innerHTML = '🔧 Quản trị';
+                adminBtn.href = 'admin.html';
+                adminBtn.target = '_blank';
+                adminBtn.style.display = 'block';
+                
+                document.body.appendChild(adminBtn);
+                debugLog('✅ Admin button created', 'success');
+            } catch (error) {
+                debugLog(`❌ Error creating admin button: ${error.message}`, 'error');
+            }
+        }
+
+        // Data cleanup
+        function cleanOldData() {
+            try {
+                debugLog('🧹 Cleaning old data...', 'info');
+                
+                const logs = safeLocalStorageGet('seatSearchLogs') || [];
+                const oneMonthAgo = new Date();
+                oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1);
+                
+                const filteredLogs = logs.filter(log => 
+                    new Date(log.timestamp) > oneMonthAgo
+                );
+                
+                if (filteredLogs.length !== logs.length) {
+                    safeLocalStorageSet('seatSearchLogs', filteredLogs);
+                    debugLog(`🧹 Cleaned ${logs.length - filteredLogs.length} old logs`, 'info');
+                }
+            } catch (error) {
+                debugLog(`❌ Error cleaning data: ${error.message}`, 'error');
+            }
+        }
+
+        // ==================== INPUT PROCESSING ====================
+        function processSearchInput(input) {
+            let processedInput = input.trim();
+            let processingNote = "";
+            
+            debugLog(`🔄 Processing input: "${input}"`, 'info');
+            
+            // Handle +84 country code
+            if (processedInput.startsWith('+84')) {
+                processedInput = '0' + processedInput.substring(3);
+                debugLog('📱 Converted +84 format to local format', 'info');
+            }
+            
+            // Handle spaced phone numbers
+            if (/^\d/.test(processedInput) || /\d/.test(processedInput)) {
+                const spaceCount = (processedInput.match(/\s/g) || []).length;
+                
+                if (spaceCount > 0) {
+                    processedInput = processedInput.replace(/\s+/g, '');
+                    debugLog('📱 Removed spaces from phone number', 'info');
+                }
+            }
+            // Handle full email
+            else if (processedInput.includes('@')) {
+                const atIndex = processedInput.indexOf('@');
+                processedInput = processedInput.substring(0, atIndex);
+                debugLog('📧 Extracted username from email', 'info');
+            }
+            
+            debugLog(`✅ Processed input: "${processedInput}"`, 'info');
+            return { processedInput, processingNote };
+        }
+
+        // ==================== SEARCH FUNCTIONS ====================
+        function findDelegate(searchKey) {
+            debugLog(`🔍 Searching for: "${searchKey}"`, 'info');
+            
+            const lowerKey = searchKey.toLowerCase();
+            
+            if (/^\d/.test(searchKey)) {
+                debugLog('📱 Searching by phone number', 'info');
+                const delegateId = phoneIndex.get(searchKey);
+                const result = delegateId ? delegates.get(delegateId) : null;
+                debugLog(`📱 Phone search result: ${result ? 'Found' : 'Not found'}`, 'info');
+                return result;
+            }
+            
+            debugLog('👤 Searching by username', 'info');
+            const delegateId = usernameIndex.get(lowerKey);
+            const result = delegateId ? delegates.get(delegateId) : null;
+            debugLog(`👤 Username search result: ${result ? 'Found' : 'Not found'}`, 'info');
+            return result;
+        }
+
+        function findSimilarUsernames(searchInput) {
+            const searchLower = searchInput.toLowerCase();
+            if (searchLower.length < 2) return [];
+            
+            debugLog(`🔍 Finding similar usernames for: "${searchInput}"`, 'info');
+            
+            const prefixMatches = usernameList.filter(username => 
+                username.toLowerCase().startsWith(searchLower.slice(0, 2))
+            );
+            
+            if (prefixMatches.length === 0) {
+                debugLog('❌ No similar usernames found', 'info');
+                return [];
+            }
+            
+            const results = prefixMatches
+                .map(username => ({
+                    username,
+                    similarity: calculateSimilarity(searchLower, username.toLowerCase())
+                }))
+                .filter(item => item.similarity > 0.4)
+                .sort((a, b) => b.similarity - a.similarity)
+                .slice(0, 3)
+                .map(item => item.username);
+                
+            debugLog(`💡 Found ${results.length} similar usernames`, 'info');
+            return results;
+        }
+
+        function calculateSimilarity(str1, str2) {
+            const len1 = str1.length;
+            const len2 = str2.length;
+            const maxLen = Math.max(len1, len2);
+            
+            if (Math.abs(len1 - len2) > maxLen * 0.5) return 0;
+            
+            const matrix = Array(len1 + 1).fill().map(() => Array(len2 + 1).fill(0));
+            
+            for (let i = 0; i <= len1; i++) matrix[i][0] = i;
+            for (let j = 0; j <= len2; j++) matrix[0][j] = j;
+            
+            for (let i = 1; i <= len1; i++) {
+                for (let j = 1; j <= len2; j++) {
+                    const cost = str1[i - 1] === str2[j - 1] ? 0 : 1;
+                    matrix[i][j] = Math.min(
+                        matrix[i - 1][j] + 1,
+                        matrix[i][j - 1] + 1,
+                        matrix[i - 1][j - 1] + cost
+                    );
+                }
+            }
+            
+            return (maxLen - matrix[len1][len2]) / maxLen;
+        }
+
+        // ==================== UI FUNCTIONS ====================
+        let seatingChartCreated = false;
+        
+        function createSeatingChart() {
+            if (seatingChartCreated) return;
+            
+            debugLog('🎭 Creating seating chart...', 'info');
+            
+            const seatingRows = document.getElementById('seatingRows');
+            const fragment = document.createDocumentFragment();
+            
+            const rows = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N'];
+            const seatsPerRow = 24;
+            
+            rows.forEach(rowLabel => {
+                const rowDiv = document.createElement('div');
+                rowDiv.className = 'row';
+                
+                for (let i = 1; i <= seatsPerRow; i++) {
+                    const seatDiv = document.createElement('div');
+                    seatDiv.className = 'seat';
+                    seatDiv.id = `seat-${rowLabel}${i}`;
+                    seatDiv.textContent = `${rowLabel}${i}`;
+                    
+                    if (i === 6) seatDiv.style.marginRight = '15px';
+                    if (i === 18) seatDiv.style.marginRight = '15px';
+                    
+                    rowDiv.appendChild(seatDiv);
+                }
+                
+                if (rowLabel === 'H') rowDiv.style.marginBottom = '15px';
+                fragment.appendChild(rowDiv);
+            });
+            
+            seatingRows.appendChild(fragment);
+            seatingChartCreated = true;
+            debugLog('✅ Seating chart created successfully', 'success');
+        }
+
+        let isLoading = false;
+        
+        function searchSeat() {
+            if (isLoading) return;
+            
+            debugLog('🔍 Starting search process...', 'info');
+            
+            const originalInput = document.getElementById('searchInput').value.trim();
+            const errorMessage = document.getElementById('errorMessage');
+            const resultSection = document.getElementById('resultSection');
+            const searchBtn = document.getElementById('searchBtn');
+
+            errorMessage.classList.add('hidden');
+            resultSection.classList.add('hidden');
+            resetHighlight();
+
+            if (!originalInput) {
+                showError('Vui lòng nhập username email hoặc số điện thoại!');
+                debugLog('❌ Empty input provided', 'warning');
+                return;
+            }
+
+            const { processedInput, processingNote } = processSearchInput(originalInput);
+
+            const isPhone = /^\d/.test(processedInput);
+            if (!isPhone && !isValidUsername(processedInput)) {
+                showError('Username email hoặc số điện thoại không hợp lệ!');
+                debugLog('❌ Invalid input format', 'warning');
+                return;
+            }
+
+            isLoading = true;
+            searchBtn.innerHTML = '<span class="loading"></span>Đang tra cứu...';
+            searchBtn.disabled = true;
+            debugLog('🔄 Search in progress...', 'info');
+
+            setTimeout(() => {
+                const delegate = findDelegate(processedInput);
+                
+                if (!delegate) {
+                    debugLog('❌ Search failed - delegate not found', 'warning');
+                    const logResult = logSearchActivity(processedInput, null, false);
+                    debugLog(`📝 Failed search logged: ${logResult}`, logResult ? 'success' : 'error');
+                    handleSearchNotFound(processedInput, isPhone, processingNote);
+                } else {
+                    debugLog(`✅ Search successful - found ${delegate.fullName}`, 'success');
+                    const logResult = logSearchActivity(processedInput, delegate, true);
+                    debugLog(`📝 Successful search logged: ${logResult}`, logResult ? 'success' : 'error');
+                    displaySeatInfo(delegate);
+                    highlightSeatOrVIP(delegate);
+                }
+
+                isLoading = false;
+                searchBtn.innerHTML = 'Tra cứu';
+                searchBtn.disabled = false;
+                debugLog('✅ Search process completed', 'info');
+            }, 100);
+        }
+
+        function handleSearchNotFound(processedInput, isPhone, processingNote) {
+            if (!isPhone) {
+                const similarUsernames = findSimilarUsernames(processedInput);
+                let errorMsg = `❌ <strong>Không tìm thấy username này trong hệ thống!</strong>`;
+                
+                if (similarUsernames.length > 0) {
+                    errorMsg += `<br><br><strong>🔍 Username gợi ý:</strong>`;
+                    errorMsg += `<div class="suggestions-container">`;
+                    similarUsernames.forEach(username => {
+                        errorMsg += `
+                            <div class="username-suggestion">
+                                <div class="username-text">💡 ${username}</div>
+                                <button class="copy-btn" onclick="copyInput('${username}')">🔍 Tra cứu</button>
+                            </div>
+                        `;
+                    });
+                    errorMsg += `</div>`;
+                }
+                showError(errorMsg);
+            } else {
+                let errorMsg = `❌ <strong>Không tìm thấy số điện thoại này trong hệ thống!</strong>`;
+                showError(errorMsg);
+            }
+        }
+
+        function displaySeatInfo(delegate) {
+            debugLog(`📋 Displaying seat info for ${delegate.fullName}`, 'info');
+            
+            document.getElementById('fullName').textContent = delegate.fullName;
+            document.getElementById('seatNumber').textContent = (delegate.row === 'A' || delegate.row === 'B') ? 'VIP' : delegate.seatNumber;
+            document.getElementById('rowNumber').textContent = delegate.row;
+            document.getElementById('resultSection').classList.remove('hidden');
+        }
+
+        function highlightSeatOrVIP(delegate) {
+            if (!seatingChartCreated) createSeatingChart();
+            
+            if (delegate.row === 'A' || delegate.row === 'B') {
+                highlightVIPRow(delegate.row);
+                debugLog(`🌟 Highlighted VIP row ${delegate.row}`, 'info');
+            } else {
+                highlightSeat(delegate.seatNumber);
+                debugLog(`💺 Highlighted seat ${delegate.seatNumber}`, 'info');
+            }
+        }
+
+        function resetHighlight() {
+            const selectedSeats = document.querySelectorAll('.seat.selected, .seat.vip-area');
+            selectedSeats.forEach(seat => {
+                seat.classList.remove('selected', 'vip-area');
+            });
+        }
+
+        function highlightVIPRow(row) {
+            const seatsPerRow = 24;
+            
+            for (let i = 1; i <= seatsPerRow; i++) {
+                const seatElement = document.getElementById(`seat-${row}${i}`);
+                if (seatElement) {
+                    seatElement.classList.add('vip-area');
+                }
+            }
+
+            const firstSeat = document.getElementById(`seat-${row}1`);
+            if (firstSeat) {
+                firstSeat.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        }
+
+        function highlightSeat(seatNumber) {
+            const seatElement = document.getElementById(`seat-${seatNumber}`);
+            if (seatElement) {
+                seatElement.classList.add('selected');
+                seatElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        }
+
+        function showError(message) {
+            const errorMessage = document.getElementById('errorMessage');
+            errorMessage.innerHTML = message;
+            errorMessage.classList.remove('hidden');
+        }
+
+        function isValidUsername(input) {
+            if (/^\d/.test(input)) {
+                return /^0\d{9,10}$/.test(input);
+            }
+            return /^[a-zA-Z0-9.]+$/.test(input) && input.length >= 2;
+        }
+
+        function toggleClearButton() {
+            const searchInput = document.getElementById('searchInput');
+            const clearBtn = document.getElementById('clearBtn');
+            
+            clearBtn.style.display = searchInput.value.trim() ? 'flex' : 'none';
+        }
+
+        function clearInput() {
+            const searchInput = document.getElementById('searchInput');
+            searchInput.value = '';
+            searchInput.focus();
+            toggleClearButton();
+            
+            document.getElementById('errorMessage').classList.add('hidden');
+            document.getElementById('resultSection').classList.add('hidden');
+            resetHighlight();
+        }
+
+        function copyInput(input) {
+            const searchInput = document.getElementById('searchInput');
+            
+            searchInput.value = input;
+            searchInput.focus();
+            toggleClearButton();
+            
+            setTimeout(() => {
+                if (document.getElementById('searchInput').value.trim().toLowerCase() === input.toLowerCase()) {
+                    searchSeat();
+                }
+            }, 300);
+        }
+
+        // ==================== EVENT LISTENERS ====================
+        function throttle(func, delay) {
+            let timeoutId;
+            let lastExecTime = 0;
+            return function (...args) {
+                const currentTime = Date.now();
+                
+                if (currentTime - lastExecTime > delay) {
+                    func.apply(this, args);
+                    lastExecTime = currentTime;
+                } else {
+                    clearTimeout(timeoutId);
+                    timeoutId = setTimeout(() => {
+                        func.apply(this, args);
+                        lastExecTime = Date.now();
+                    }, delay - (currentTime - lastExecTime));
+                }
+            };
+        }
+
+        const throttledToggleClear = throttle(toggleClearButton, 100);
+
+        // ==================== UTILITY FUNCTIONS ====================
+        window.exportSearchData = function() {
+            return {
+                logs: safeLocalStorageGet('seatSearchLogs') || [],
+                stats: safeLocalStorageGet('generalStats') || {},
+                pageStats: safeLocalStorageGet('pageViewStats') || {},
+                exportTime: new Date().toISOString()
+            };
+        };
+
+        window.clearAllSearchData = function() {
+            const confirm = window.confirm('⚠️ Bạn có chắc muốn xóa toàn bộ dữ liệu tra cứu?');
+            if (confirm) {
+                try {
+                    localStorage.removeItem('seatSearchLogs');
+                    localStorage.removeItem('generalStats');
+                    localStorage.removeItem('pageViewStats');
+                    sessionStorage.removeItem('seatSearchLogs');
+                    sessionStorage.removeItem('generalStats');
+                    sessionStorage.removeItem('pageViewStats');
+                    debugLog('✅ All search data cleared', 'success');
+                    return true;
+                } catch (error) {
+                    debugLog(`❌ Error clearing data: ${error.message}`, 'error');
+                    return false;
+                }
+            }
+            return false;
+        };
+
+        window.debugLogs = function() {
+            const logs = safeLocalStorageGet('seatSearchLogs') || [];
+            console.table(logs.slice(0, 10));
+            return logs;
+        };
+
+        // ==================== INITIALIZATION ====================
+        document.addEventListener('DOMContentLoaded', function() {
+            debugLog('🚀 Application starting...', 'info');
+            
+            // Initialize delegate data
+            initializeDelegateData();
+            
+            // Setup search input
+            const searchInput = document.getElementById('searchInput');
+            
+            searchInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    searchSeat();
+                }
+            });
+
+            searchInput.addEventListener('input', throttledToggleClear);
+            searchInput.focus();
+            
+            // Setup intersection observer for seating chart
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        createSeatingChart();
+                        observer.disconnect();
+                    }
+                });
+            });
+            
+            const seatingChart = document.querySelector('.seating-chart');
+            observer.observe(seatingChart);
+
+            // Initialize logging systems
+            trackPageView();
+            initAdminSystem();
+            
+            // Clean old data after 5 seconds
+            setTimeout(cleanOldData, 5000);
+            
+            // Test storage capabilities on load
+            setTimeout(() => {
+                const testResult = safeLocalStorageSet('initTest', { test: true });
+                debugLog(`🧪 Storage test result: ${testResult}`, testResult ? 'success' : 'error');
+                
+                try {
+                    localStorage.removeItem('initTest');
+                    sessionStorage.removeItem('initTest');
+                } catch (e) {
+                    debugLog('⚠️ Could not clean init test', 'warning');
+                }
+            }, 1000);
+            
+            debugLog('✅ Application initialized successfully', 'success');
+            console.log('🔍 Hệ thống tra cứu ghế với enhanced logging đã khởi tạo');
+            console.log('🔧 Nhấn Ctrl+Shift+A để truy cập quản trị');
+            console.log('🐛 Nhấn nút debug (mobile) để xem logs');
+            
+            // Show current stats
+            const stats = safeLocalStorageGet('generalStats') || {};
+            if (stats.totalSearches > 0) {
+                console.log(`📊 Tổng lượt tra cứu: ${stats.totalSearches}`);
+                debugLog(`📊 Current stats: ${stats.totalSearches} total searches`, 'info');
+            }
+            
+            // Log device info
+            const isMobile = /Mobi|Android/i.test(navigator.userAgent);
+            debugLog(`📱 Device type: ${isMobile ? 'Mobile' : 'Desktop'}`, 'info');
+            debugLog(`🌐 User agent: ${navigator.userAgent.substring(0, 50)}...`, 'info');
+            debugLog(`📏 Viewport: ${window.innerWidth}x${window.innerHeight}`, 'info');
+        });
+
+        // Enhanced error handling
+        window.addEventListener('error', function(e) {
+            debugLog(`❌ Global error: ${e.message} at ${e.filename}:${e.lineno}`, 'error');
+        });
+
+        window.addEventListener('unhandledrejection', function(e) {
+            debugLog(`❌ Unhandled promise rejection: ${e.reason}`, 'error');
+        });
+    </script>
+</body>
+</html>
