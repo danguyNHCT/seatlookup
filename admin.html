@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quản trị hệ thống tra cứu ghế</title>
+    <title>Admin - Tra cứu thông tin đại biểu theo ghế</title>
     <style>
         * {
             margin: 0;
@@ -13,422 +13,505 @@
 
         body {
             font-family: 'Arial', sans-serif;
-            background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%);
+            background: linear-gradient(135deg, #7ed3f7 0%, #5fb3d4 100%);
             min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             padding: 20px;
         }
 
-        .admin-container {
-            max-width: 1400px;
-            margin: 0 auto;
+        .container {
             background: white;
+            padding: 30px;
             border-radius: 15px;
-            overflow: hidden;
             box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            max-width: 1200px;
+            width: 100%;
         }
 
-        .header {
-            background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
-            color: white;
-            padding: 25px;
+        .login-container {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            max-width: 400px;
+            width: 100%;
             text-align: center;
         }
 
-        .header h1 {
+        .login-title {
+            color: #005993;
+            margin-bottom: 30px;
             font-size: 1.8em;
-            margin-bottom: 10px;
-            font-weight: 700;
+            font-weight: 600;
         }
 
-        .header p {
-            opacity: 0.9;
+        .login-subtitle {
+            color: #666;
+            margin-bottom: 30px;
             font-size: 1.1em;
         }
 
-        .header .nav-info {
-            margin-top: 10px;
-            font-size: 14px;
-            opacity: 0.9;
-        }
-
-        .header .nav-info a {
-            color: white;
-            text-decoration: underline;
-        }
-
-        .admin-nav {
-            background: #f8fafc;
-            padding: 20px;
-            border-bottom: 1px solid #e2e8f0;
-        }
-
-        .nav-buttons {
-            display: flex;
-            gap: 15px;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-
-        .nav-btn {
-            padding: 12px 24px;
-            border: none;
+        .password-input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #ddd;
             border-radius: 8px;
-            font-size: 14px;
-            font-weight: 600;
+            font-size: 16px;
+            margin-bottom: 20px;
+            box-sizing: border-box;
+            text-align: center;
+        }
+
+        .password-input:focus {
+            outline: none;
+            border-color: #005993;
+        }
+
+        .login-btn {
+            background: linear-gradient(135deg, #005993 0%, #004a7a 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            font-size: 16px;
             cursor: pointer;
             transition: all 0.3s;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
+            font-weight: 500;
+            width: 100%;
         }
 
-        .nav-btn.active {
-            background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
-            color: white;
+        .login-btn:hover {
+            background: linear-gradient(135deg, #004a7a 0%, #003a61 100%);
             transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);
+            box-shadow: 0 4px 12px rgba(0, 89, 147, 0.3);
         }
 
-        .nav-btn:not(.active) {
-            background: white;
-            color: #64748b;
-            border: 2px solid #e2e8f0;
+        .login-error {
+            background: #fecaca;
+            color: #991b1b;
+            padding: 10px;
+            border-radius: 8px;
+            margin-top: 15px;
+            border-left: 4px solid #dc2626;
+            font-size: 14px;
         }
 
-        .nav-btn:not(.active):hover {
-            border-color: #dc2626;
-            color: #dc2626;
-            transform: translateY(-1px);
+        .login-instructions {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-left: 4px solid #f59e0b;
+            color: #92400e;
+            font-size: 14px;
         }
 
-        .content {
-            padding: 30px;
-        }
-
-        .section {
-            display: none;
-        }
-
-        .section.active {
-            display: block;
-        }
-
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
+        .header {
+            text-align: center;
             margin-bottom: 30px;
         }
 
-        .stat-card {
-            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
-            padding: 25px;
-            border-radius: 12px;
-            border-left: 4px solid #dc2626;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-            transition: transform 0.3s;
-        }
-
-        .stat-card:hover {
-            transform: translateY(-2px);
-        }
-
-        .stat-label {
-            font-size: 14px;
-            color: #64748b;
-            font-weight: 600;
+        .header .event-title {
+            color: #005993;
+            margin-bottom: 15px;
+            font-size: 1.4em;
+            font-weight: 700;
+            line-height: 1.3;
             text-transform: uppercase;
             letter-spacing: 0.5px;
-            margin-bottom: 8px;
         }
 
-        .stat-value {
-            font-size: 2.2em;
-            font-weight: bold;
-            color: #dc2626;
-            margin-bottom: 5px;
+        .admin-badge {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: 600;
+            display: inline-block;
+            margin-bottom: 10px;
+            box-shadow: 0 2px 8px rgba(239, 68, 68, 0.3);
         }
 
-        .stat-desc {
-            font-size: 13px;
-            color: #94a3b8;
+        .header h1 {
+            color: #005993;
+            margin-bottom: 10px;
+            font-size: 1.5em;
+            font-weight: 600;
         }
 
-        .logs-container {
-            background: #f8fafc;
-            border-radius: 12px;
-            padding: 25px;
-            margin-bottom: 20px;
+        .search-section {
+            margin-bottom: 30px;
         }
 
-        .logs-header {
+        .input-tooltip {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            color: #92400e;
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            border-left: 4px solid #f59e0b;
+            font-size: 14px;
+            font-weight: 500;
+            box-shadow: 0 2px 4px rgba(245, 158, 11, 0.1);
             display: flex;
-            justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
-            gap: 15px;
+            gap: 8px;
         }
 
-        .logs-title {
-            font-size: 1.3em;
-            font-weight: bold;
-            color: #1e293b;
+        .input-tooltip::before {
+            content: "🔍";
+            font-size: 16px;
         }
 
-        .logs-controls {
+        .input-group {
             display: flex;
             gap: 10px;
-            align-items: center;
-            flex-wrap: wrap;
+            margin-bottom: 20px;
+            position: relative;
         }
 
-        .filter-input {
-            padding: 8px 12px;
-            border: 2px solid #e2e8f0;
-            border-radius: 6px;
-            font-size: 14px;
-            min-width: 200px;
+        .input-container {
+            flex: 1;
+            position: relative;
         }
 
-        .filter-input:focus {
-            outline: none;
-            border-color: #dc2626;
-        }
-
-        .export-btn, .reset-btn {
-            padding: 10px 18px;
-            border: none;
-            border-radius: 6px;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-            text-decoration: none;
-            display: inline-block;
-        }
-
-        .export-btn {
-            background: linear-gradient(135deg, #059669 0%, #047857 100%);
-            color: white;
-        }
-
-        .export-btn:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(5, 150, 105, 0.3);
-            color: white;
-            text-decoration: none;
-        }
-
-        .export-btn.blue {
-            background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
-        }
-
-        .export-btn.blue:hover {
-            box-shadow: 0 4px 12px rgba(2, 132, 199, 0.3);
-        }
-
-        .reset-btn {
-            background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
-            color: white;
-        }
-
-        .reset-btn:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);
-        }
-
-        .logs-table {
+        input[type="text"] {
             width: 100%;
-            border-collapse: collapse;
-            background: white;
+            padding: 12px 50px 12px 12px;
+            border: 2px solid #ddd;
             border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            font-size: 16px;
+            transition: border-color 0.3s;
+            box-sizing: border-box;
         }
 
-        .logs-table th {
-            background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
-            color: white;
-            padding: 15px 12px;
-            text-align: left;
-            font-weight: 600;
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #005993;
+        }
+
+        .input-actions {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            gap: 5px;
+            align-items: center;
+        }
+
+        .clear-btn {
+            background: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+            border: none;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            cursor: pointer;
             font-size: 14px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .logs-table td {
-            padding: 12px;
-            border-bottom: 1px solid #e2e8f0;
-            font-size: 14px;
-        }
-
-        .logs-table tr:hover {
-            background: #f8fafc;
-        }
-
-        .search-term {
-            font-family: 'Courier New', monospace;
-            background: #f1f5f9;
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 13px;
-        }
-
-        .seat-badge {
-            background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
-            color: #92400e;
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 12px;
-            font-weight: bold;
-        }
-
-        .vip-badge {
-            background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
-            color: white;
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 12px;
-            font-weight: bold;
-        }
-
-        .timestamp {
-            color: #64748b;
-            font-size: 13px;
-        }
-
-        .no-data {
-            text-align: center;
-            padding: 40px;
-            color: #64748b;
-            font-style: italic;
-        }
-
-        .chart-container {
-            background: white;
-            padding: 25px;
-            border-radius: 12px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-            margin-bottom: 20px;
-        }
-
-        .chart-title {
-            font-size: 1.2em;
-            font-weight: bold;
-            color: #1e293b;
-            margin-bottom: 20px;
-            text-align: center;
-        }
-
-        .reset-confirmation {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.5);
+            transition: all 0.3s ease;
             display: none;
             align-items: center;
             justify-content: center;
-            z-index: 1000;
         }
 
-        .reset-modal {
-            background: white;
-            padding: 30px;
-            border-radius: 12px;
-            max-width: 400px;
-            width: 90%;
-            text-align: center;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        .clear-btn:hover {
+            background: rgba(239, 68, 68, 0.2);
+            transform: scale(1.1);
         }
 
-        .reset-modal h3 {
-            color: #dc2626;
+        .search-btn {
+            background: linear-gradient(135deg, #005993 0%, #004a7a 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 500;
+            white-space: nowrap;
+        }
+
+        .search-btn:hover {
+            background: linear-gradient(135deg, #004a7a 0%, #003a61 100%);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 89, 147, 0.3);
+        }
+
+        .search-btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .result-section {
+            margin-bottom: 30px;
+        }
+
+        .delegate-info {
+            background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 4px solid #005993;
+            margin-bottom: 20px;
+        }
+
+        .delegate-info h3 {
+            color: #005993;
             margin-bottom: 15px;
-            font-size: 1.3em;
+            font-weight: 600;
         }
 
-        .reset-modal p {
-            color: #64748b;
-            margin-bottom: 25px;
-            line-height: 1.5;
+        .delegate-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 12px;
+            margin-bottom: 15px;
         }
 
-        .reset-modal-buttons {
+        .detail-item {
+            background: white;
+            padding: 12px;
+            border-radius: 6px;
+            text-align: center;
+            border: 1px solid #93c5fd;
+            transition: all 0.3s ease;
+        }
+
+        .detail-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 89, 147, 0.2);
+        }
+
+        .detail-label {
+            font-weight: bold;
+            color: #005993;
+            font-size: 0.9em;
+            margin-bottom: 5px;
+        }
+
+        .detail-value {
+            color: #1e3a8a;
+            font-size: 1.1em;
+            font-weight: 600;
+        }
+
+        .phone-link {
+            color: #1e3a8a;
+            text-decoration: none;
+            font-size: 1.1em;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            transition: all 0.3s ease;
+            padding: 2px 4px;
+            border-radius: 4px;
+        }
+
+        .phone-link:hover {
+            color: #005993;
+            background: rgba(0, 89, 147, 0.1);
+            transform: scale(1.02);
+        }
+
+        .phone-link::after {
+            content: "📞";
+            font-size: 0.9em;
+            opacity: 0.7;
+        }
+
+        .seat-highlight {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            padding: 10px 15px;
+            border-radius: 6px;
+            border-left: 3px solid #f59e0b;
+            font-size: 14px;
+            color: #92400e;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .seat-highlight::before {
+            content: "📍";
+            font-size: 16px;
+        }
+
+        .seating-chart {
+            background: linear-gradient(135deg, #fefce8 0%, #fef3c7 100%);
+            padding: 20px;
+            border-radius: 10px;
+            overflow-x: auto;
+            border: 1px solid #fed7aa;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+        }
+
+        .chart-title {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #7c2d12;
+            font-size: 1.2em;
+            font-weight: bold;
+            flex-shrink: 0;
+            width: 100%;
+        }
+
+        .chart-instruction {
+            background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+            color: #005993;
+            padding: 10px 16px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+            border-left: 3px solid #005993;
+            font-size: 13px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            width: calc(24 * 38px + 23 * 3px + 30px);
+        }
+
+        .chart-instruction::before {
+            content: "👆";
+            font-size: 14px;
+        }
+
+        .stage {
+            background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+            color: white;
+            text-align: center;
+            padding: 10px;
+            margin: 0 0 40px 0;
+            border-radius: 8px;
+            width: calc(24 * 38px + 23 * 3px + 30px);
+            font-weight: bold;
+            box-shadow: 0 2px 8px rgba(220, 38, 38, 0.3);
+            flex-shrink: 0;
+        }
+
+        .rows {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            align-items: flex-start;
+            width: calc(24 * 38px + 23 * 3px + 30px);
+            flex-shrink: 0;
+        }
+
+        .row {
+            display: flex;
+            align-items: center;
+            gap: 3px;
+            flex-wrap: nowrap;
+        }
+
+        .seat {
+            width: 38px;
+            height: 30px;
+            border: 2px solid #fed7aa;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            font-weight: bold;
+            transition: all 0.3s;
+            background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
+            color: #a16207;
+            flex-shrink: 0;
+            user-select: none;
+            cursor: pointer;
+        }
+
+        .seat:hover {
+            background: linear-gradient(135deg, #fde68a 0%, #fcd34d 100%);
+            transform: scale(1.05);
+            border-color: #f59e0b;
+            box-shadow: 0 2px 8px rgba(245, 158, 11, 0.3);
+        }
+
+        .seat.selected {
+            background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+            color: white;
+            border-color: #991b1b;
+            transform: scale(1.1);
+            box-shadow: 0 4px 12px rgba(220, 38, 38, 0.4);
+        }
+
+        .seat.vip-area {
+            background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
+            color: #a16207;
+            border-color: #fed7aa;
+            font-weight: bold;
+        }
+
+        .seat.vip-area.selected {
+            background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%) !important;
+            color: white !important;
+            border-color: #991b1b !important;
+            transform: scale(1.1) !important;
+            box-shadow: 0 4px 12px rgba(220, 38, 38, 0.4) !important;
+        }
+
+        .error-message {
+            background: #fecaca;
+            color: #991b1b;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-left: 4px solid #dc2626;
+            animation: slideIn 0.5s ease;
+        }
+
+        .legend {
             display: flex;
             gap: 15px;
             justify-content: center;
+            margin-top: 15px;
+            flex-wrap: wrap;
         }
 
-        .confirm-btn, .cancel-btn {
-            padding: 12px 24px;
-            border: none;
-            border-radius: 6px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 12px;
+            color: #7c2d12;
         }
 
-        .confirm-btn {
-            background: #dc2626;
-            color: white;
+        .legend-color {
+            width: 20px;
+            height: 15px;
+            border-radius: 3px;
+            border: 1px solid #fed7aa;
         }
 
-        .cancel-btn {
-            background: #e5e7eb;
-            color: #6b7280;
+        .legend-color.selected {
+            background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
         }
 
-        .refresh-indicator {
+        .loading {
             display: inline-block;
             width: 16px;
             height: 16px;
             border: 2px solid #f3f3f3;
-            border-top: 2px solid #dc2626;
+            border-top: 2px solid #005993;
             border-radius: 50%;
             animation: spin 1s linear infinite;
             margin-right: 8px;
         }
 
-        .status-indicator {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            padding: 10px 15px;
-            border-radius: 8px;
-            font-size: 14px;
-            font-weight: 600;
-            z-index: 999;
+        .hidden {
             display: none;
-        }
-
-        .status-success {
-            background: #059669;
-            color: white;
-        }
-
-        .status-error {
-            background: #dc2626;
-            color: white;
-        }
-
-        .status-warning {
-            background: #f59e0b;
-            color: white;
-        }
-
-        .debug-panel {
-            background: #1e293b;
-            color: #00ff00;
-            padding: 15px;
-            border-radius: 8px;
-            font-family: monospace;
-            font-size: 12px;
-            max-height: 200px;
-            overflow-y: auto;
-            margin-top: 20px;
         }
 
         @keyframes spin {
@@ -436,1106 +519,3116 @@
             100% { transform: rotate(360deg); }
         }
 
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
+        @media (max-width: 1250px) {
+            .container { max-width: 95%; padding: 15px; }
+        }
+
         @media (max-width: 768px) {
-            .admin-container {
-                margin: 0;
-                border-radius: 0;
-            }
-            
-            .content {
-                padding: 20px;
-            }
+            .container { padding: 20px; }
+            .header .event-title { font-size: 1.2em; }
+            .header h1 { font-size: 1.3em; }
+            .input-tooltip { padding: 10px 12px; font-size: 13px; }
+            .input-group { flex-direction: column; }
+            .seat { width: 32px; height: 25px; font-size: 9px; }
+            .stage { width: calc(24 * 32px + 23 * 3px + 30px); }
+            .rows { width: calc(24 * 32px + 23 * 3px + 30px); }
+            .chart-instruction { width: calc(24 * 32px + 23 * 3px + 30px); }
+            .seating-chart { padding: 15px; align-items: flex-start; }
+            .legend { justify-content: flex-start; }
+        }
 
-            .stats-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .logs-controls {
-                flex-direction: column;
-                align-items: stretch;
-            }
-
-            .filter-input {
-                min-width: auto;
-            }
-
-            .logs-table {
-                font-size: 12px;
-            }
-
-            .logs-table th,
-            .logs-table td {
-                padding: 8px;
-            }
+        @media (max-width: 480px) {
+            .header .event-title { font-size: 1em; }
+            .header h1 { font-size: 1.1em; }
+            .input-tooltip { padding: 8px 10px; font-size: 12px; }
+            .seat { width: 28px; height: 22px; font-size: 8px; }
+            .stage { width: calc(24 * 28px + 23 * 2px + 20px); font-size: 14px; }
+            .rows { width: calc(24 * 28px + 23 * 2px + 20px); gap: 4px; }
+            .chart-instruction { width: calc(24 * 28px + 23 * 2px + 20px); }
+            .row { gap: 2px; }
+            .seating-chart { padding: 10px; }
+            .seat:nth-child(6) { margin-right: 10px !important; }
+            .seat:nth-child(18) { margin-right: 10px !important; }
         }
     </style>
 </head>
 <body>
-    <div class="admin-container">
+    <!-- Login Screen -->
+    <div id="loginScreen" class="login-container">
+        <div class="admin-badge">🔐 ADMIN PANEL</div>
+        <h1 class="login-title">Đăng nhập Admin</h1>
+        <p class="login-subtitle">Vui lòng nhập mật khẩu để truy cập hệ thống</p>
+        
+        <div class="login-instructions">
+            🔑 Nhập mật khẩu admin để truy cập hệ thống tra cứu thông tin đại biểu
+        </div>
+        
+        <input type="password" id="passwordInput" class="password-input" placeholder="Nhập mật khẩu admin..." />
+        <button id="loginBtn" class="login-btn">🚀 Đăng nhập</button>
+        
+        <div id="loginError" class="login-error hidden">
+            ❌ Mật khẩu không đúng! Vui lòng thử lại.
+        </div>
+    </div>
+
+    <!-- Main Admin Panel (Hidden initially) -->
+    <div id="mainPanel" class="container hidden">
         <div class="header">
-            <h1>🔧 Công cụ quản trị hệ thống tra cứu ghế</h1>
-            <p>Theo dõi và quản lý hoạt động tra cứu chỗ ngồi đại biểu</p>
-            <div class="nav-info">
-                <span id="lastUpdate">Cập nhật: --</span> | 
-                <a href="index.html" target="_blank">← Quay lại trang tra cứu</a>
+            <div class="admin-badge">🔐 ADMIN PANEL</div>
+            <div class="event-title">
+                ĐẠI HỘI ĐẠI BIỂU ĐẢNG BỘ NHCTVN LẦN THỨ XI,<br>
+                NHIỆM KỲ 2025 - 2030
+            </div>
+            <h1>Hệ thống tra cứu thông tin đại biểu</h1>
+        </div>
+
+        <div class="search-section">
+            <div class="input-tooltip">
+                Nhập mã số ghế (VD: A1, B15, C23) hoặc click trực tiếp vào ghế trong sơ đồ
+            </div>
+            <div class="input-group">
+                <div class="input-container">
+                    <input type="text" id="searchInput" placeholder="nhập mã số ghế tại đây..." />
+                    <div class="input-actions">
+                        <button class="clear-btn" id="clearBtn">✕</button>
+                    </div>
+                </div>
+                <button class="search-btn" id="searchBtn">Tra cứu</button>
             </div>
         </div>
 
-        <div class="admin-nav">
-            <div class="nav-buttons">
-                <button class="nav-btn active" onclick="showSection('dashboard')">Dashboard</button>
-                <button class="nav-btn" onclick="showSection('logs')">Lịch sử tra cứu</button>
-                <button class="nav-btn" onclick="showSection('reports')">Báo cáo thống kê</button>
-                <button class="nav-btn" onclick="showSection('debug')">Debug</button>
-                <button class="nav-btn" onclick="showSection('settings')">Cài đặt</button>
+        <div id="errorMessage" class="error-message hidden"></div>
+
+        <div id="resultSection" class="result-section hidden">
+            <div class="delegate-info">
+                <h3>Thông tin đại biểu:</h3>
+                <div class="delegate-details">
+                    <div class="detail-item">
+                        <div class="detail-label">Họ và tên</div>
+                        <div class="detail-value" id="fullName"></div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">Chức danh</div>
+                        <div class="detail-value" id="position"></div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">Số điện thoại</div>
+                        <div class="detail-value" id="phoneNumber"></div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">Số ghế</div>
+                        <div class="detail-value" id="seatNumber"></div>
+                    </div>
+                </div>
+                <div class="seat-highlight" id="seatHighlight"></div>
             </div>
         </div>
 
-        <div class="content">
-            <!-- Dashboard Section -->
-            <div id="dashboard" class="section active">
-                <div class="stats-grid">
-                    <div class="stat-card">
-                        <div class="stat-label">Tổng lượt tra cứu</div>
-                        <div class="stat-value" id="totalSearches">0</div>
-                        <div class="stat-desc">Từ khi bắt đầu ghi nhận</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-label">Ghế đã tra cứu</div>
-                        <div class="stat-value" id="uniqueSeats">0</div>
-                        <div class="stat-desc">Số ghế riêng biệt</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-label">Tra cứu hôm nay</div>
-                        <div class="stat-value" id="todaySearches">0</div>
-                        <div class="stat-desc">Trong 24h qua</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-label">Tỷ lệ tra cứu</div>
-                        <div class="stat-value" id="searchRate">0%</div>
-                        <div class="stat-desc">Trên tổng số ghế</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-label">Mobile/Desktop</div>
-                        <div class="stat-value" id="deviceRatio">--</div>
-                        <div class="stat-desc">Tỷ lệ thiết bị truy cập</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-label">Trạng thái hệ thống</div>
-                        <div class="stat-value" id="systemStatus">✅</div>
-                        <div class="stat-desc" id="systemStatusDesc">Hoạt động bình thường</div>
-                    </div>
-                </div>
-
-                <div class="chart-container">
-                    <div class="chart-title">📊 Biểu đồ tra cứu theo thời gian</div>
-                    <canvas id="searchChart" width="800" height="300"></canvas>
-                </div>
-
-                <div class="logs-container">
-                    <div class="logs-header">
-                        <div class="logs-title">🕒 Hoạt động gần đây</div>
-                        <div class="logs-controls">
-                            <button class="export-btn" onclick="refreshDashboard()">
-                                <span id="refreshIcon">🔄</span> Làm mới
-                            </button>
-                            <a href="index.html" class="export-btn blue" target="_blank">
-                                🔗 Mở trang chính
-                            </a>
-                        </div>
-                    </div>
-                    <div id="recentLogs"></div>
-                </div>
+        <div class="seating-chart">
+            <div class="chart-title">Sơ đồ chỗ ngồi - Click để xem thông tin</div>
+            <div class="chart-instruction">
+                Click vào bất kỳ ghế nào để xem thông tin chi tiết của đại biểu
             </div>
-
-            <!-- Logs Section -->
-            <div id="logs" class="section">
-                <div class="logs-container">
-                    <div class="logs-header">
-                        <div class="logs-title">📋 Lịch sử tra cứu chi tiết</div>
-                        <div class="logs-controls">
-                            <input type="text" class="filter-input" id="logFilter" placeholder="Tìm kiếm theo tên, username, ghế...">
-                            <button class="export-btn" onclick="exportLogs()">📥 Xuất Excel</button>
-                        </div>
-                    </div>
-                    <div id="logsTableContainer"></div>
-                </div>
-            </div>
-
-            <!-- Reports Section -->
-            <div id="reports" class="section">
-                <div class="stats-grid">
-                    <div class="stat-card">
-                        <div class="stat-label">Ghế VIP tra cứu</div>
-                        <div class="stat-value" id="vipSearches">0</div>
-                        <div class="stat-desc">Hàng A và B</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-label">Ghế thường tra cứu</div>
-                        <div class="stat-value" id="normalSearches">0</div>
-                        <div class="stat-desc">Hàng C đến N</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-label">Giờ cao điểm</div>
-                        <div class="stat-value" id="peakHour">--</div>
-                        <div class="stat-desc">Thời gian tra cứu nhiều nhất</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-label">Tra cứu thành công</div>
-                        <div class="stat-value" id="successRate">0%</div>
-                        <div class="stat-desc">Tỷ lệ tìm thấy kết quả</div>
-                    </div>
-                </div>
-
-                <div class="chart-container">
-                    <div class="chart-title">📈 Thống kê tra cứu theo hàng ghế</div>
-                    <canvas id="rowChart" width="800" height="400"></canvas>
-                </div>
-            </div>
-
-            <!-- Debug Section -->
-            <div id="debug" class="section">
-                <div class="logs-container">
-                    <div class="logs-header">
-                        <div class="logs-title">🐛 Debug & Troubleshooting</div>
-                        <div class="logs-controls">
-                            <button class="export-btn" onclick="runDiagnostics()">🔍 Chạy chẩn đoán</button>
-                            <button class="export-btn blue" onclick="testStorage()">💾 Test Storage</button>
-                        </div>
-                    </div>
-                    
-                    <div class="stats-grid">
-                        <div class="stat-card">
-                            <div class="stat-label">LocalStorage</div>
-                            <div class="stat-value" id="localStorageStatus">--</div>
-                            <div class="stat-desc">Trạng thái lưu trữ</div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-label">SessionStorage</div>
-                            <div class="stat-value" id="sessionStorageStatus">--</div>
-                            <div class="stat-desc">Trạng thái phiên</div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-label">Storage Usage</div>
-                            <div class="stat-value" id="storageUsage">0KB</div>
-                            <div class="stat-desc">Dung lượng sử dụng</div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-label">Failed Logs</div>
-                            <div class="stat-value" id="failedLogs">0</div>
-                            <div class="stat-desc">Số log lỗi ghi nhận</div>
-                        </div>
-                    </div>
-                    
-                    <div class="debug-panel" id="debugOutput">
-                        Nhấn "Chạy chẩn đoán" để bắt đầu kiểm tra hệ thống...
-                    </div>
-                </div>
-            </div>
-
-            <!-- Settings Section -->
-            <div id="settings" class="section">
-                <div class="logs-container">
-                    <div class="logs-header">
-                        <div class="logs-title">⚙️ Cài đặt hệ thống</div>
-                    </div>
-                    <div style="text-align: center; padding: 20px;">
-                        <h3 style="color: #dc2626; margin-bottom: 15px;">Reset dữ liệu tra cứu</h3>
-                        <p style="color: #64748b; margin-bottom: 25px; line-height: 1.6;">
-                            Xóa toàn bộ lịch sử tra cứu đã ghi nhận và bắt đầu thu thập dữ liệu mới.<br>
-                            <strong>Lưu ý:</strong> Hành động này không thể hoàn tác!
-                        </p>
-                        <div style="background: #fef2f2; padding: 20px; border-radius: 8px; margin-bottom: 25px; border-left: 4px solid #dc2626;">
-                            <div style="font-weight: bold; color: #dc2626; margin-bottom: 10px;">
-                                Thời gian reset gần nhất: <span id="lastResetTime">Chưa có</span>
-                            </div>
-                            <div style="color: #991b1b; font-size: 14px;">
-                                Tổng số bản ghi hiện tại: <span id="currentRecords">0</span> lượt tra cứu
-                            </div>
-                        </div>
-                        <button class="reset-btn" onclick="showResetConfirmation()">
-                            🗑️ Reset dữ liệu tra cứu
-                        </button>
-                    </div>
+            <div class="stage">SÂN KHẤU</div>
+            <div class="rows" id="seatingRows"></div>
+            
+            <div class="legend">
+                <div class="legend-item">
+                    <div class="legend-color selected"></div>
+                    <span>Ghế đã chọn</span>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Status Indicator -->
-    <div id="statusIndicator" class="status-indicator"></div>
+<script>
+// === GLOBAL VARIABLES ===
+var delegates = new Map();
+var seatIndex = new Map();
+var seatingChartCreated = false;
+var isLoading = false;
+var isLoggedIn = false;
 
-    <!-- Reset Confirmation Modal -->
-    <div id="resetConfirmation" class="reset-confirmation">
-        <div class="reset-modal">
-            <h3>⚠️ Xác nhận reset dữ liệu</h3>
-            <p>
-                Bạn có chắc chắn muốn xóa toàn bộ <strong id="confirmRecordCount">0</strong> bản ghi tra cứu?<br>
-                Hành động này không thể hoàn tác!
-            </p>
-            <div class="reset-modal-buttons">
-                <button class="cancel-btn" onclick="hideResetConfirmation()">Hủy bỏ</button>
-                <button class="confirm-btn" onclick="confirmReset()">Xác nhận Reset</button>
-            </div>
-        </div>
-    </div>
+// === GLOBAL FUNCTIONS ===
+function loginAdmin() {
+    var passwordInput = document.getElementById('passwordInput');
+    var loginError = document.getElementById('loginError');
+    var loginBtn = document.getElementById('loginBtn');
+    
+    var enteredPassword = passwordInput.value.trim();
+    
+    if (enteredPassword === "daihoi2025") {
+        loginError.classList.add('hidden');
+        loginBtn.innerHTML = '✅ Đang đăng nhập...';
+        loginBtn.disabled = true;
+        
+        setTimeout(function() {
+            document.getElementById('loginScreen').classList.add('hidden');
+            document.getElementById('mainPanel').classList.remove('hidden');
+            isLoggedIn = true;
+            initializeApp();
+        }, 1000);
+        
+    } else {
+        loginError.classList.remove('hidden');
+        passwordInput.value = '';
+        passwordInput.focus();
+        
+        passwordInput.style.animation = 'shake 0.5s';
+        setTimeout(function() {
+            passwordInput.style.animation = '';
+        }, 500);
+    }
+}
 
-    <script>
-        // ==================== ENHANCED STORAGE FUNCTIONS ====================
-        function safeLocalStorageGet(key) {
-            try {
-                let value = localStorage.getItem(key);
-                if (value === null) {
-                    value = sessionStorage.getItem(key);
-                }
-                return value ? JSON.parse(value) : null;
-            } catch (error) {
-                console.error('Storage get error:', error);
-                return null;
-            }
-        }
+function searchBySeat() {
+    if (!checkAccess() || isLoading) return;
+    
+    var seatInput = document.getElementById('searchInput').value.trim().toUpperCase();
+    var errorMessage = document.getElementById('errorMessage');
+    var resultSection = document.getElementById('resultSection');
+    var searchBtn = document.getElementById('searchBtn');
 
-        function safeLocalStorageSet(key, value) {
-            try {
-                localStorage.setItem(key, JSON.stringify(value));
-                return true;
-            } catch (error) {
-                try {
-                    sessionStorage.setItem(key, JSON.stringify(value));
-                    return true;
-                } catch (sessionError) {
-                    console.error('Storage set error:', error);
-                    return false;
-                }
-            }
-        }
+    errorMessage.classList.add('hidden');
+    resultSection.classList.add('hidden');
+    resetHighlight();
 
-        // ==================== GLOBAL FUNCTION DECLARATIONS ====================
-        window.showSection = function(sectionName) {
-            document.querySelectorAll('.section').forEach(section => {
-                section.classList.remove('active');
+    if (!seatInput) {
+        showError('Vui lòng nhập mã số ghế (VD: A1, B15, C23)!');
+        return;
+    }
+
+    if (!isValidSeatNumber(seatInput)) {
+        showError('Mã ghế không hợp lệ! Vui lòng nhập theo định dạng: A1, B15, C23...');
+        return;
+    }
+
+    isLoading = true;
+    searchBtn.innerHTML = '<span class="loading"></span>Đang tra cứu...';
+    searchBtn.disabled = true;
+
+    setTimeout(function() {
+        var delegate = findDelegateBySeat(seatInput);
+        
+        if (!delegate) {
+            showError('❌ <strong>Ghế ' + seatInput + ' chưa có đại biểu!</strong><br>Ghế này hiện đang trống.');
+        } else {
+            displayDelegateInfo(delegate);
+            highlightSeat(seatInput);
+            
+            document.getElementById('resultSection').scrollIntoView({ 
+                behavior: 'smooth', 
+                block: 'center' 
             });
-            
-            document.querySelectorAll('.nav-btn').forEach(btn => {
-                btn.classList.remove('active');
-            });
-            
-            document.getElementById(sectionName).classList.add('active');
-            
-            const clickedButton = document.querySelector(`[onclick="showSection('${sectionName}')"]`);
-            if (clickedButton) {
-                clickedButton.classList.add('active');
-            }
-            
-            switch(sectionName) {
-                case 'dashboard':
-                    loadDashboard();
-                    break;
-                case 'logs':
-                    loadLogs();
-                    break;
-                case 'reports':
-                    loadReports();
-                    break;
-                case 'debug':
-                    loadDebugSection();
-                    break;
-                case 'settings':
-                    loadSettings();
-                    break;
-            }
-        };
-
-        window.refreshDashboard = function() {
-            const icon = document.getElementById('refreshIcon');
-            if (icon) {
-                icon.innerHTML = '<span class="refresh-indicator"></span>';
-                
-                setTimeout(() => {
-                    loadDashboard();
-                    updateLastUpdateTime();
-                    icon.innerHTML = '🔄';
-                    showStatus('Dashboard đã được làm mới', 'success');
-                }, 1000);
-            }
-        };
-
-        window.exportLogs = function() {
-            const logs = getSearchLogs();
-            if (logs.length === 0) {
-                showStatus('Không có dữ liệu để xuất!', 'warning');
-                return;
-            }
-            
-            let csvContent = "STT,Thời gian,Từ khóa tìm kiếm,Tìm thấy,Họ tên,Username,Số điện thoại,Số ghế,Hàng,Thiết bị\n";
-            
-            logs.forEach((log, index) => {
-                const time = new Date(log.timestamp).toLocaleString('vi-VN');
-                const found = log.found ? 'Có' : 'Không';
-                const name = log.found ? log.delegate.fullName : '';
-                const username = log.found ? log.delegate.username : '';
-                const phone = log.found ? log.delegate.phone : '';
-                const seat = log.found ? log.delegate.seatNumber : '';
-                const row = log.found ? log.delegate.row : '';
-                const device = log.isMobile ? 'Mobile' : 'Desktop';
-                
-                csvContent += `${index + 1},"${time}","${log.searchTerm}","${found}","${name}","${username}","${phone}","${seat}","${row}","${device}"\n`;
-            });
-            
-            const blob = new Blob(['\uFEFF' + csvContent], { type: 'text/csv;charset=utf-8;' });
-            const link = document.createElement('a');
-            const url = URL.createObjectURL(blob);
-            
-            link.setAttribute('href', url);
-            link.setAttribute('download', `lich_su_tra_cuu_${new Date().toISOString().split('T')[0]}.csv`);
-            link.style.visibility = 'hidden';
-            
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-            
-            showStatus('Đã xuất file Excel thành công!', 'success');
-        };
-
-        window.showResetConfirmation = function() {
-            const stats = calculateStats();
-            document.getElementById('confirmRecordCount').textContent = stats.totalSearches;
-            document.getElementById('resetConfirmation').style.display = 'flex';
-        };
-        
-        window.hideResetConfirmation = function() {
-            document.getElementById('resetConfirmation').style.display = 'none';
-        };
-        
-        window.confirmReset = function() {
-            resetAllLogs();
-            window.hideResetConfirmation();
-            
-            loadDashboard();
-            loadSettings();
-            updateLastUpdateTime();
-            
-            showStatus('✅ Đã reset thành công! Hệ thống sẽ bắt đầu ghi nhận dữ liệu mới.', 'success');
-        };
-
-        window.runDiagnostics = function() {
-            const output = document.getElementById('debugOutput');
-            output.innerHTML = '';
-            
-            let diagnostics = [];
-            
-            // Test 1: LocalStorage
-            diagnostics.push('=== STORAGE DIAGNOSTICS ===');
-            try {
-                const testKey = 'diagnostic_test_' + Date.now();
-                const testData = { test: true, timestamp: Date.now() };
-                
-                localStorage.setItem(testKey, JSON.stringify(testData));
-                const retrieved = JSON.parse(localStorage.getItem(testKey));
-                localStorage.removeItem(testKey);
-                
-                if (retrieved && retrieved.test === true) {
-                    diagnostics.push('✅ LocalStorage: WORKING');
-                    document.getElementById('localStorageStatus').textContent = '✅';
-                } else {
-                    diagnostics.push('❌ LocalStorage: FAILED - Data corruption');
-                    document.getElementById('localStorageStatus').textContent = '❌';
-                }
-            } catch (error) {
-                diagnostics.push(`❌ LocalStorage: ERROR - ${error.message}`);
-                document.getElementById('localStorageStatus').textContent = '❌';
-            }
-            
-            // Test 2: SessionStorage
-            try {
-                const testKey = 'session_diagnostic_test_' + Date.now();
-                const testData = { test: true, timestamp: Date.now() };
-                
-                sessionStorage.setItem(testKey, JSON.stringify(testData));
-                const retrieved = JSON.parse(sessionStorage.getItem(testKey));
-                sessionStorage.removeItem(testKey);
-                
-                if (retrieved && retrieved.test === true) {
-                    diagnostics.push('✅ SessionStorage: WORKING');
-                    document.getElementById('sessionStorageStatus').textContent = '✅';
-                } else {
-                    diagnostics.push('❌ SessionStorage: FAILED - Data corruption');
-                    document.getElementById('sessionStorageStatus').textContent = '❌';
-                }
-            } catch (error) {
-                diagnostics.push(`❌ SessionStorage: ERROR - ${error.message}`);
-                document.getElementById('sessionStorageStatus').textContent = '❌';
-            }
-            
-            // Test 3: Data integrity
-            diagnostics.push('\n=== DATA INTEGRITY CHECK ===');
-            const logs = getSearchLogs();
-            const stats = safeLocalStorageGet('generalStats') || {};
-            const pageStats = safeLocalStorageGet('pageViewStats') || {};
-            
-            diagnostics.push(`📊 Total logs in storage: ${logs.length}`);
-            diagnostics.push(`📊 General stats records: ${stats.totalSearches || 0}`);
-            diagnostics.push(`📊 Page view records: ${pageStats.totalViews || 0}`);
-            
-            // Test 4: Storage usage
-            let totalSize = 0;
-            for (let key in localStorage) {
-                if (localStorage.hasOwnProperty(key)) {
-                    totalSize += localStorage[key].length;
-                }
-            }
-            const sizeKB = Math.round(totalSize / 1024);
-            diagnostics.push(`💾 Storage usage: ${sizeKB}KB`);
-            document.getElementById('storageUsage').textContent = sizeKB + 'KB';
-            
-            // Test 5: Recent errors
-            diagnostics.push('\n=== ERROR ANALYSIS ===');
-            const recentLogs = logs.slice(0, 100);
-            const failedLogs = recentLogs.filter(log => !log.found).length;
-            const errorRate = recentLogs.length > 0 ? ((failedLogs / recentLogs.length) * 100).toFixed(1) : 0;
-            
-            diagnostics.push(`❌ Failed searches (last 100): ${failedLogs} (${errorRate}%)`);
-            document.getElementById('failedLogs').textContent = failedLogs;
-            
-            // Test 6: Device analysis
-            diagnostics.push('\n=== DEVICE ANALYSIS ===');
-            const mobileCount = recentLogs.filter(log => log.isMobile).length;
-            const desktopCount = recentLogs.length - mobileCount;
-            diagnostics.push(`📱 Mobile searches: ${mobileCount}`);
-            diagnostics.push(`🖥️ Desktop searches: ${desktopCount}`);
-            
-            // Test 7: System status
-            diagnostics.push('\n=== SYSTEM STATUS ===');
-            const lastActivity = stats.lastActivity;
-            if (lastActivity) {
-                const lastTime = new Date(lastActivity);
-                const timeDiff = Date.now() - lastTime.getTime();
-                const hoursDiff = Math.round(timeDiff / (1000 * 60 * 60));
-                
-                if (hoursDiff < 1) {
-                    diagnostics.push('✅ System: ACTIVE (Recent activity)');
-                    document.getElementById('systemStatus').textContent = '✅';
-                    document.getElementById('systemStatusDesc').textContent = 'Hoạt động bình thường';
-                } else if (hoursDiff < 24) {
-                    diagnostics.push(`⚠️ System: IDLE (${hoursDiff}h since last activity)`);
-                    document.getElementById('systemStatus').textContent = '⚠️';
-                    document.getElementById('systemStatusDesc').textContent = `${hoursDiff}h không hoạt động`;
-                } else {
-                    diagnostics.push(`❌ System: INACTIVE (${Math.round(hoursDiff/24)} days)`);
-                    document.getElementById('systemStatus').textContent = '❌';
-                    document.getElementById('systemStatusDesc').textContent = 'Không hoạt động lâu';
-                }
-            } else {
-                diagnostics.push('❓ System: NO DATA');
-                document.getElementById('systemStatus').textContent = '❓';
-                document.getElementById('systemStatusDesc').textContent = 'Chưa có dữ liệu';
-            }
-            
-            diagnostics.push('\n=== RECOMMENDATIONS ===');
-            if (failedLogs > 10) {
-                diagnostics.push('⚠️ High failure rate detected - Check search data');
-            }
-            if (sizeKB > 1000) {
-                diagnostics.push('⚠️ Storage usage high - Consider cleanup');
-            }
-            if (logs.length === 0) {
-                diagnostics.push('❗ No search logs found - Check main page integration');
-            }
-            
-            diagnostics.push('\n=== DIAGNOSTIC COMPLETE ===');
-            
-            output.innerHTML = diagnostics.join('\n');
-            showStatus('Chẩn đoán hệ thống hoàn tất', 'success');
-        };
-
-        window.testStorage = function() {
-            const output = document.getElementById('debugOutput');
-            let results = [];
-            
-            results.push('=== STORAGE PERFORMANCE TEST ===');
-            
-            // Test write performance
-            const startTime = performance.now();
-            const testData = Array.from({length: 100}, (_, i) => ({
-                id: i,
-                timestamp: new Date().toISOString(),
-                data: 'test_data_' + i
-            }));
-            
-            try {
-                safeLocalStorageSet('performance_test', testData);
-                const writeTime = performance.now() - startTime;
-                results.push(`✅ Write test: ${writeTime.toFixed(2)}ms for 100 records`);
-                
-                // Test read performance  
-                const readStart = performance.now();
-                const retrieved = safeLocalStorageGet('performance_test');
-                const readTime = performance.now() - readStart;
-                results.push(`✅ Read test: ${readTime.toFixed(2)}ms for 100 records`);
-                
-                // Cleanup
-                localStorage.removeItem('performance_test');
-                sessionStorage.removeItem('performance_test');
-                
-                if (retrieved && retrieved.length === 100) {
-                    results.push('✅ Data integrity: PASS');
-                } else {
-                    results.push('❌ Data integrity: FAIL');
-                }
-                
-            } catch (error) {
-                results.push(`❌ Storage test failed: ${error.message}`);
-            }
-            
-            results.push('\n=== QUOTA TEST ===');
-            try {
-                // Estimate storage quota
-                let testSize = '';
-                for (let i = 0; i < 100000; i++) {
-                    testSize += 'x';
-                }
-                
-                localStorage.setItem('quota_test', testSize);
-                results.push(`✅ Large data test: PASS (${Math.round(testSize.length/1024)}KB)`);
-                localStorage.removeItem('quota_test');
-                
-            } catch (error) {
-                if (error.name === 'QuotaExceededError') {
-                    results.push('⚠️ Storage quota exceeded - Storage nearly full');
-                } else {
-                    results.push(`❌ Quota test error: ${error.message}`);
-                }
-            }
-            
-            output.innerHTML = results.join('\n');
-            showStatus('Storage test hoàn tất', 'success');
-        };
-
-        // ==================== DATA MANAGEMENT ====================
-        const STORAGE_KEY = 'seatSearchLogs';
-        const RESET_TIME_KEY = 'lastResetTime';
-        
-        function getSearchLogs() {
-            return safeLocalStorageGet(STORAGE_KEY) || [];
-        }
-        
-        function saveSearchLogs(logs) {
-            return safeLocalStorageSet(STORAGE_KEY, logs);
-        }
-        
-        function getLastResetTime() {
-            return safeLocalStorageGet(RESET_TIME_KEY);
-        }
-        
-        function setLastResetTime() {
-            const now = new Date().toISOString();
-            safeLocalStorageSet(RESET_TIME_KEY, now);
-            return now;
-        }
-        
-        function resetAllLogs() {
-            try {
-                localStorage.removeItem(STORAGE_KEY);
-                localStorage.removeItem('generalStats');
-                localStorage.removeItem('pageViewStats');
-                sessionStorage.removeItem(STORAGE_KEY);
-                sessionStorage.removeItem('generalStats');
-                sessionStorage.removeItem('pageViewStats');
-                setLastResetTime();
-                return true;
-            } catch (error) {
-                console.error('Reset error:', error);
-                return false;
-            }
         }
 
-        // ==================== ENHANCED ANALYTICS ====================
-        function calculateStats() {
-            const logs = getSearchLogs();
-            const now = new Date();
-            const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-            
-            const totalSearches = logs.length;
-            const successfulSearches = logs.filter(log => log.found);
-            const todaySearches = logs.filter(log => new Date(log.timestamp) >= todayStart);
-            
-            const uniqueSeats = new Set();
-            let vipSearches = 0;
-            let normalSearches = 0;
-            let mobileSearches = 0;
-            let desktopSearches = 0;
-            
-            successfulSearches.forEach(log => {
-                if (log.delegate) {
-                    uniqueSeats.add(log.delegate.seatNumber);
-                    if (log.delegate.row === 'A' || log.delegate.row === 'B') {
-                        vipSearches++;
-                    } else {
-                        normalSearches++;
-                    }
-                }
-            });
-            
-            logs.forEach(log => {
-                if (log.isMobile) {
-                    mobileSearches++;
-                } else {
-                    desktopSearches++;
-                }
-            });
-            
-            const totalSeats = 14 * 24;
-            const searchRate = totalSearches > 0 ? ((uniqueSeats.size / totalSeats) * 100).toFixed(1) : 0;
-            const successRate = totalSearches > 0 ? ((successfulSearches.length / totalSearches) * 100).toFixed(1) : 0;
-            
-            // Calculate peak hour
-            const hourCounts = {};
-            logs.forEach(log => {
-                const hour = new Date(log.timestamp).getHours();
-                hourCounts[hour] = (hourCounts[hour] || 0) + 1;
-            });
-            
-            const peakHour = Object.keys(hourCounts).length > 0 
-                ? Object.keys(hourCounts).reduce((a, b) => hourCounts[a] > hourCounts[b] ? a : b)
-                : null;
-            
-            // Device ratio
-            const deviceRatio = totalSearches > 0 
-                ? `${Math.round((mobileSearches / totalSearches) * 100)}% / ${Math.round((desktopSearches / totalSearches) * 100)}%`
-                : '--';
-            
-            return {
-                totalSearches,
-                uniqueSeats: uniqueSeats.size,
-                todaySearches: todaySearches.length,
-                searchRate,
-                vipSearches,
-                normalSearches,
-                successRate,
-                peakHour: peakHour ? `${peakHour}:00` : '--',
-                deviceRatio,
-                mobileSearches,
-                desktopSearches
-            };
-        }
+        isLoading = false;
+        searchBtn.innerHTML = 'Tra cứu';
+        searchBtn.disabled = false;
+    }, 300);
+}
 
-        // ==================== UI FUNCTIONS ====================
-        function loadDashboard() {
-            const stats = calculateStats();
-            
-            // Update dashboard stats
-            const elements = {
-                totalSearches: stats.totalSearches,
-                uniqueSeats: stats.uniqueSeats,
-                todaySearches: stats.todaySearches,
-                searchRate: stats.searchRate + '%',
-                deviceRatio: stats.deviceRatio
-            };
-            
-            Object.entries(elements).forEach(([id, value]) => {
-                const element = document.getElementById(id);
-                if (element) element.textContent = value;
-            });
-            
-            loadRecentLogs();
-            drawSearchChart();
-        }
-        
-        function loadRecentLogs() {
-            const logs = getSearchLogs().slice(0, 10);
-            const container = document.getElementById('recentLogs');
-            
-            if (logs.length === 0) {
-                container.innerHTML = '<div class="no-data">Chưa có hoạt động tra cứu nào được ghi nhận</div>';
-                return;
-            }
-            
-            let html = '<table class="logs-table"><thead><tr>';
-            html += '<th>Thời gian</th><th>Từ khóa tìm kiếm</th><th>Kết quả</th><th>Ghế</th><th>Thiết bị</th>';
-            html += '</tr></thead><tbody>';
-            
-            logs.forEach(log => {
-                const time = new Date(log.timestamp).toLocaleString('vi-VN');
-                const result = log.found ? log.delegate.fullName : 'Không tìm thấy';
-                const seat = log.found 
-                    ? (log.delegate.row === 'A' || log.delegate.row === 'B' 
-                        ? '<span class="vip-badge">VIP ' + log.delegate.row + '</span>' 
-                        : '<span class="seat-badge">' + log.delegate.seatNumber + '</span>')
-                    : '--';
-                const device = log.isMobile ? '📱' : '🖥️';
-                
-                html += `<tr>
-                    <td class="timestamp">${time}</td>
-                    <td><span class="search-term">${log.searchTerm}</span></td>
-                    <td>${result}</td>
-                    <td>${seat}</td>
-                    <td>${device}</td>
-                </tr>`;
-            });
-            
-            html += '</tbody></table>';
-            container.innerHTML = html;
-        }
-        
-        function loadLogs() {
-            const logs = getSearchLogs();
-            const container = document.getElementById('logsTableContainer');
-            
-            if (logs.length === 0) {
-                container.innerHTML = '<div class="no-data">Chưa có dữ liệu tra cứu nào được ghi nhận</div>';
-                return;
-            }
-            
-            let html = '<table class="logs-table" id="fullLogsTable"><thead><tr>';
-            html += '<th>STT</th><th>Thời gian</th><th>Từ khóa</th><th>Họ tên</th><th>Username</th><th>SĐT</th><th>Ghế</th><th>Hàng</th><th>Thiết bị</th>';
-            html += '</tr></thead><tbody>';
-            
-            logs.forEach((log, index) => {
-                const time = new Date(log.timestamp).toLocaleString('vi-VN');
-                const name = log.found ? log.delegate.fullName : '--';
-                const username = log.found ? log.delegate.username : '--';
-                const phone = log.found ? log.delegate.phone : '--';
-                const seat = log.found ? log.delegate.seatNumber : '--';
-                const row = log.found ? log.delegate.row : '--';
-                const device = log.isMobile ? '📱 Mobile' : '🖥️ Desktop';
-                
-                html += `<tr>
-                    <td>${index + 1}</td>
-                    <td class="timestamp">${time}</td>
-                    <td><span class="search-term">${log.searchTerm}</span></td>
-                    <td>${name}</td>
-                    <td>${username}</td>
-                    <td>${phone}</td>
-                    <td>${seat}</td>
-                    <td>${row}</td>
-                    <td>${device}</td>
-                </tr>`;
-            });
-            
-            html += '</tbody></table>';
-            container.innerHTML = html;
-            
-            setupLogFilter();
-        }
-        
-        function loadReports() {
-            const stats = calculateStats();
-            
-            const elements = {
-                vipSearches: stats.vipSearches,
-                normalSearches: stats.normalSearches,
-                peakHour: stats.peakHour,
-                successRate: stats.successRate + '%'
-            };
-            
-            Object.entries(elements).forEach(([id, value]) => {
-                const element = document.getElementById(id);
-                if (element) element.textContent = value;
-            });
-            
-            drawRowChart();
-        }
-        
-        function loadDebugSection() {
-            // Auto-run diagnostics when entering debug section
-            setTimeout(runDiagnostics, 500);
-        }
-        
-        function loadSettings() {
-            const stats = calculateStats();
-            const lastReset = getLastResetTime();
-            
-            const currentRecordsEl = document.getElementById('currentRecords');
-            const lastResetTimeEl = document.getElementById('lastResetTime');
-            
-            if (currentRecordsEl) currentRecordsEl.textContent = stats.totalSearches;
-            if (lastResetTimeEl) {
-                lastResetTimeEl.textContent = lastReset 
-                    ? new Date(lastReset).toLocaleString('vi-VN')
-                    : 'Chưa có';
-            }
-        }
-        
-        function setupLogFilter() {
-            const filterInput = document.getElementById('logFilter');
-            const table = document.getElementById('fullLogsTable');
-            
-            if (!table) return;
-            
-            filterInput.addEventListener('input', function() {
-                const filterValue = this.value.toLowerCase();
-                const rows = table.getElementsByTagName('tr');
-                
-                for (let i = 1; i < rows.length; i++) {
-                    const row = rows[i];
-                    const text = row.textContent.toLowerCase();
-                    row.style.display = text.includes(filterValue) ? '' : 'none';
-                }
-            });
-        }
-        
-        function updateLastUpdateTime() {
-            const lastUpdateEl = document.getElementById('lastUpdate');
-            if (lastUpdateEl) {
-                lastUpdateEl.textContent = 'Cập nhật: ' + new Date().toLocaleTimeString('vi-VN');
-            }
-        }
-
-        function showStatus(message, type = 'info') {
-            const indicator = document.getElementById('statusIndicator');
-            indicator.textContent = message;
-            indicator.className = `status-indicator status-${type}`;
-            indicator.style.display = 'block';
-            
-            setTimeout(() => {
-                indicator.style.display = 'none';
-            }, 3000);
-        }
-        
-        // ==================== CHART FUNCTIONS ====================
-        function drawSearchChart() {
-            const canvas = document.getElementById('searchChart');
-            const ctx = canvas.getContext('2d');
-            const logs = getSearchLogs();
-            
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            
-            if (logs.length === 0) {
-                ctx.fillStyle = '#64748b';
-                ctx.font = '16px Arial';
-                ctx.textAlign = 'center';
-                ctx.fillText('Chưa có dữ liệu để hiển thị', canvas.width / 2, canvas.height / 2);
-                return;
-            }
-            
-            // Group logs by day
-            const dayGroups = {};
-            const now = new Date();
-            
-            // Initialize last 7 days
-            for (let i = 6; i >= 0; i--) {
-                const date = new Date(now);
-                date.setDate(date.getDate() - i);
-                const dateStr = date.toISOString().split('T')[0];
-                dayGroups[dateStr] = 0;
-            }
-            
-            logs.forEach(log => {
-                const date = log.timestamp.split('T')[0];
-                if (dayGroups.hasOwnProperty(date)) {
-                    dayGroups[date]++;
-                }
-            });
-            
-            const dates = Object.keys(dayGroups);
-            const counts = Object.values(dayGroups);
-            const maxCount = Math.max(...counts) || 1;
-            
-            // Chart dimensions
-            const padding = 60;
-            const chartWidth = canvas.width - padding * 2;
-            const chartHeight = canvas.height - padding * 2;
-            const barWidth = chartWidth / dates.length;
-            
-            // Draw axes
-            ctx.strokeStyle = '#e2e8f0';
-            ctx.lineWidth = 2;
-            ctx.beginPath();
-            ctx.moveTo(padding, padding);
-            ctx.lineTo(padding, canvas.height - padding);
-            ctx.lineTo(canvas.width - padding, canvas.height - padding);
-            ctx.stroke();
-            
-            // Draw bars and labels
-            dates.forEach((date, index) => {
-                const count = counts[index];
-                const barHeight = (count / maxCount) * chartHeight;
-                const x = padding + index * barWidth + barWidth * 0.1;
-                const y = canvas.height - padding - barHeight;
-                const width = barWidth * 0.8;
-                
-                // Draw bar
-                const gradient = ctx.createLinearGradient(0, y, 0, y + barHeight);
-                gradient.addColorStop(0, '#dc2626');
-                gradient.addColorStop(1, '#b91c1c');
-                ctx.fillStyle = gradient;
-                ctx.fillRect(x, y, width, barHeight);
-                
-                // Draw count on top of bar
-                ctx.fillStyle = '#1e293b';
-                ctx.font = 'bold 12px Arial';
-                ctx.textAlign = 'center';
-                ctx.fillText(count.toString(), x + width / 2, y - 5);
-                
-                // Draw date label
-                ctx.fillStyle = '#64748b';
-                ctx.font = '10px Arial';
-                const dateObj = new Date(date);
-                const label = `${dateObj.getDate()}/${dateObj.getMonth() + 1}`;
-                ctx.save();
-                ctx.translate(x + width / 2, canvas.height - padding + 15);
-                ctx.rotate(-Math.PI / 4);
-                ctx.textAlign = 'right';
-                ctx.fillText(label, 0, 0);
-                ctx.restore();
-            });
-            
-            // Draw title
-            ctx.fillStyle = '#1e293b';
-            ctx.font = 'bold 14px Arial';
-            ctx.textAlign = 'center';
-            ctx.fillText('Số lượt tra cứu 7 ngày qua', canvas.width / 2, 20);
-        }
-        
-        function drawRowChart() {
-            const canvas = document.getElementById('rowChart');
-            const ctx = canvas.getContext('2d');
-            const logs = getSearchLogs().filter(log => log.found);
-            
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            
-            if (logs.length === 0) {
-                ctx.fillStyle = '#64748b';
-                ctx.font = '16px Arial';
-                ctx.textAlign = 'center';
-                ctx.fillText('Chưa có dữ liệu để hiển thị', canvas.width / 2, canvas.height / 2);
-                return;
-            }
-            
-            // Count searches by row
-            const rowCounts = {};
-            const rows = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N'];
-            
-            rows.forEach(row => rowCounts[row] = 0);
-            
-            logs.forEach(log => {
-                if (log.delegate && log.delegate.row) {
-                    rowCounts[log.delegate.row]++;
-                }
-            });
-            
-            const maxCount = Math.max(...Object.values(rowCounts)) || 1;
-            
-            // Chart dimensions
-            const padding = 60;
-            const chartWidth = canvas.width - padding * 2;
-            const chartHeight = canvas.height - padding * 2;
-            const barWidth = chartWidth / rows.length;
-            
-            // Draw axes
-            ctx.strokeStyle = '#e2e8f0';
-            ctx.lineWidth = 2;
-            ctx.beginPath();
-            ctx.moveTo(padding, padding);
-            ctx.lineTo(padding, canvas.height - padding);
-            ctx.lineTo(canvas.width - padding, canvas.height - padding);
-            ctx.stroke();
-            
-            // Draw bars
-            rows.forEach((row, index) => {
-                const count = rowCounts[row];
-                const barHeight = (count / maxCount) * chartHeight;
-                const x = padding + index * barWidth + barWidth * 0.1;
-                const y = canvas.height - padding - barHeight;
-                const width = barWidth * 0.8;
-                
-                // Color coding: VIP rows (A, B) in red, others in blue
-                const isVIP = row === 'A' || row === 'B';
-                const gradient = ctx.createLinearGradient(0, y, 0, y + barHeight);
-                if (isVIP) {
-                    gradient.addColorStop(0, '#dc2626');
-                    gradient.addColorStop(1, '#b91c1c');
-                } else {
-                    gradient.addColorStop(0, '#2563eb');
-                    gradient.addColorStop(1, '#1d4ed8');
-                }
-                
-                ctx.fillStyle = gradient;
-                ctx.fillRect(x, y, width, barHeight);
-                
-                // Draw count on top of bar
-                if (count > 0) {
-                    ctx.fillStyle = '#1e293b';
-                    ctx.font = 'bold 12px Arial';
-                    ctx.textAlign = 'center';
-                    ctx.fillText(count.toString(), x + width / 2, y - 5);
-                }
-                
-                // Draw row label
-                ctx.fillStyle = '#1e293b';
-                ctx.font = 'bold 14px Arial';
-                ctx.textAlign = 'center';
-                ctx.fillText(row, x + width / 2, canvas.height - padding + 20);
-            });
-            
-            // Draw legend
-            ctx.fillStyle = '#dc2626';
-            ctx.fillRect(padding, 30, 15, 15);
-            ctx.fillStyle = '#1e293b';
-            ctx.font = '12px Arial';
-            ctx.textAlign = 'left';
-            ctx.fillText('VIP (A, B)', padding + 25, 42);
-            
-            ctx.fillStyle = '#2563eb';
-            ctx.fillRect(padding + 120, 30, 15, 15);
-            ctx.fillText('Thường (C-N)', padding + 145, 42);
-            
-            // Draw title
-            ctx.fillStyle = '#1e293b';
-            ctx.font = 'bold 14px Arial';
-            ctx.textAlign = 'center';
-            ctx.fillText('Thống kê tra cứu theo hàng ghế', canvas.width / 2, 20);
-        }
-        
-        // ==================== INITIALIZATION ====================
-        document.addEventListener('DOMContentLoaded', function() {
-            // Check admin access
-            checkAdminAccess();
-            
-            loadDashboard();
-            updateLastUpdateTime();
-            
-            // Auto refresh dashboard every 30 seconds
-            setInterval(() => {
-                if (document.getElementById('dashboard').classList.contains('active')) {
-                    loadDashboard();
-                    updateLastUpdateTime();
-                }
-            }, 30000);
-            
-            // Handle clicks outside modal
-            document.getElementById('resetConfirmation').addEventListener('click', function(e) {
-                if (e.target === this) {
-                    hideResetConfirmation();
-                }
-            });
-            
-            // Listen for storage changes from main site
-            window.addEventListener('storage', function(e) {
-                if (e.key === 'seatSearchLogs' || e.key === 'generalStats') {
-                    setTimeout(() => {
-                        loadDashboard();
-                        updateLastUpdateTime();
-                    }, 1000);
-                }
-            });
-            
-            console.log('🔧 Admin system loaded successfully');
+function selectSeat(seatNumber) {
+    if (!checkAccess()) return;
+    
+    document.getElementById('searchInput').value = seatNumber;
+    toggleClearButton();
+    
+    resetHighlight();
+    document.getElementById('errorMessage').classList.add('hidden');
+    
+    var delegate = findDelegateBySeat(seatNumber);
+    
+    if (!delegate) {
+        document.getElementById('resultSection').classList.add('hidden');
+        showError('❌ <strong>Ghế ' + seatNumber + ' chưa có đại biểu!</strong><br>Ghế này hiện đang trống.');
+        document.getElementById('errorMessage').scrollIntoView({ 
+            behavior: 'smooth', 
+            block: 'center' 
         });
+    } else {
+        displayDelegateInfo(delegate);
+        highlightSeat(seatNumber);
         
-        function checkAdminAccess() {
-            const isAdmin = safeLocalStorageGet('isAdmin') === true;
-            if (!isAdmin) {
-                const password = prompt('🔐 Nhập mã truy cập quản trị để xem trang này:');
-                if (password === 'DAIHOI2025' || password === 'admin') {
-                    safeLocalStorageSet('isAdmin', true);
+        document.getElementById('resultSection').scrollIntoView({ 
+            behavior: 'smooth', 
+            block: 'center' 
+        });
+    }
+}
+
+function clearInput() {
+    if (!checkAccess()) return;
+    
+    var searchInput = document.getElementById('searchInput');
+    searchInput.value = '';
+    searchInput.focus();
+    toggleClearButton();
+    
+    document.getElementById('errorMessage').classList.add('hidden');
+    document.getElementById('resultSection').classList.add('hidden');
+    resetHighlight();
+}
+
+// === HELPER FUNCTIONS ===
+function checkAccess() {
+    if (!isLoggedIn) {
+        alert('⚠️ Vui lòng đăng nhập để sử dụng chức năng này!');
+        return false;
+    }
+    return true;
+}
+
+function initializeDelegateData() {
+    var realDelegates = [
+         {
+        "id": 1,
+        "seatNumber": "A14",
+        "fullName": "Trần Minh Bình",
+        "position": "Ủy viên BCH Đảng bộ Chính phủ,\r\nBí thư Đảng ủy,\r\nChủ tịch Hội đồng Quản trị NHCTVN",
+        "phone": "0913588832",
+        "row": "A",
+        "seatPosition": 14
+    },
+    {
+        "id": 2,
+        "seatNumber": "A1",
+        "fullName": "Trần Kiên Cường",
+        "position": "Phó Bí thư Thường trực Đảng ủy NHCTVN",
+        "phone": "0913260131",
+        "row": "A",
+        "seatPosition": 1
+    },
+    {
+        "id": 3,
+        "seatNumber": "A15",
+        "fullName": "Nguyễn Trần Mạnh Trung",
+        "position": "Phó Bí thư Đảng ủy,\r\nThành viên Hội đồng Quản trị kiêm \r\nTổng Giám đốc NHCTVN",
+        "phone": "0983832109",
+        "row": "A",
+        "seatPosition": 15
+    },
+    {
+        "id": 4,
+        "seatNumber": "B7",
+        "fullName": "Trần Văn Tần",
+        "position": "Ủy viên BTV Đảng ủy,\r\nThành viên Hội đồng Quản trị NHCTVN",
+        "phone": "0912171372",
+        "row": "B",
+        "seatPosition": 7
+    },
+    {
+        "id": 5,
+        "seatNumber": "B6",
+        "fullName": "Nguyễn Thế Huân",
+        "position": "Ủy viên BTV Đảng ủy,\r\nChủ nhiệm UBKT Đảng ủy,\r\nThành viên Hội đồng Quản trị NHCTVN",
+        "phone": "0913538811",
+        "row": "B",
+        "seatPosition": 6
+    },
+    {
+        "id": 6,
+        "seatNumber": "B24",
+        "fullName": "Nguyễn Việt Dũng",
+        "position": "Ủy viên BTV Đảng ủy,\r\nThành viên Hội đồng Quản trị kiêm \r\nGiám đốc Khối Nhân sự NHCTVN",
+        "phone": "0935588888",
+        "row": "B",
+        "seatPosition": 24
+    },
+    {
+        "id": 7,
+        "seatNumber": "B18",
+        "fullName": "Lê Duy Hải",
+        "position": "Ủy viên BTV Đảng ủy,\r\nPhó Tổng Giám đốc,\r\nChủ tịch Công đoàn NHCTVN",
+        "phone": "0902190669",
+        "row": "B",
+        "seatPosition": 18
+    },
+    {
+        "id": 8,
+        "seatNumber": "B5",
+        "fullName": "Đỗ Thanh Sơn",
+        "position": "Ủy viên BTV Đảng ủy,\r\nPhó Tổng Giám đốc NHCTVN",
+        "phone": "0908687868",
+        "row": "B",
+        "seatPosition": 5
+    },
+    {
+        "id": 9,
+        "seatNumber": "B17",
+        "fullName": "Dương Văn Quân",
+        "position": "Ủy viên BTV Đảng ủy,\r\nPhó Tổng Giám đốc NHCTVN kiêm\r\nGiám đốc Chi nhánh TP. Hà Nội",
+        "phone": "0913008558",
+        "row": "B",
+        "seatPosition": 17
+    },
+    {
+        "id": 10,
+        "seatNumber": "B23",
+        "fullName": "Nguyễn Quốc Giang",
+        "position": "Ủy viên BTV Đảng ủy NHCTVN,\r\nGiám đốc Chi nhánh Đống Đa",
+        "phone": "0913297191",
+        "row": "B",
+        "seatPosition": 23
+    },
+    {
+        "id": 11,
+        "seatNumber": "B21",
+        "fullName": "Phạm Thị Thanh Hoài",
+        "position": "Ủy viên BCH Đảng bộ,\r\nThành viên Hội đồng Quản trị NHCTVN",
+        "phone": "0912323239",
+        "row": "B",
+        "seatPosition": 21
+    },
+    {
+        "id": 12,
+        "seatNumber": "B19",
+        "fullName": "Lê Thanh Tùng",
+        "position": "Ủy viên BCH Đảng bộ,\r\nThành viên Hội đồng Quản trị NHCTVN",
+        "phone": "0904107810",
+        "row": "B",
+        "seatPosition": 19
+    },
+    {
+        "id": 13,
+        "seatNumber": "C10",
+        "fullName": "Nguyễn Huy Quang",
+        "position": "Uỷ viên BCH Đảng bộ NHCTVN,\r\nChủ tịch Hội đồng Quản trị Tổng công ty Cổ phần Bảo hiểm VietinBank",
+        "phone": "0912000656",
+        "row": "C",
+        "seatPosition": 10
+    },
+    {
+        "id": 14,
+        "seatNumber": "C11",
+        "fullName": "Vũ Trung Vỹ",
+        "position": "Ủy viên BCH Đảng bộ NHCTVN,\r\nChánh Văn phòng NHCTVN",
+        "phone": "0913580004",
+        "row": "C",
+        "seatPosition": 11
+    },
+    {
+        "id": 15,
+        "seatNumber": "C12",
+        "fullName": "Nguyễn Xuân Vũ",
+        "position": "Ủy viên BCH Đảng bộ NHCTVN,\r\nTrưởng Văn phòng đại diện tại TP Hồ Chí Minh",
+        "phone": "0913937136",
+        "row": "C",
+        "seatPosition": 12
+    },
+    {
+        "id": 16,
+        "seatNumber": "C13",
+        "fullName": "Lê Anh Hà",
+        "position": "Ủy viên BCH Đảng bộ,\r\nTrưởng ban Kiểm soát NHCTVN",
+        "phone": "0904021866",
+        "row": "C",
+        "seatPosition": 13
+    },
+    {
+        "id": 17,
+        "seatNumber": "C14",
+        "fullName": "Nguyễn Hải Hưng",
+        "position": "Uỷ viên BCH Đảng bộ,\r\nKế toán trưởng NHCTVN",
+        "phone": "0904252732",
+        "row": "C",
+        "seatPosition": 14
+    },
+    {
+        "id": 18,
+        "seatNumber": "C15",
+        "fullName": "Lê Như Hoa",
+        "position": "Ủy viên BCH Đảng bộ,\r\nPhó Tổng Giám đốc NHCTVN",
+        "phone": "0913312827",
+        "row": "C",
+        "seatPosition": 15
+    },
+    {
+        "id": 19,
+        "seatNumber": "C16",
+        "fullName": "Nguyễn Đức Thành",
+        "position": "Ủy viên BCH Đảng bộ,\r\nPhó Tổng Giám đốc NHCTVN",
+        "phone": "0913201274",
+        "row": "C",
+        "seatPosition": 16
+    },
+    {
+        "id": 20,
+        "seatNumber": "C17",
+        "fullName": "Nguyễn Bảo Thanh Vân",
+        "position": "Ủy viên BCH Đảng bộ,\r\nPhó Tổng Giám đốc NHCTVN kiêm\r\nGiám đốc Khối Tài chính",
+        "phone": "0913153027",
+        "row": "C",
+        "seatPosition": 17
+    },
+    {
+        "id": 21,
+        "seatNumber": "C18",
+        "fullName": "Trần Công Quỳnh Lân",
+        "position": "Uỷ viên BCH Đảng bộ,\r\nPhó Tổng Giám đốc NHCTVN kiêm\r\nGiám đốc Khối CNTT",
+        "phone": "0982512513",
+        "row": "C",
+        "seatPosition": 18
+    },
+    {
+        "id": 22,
+        "seatNumber": "C21",
+        "fullName": "Đào Xuân Tuyên",
+        "position": "Ủy viên BCH Đảng bộ,\r\nPhó Chủ nhiệm Thường trực UBKT Đảng ủy NHCTVN",
+        "phone": "0906112359",
+        "row": "C",
+        "seatPosition": 21
+    },
+    {
+        "id": 23,
+        "seatNumber": "C22",
+        "fullName": "Đoàn Thị Kiều Hương",
+        "position": "Ủy viên BCH Đảng bộ,\r\nPhó Trưởng Ban Thường trực Ban Tuyên giáo Đảng ủy NHCTVN, \r\nBí thư Đoàn Thanh niên NHCTVN",
+        "phone": "0984339558",
+        "row": "C",
+        "seatPosition": 22
+    },
+    {
+        "id": 24,
+        "seatNumber": "C23",
+        "fullName": "Lê Thị Phượng",
+        "position": "Ủy viên BCH Đảng bộ,\r\nTrưởng Phòng Kiểm tra kiểm soát nội bộ\r\nkiêm Phó Trưởng Ban Tổ chức Đảng ủy NHCTVN",
+        "phone": "0988532555",
+        "row": "C",
+        "seatPosition": 23
+    },
+    {
+        "id": 25,
+        "seatNumber": "C24",
+        "fullName": "Lý Thanh Thảo",
+        "position": "Ủy viên BCH Đảng bộ,\r\nChánh Văn phòng Đảng ủy NHCTVN",
+        "phone": "0913366353",
+        "row": "C",
+        "seatPosition": 24
+    },
+    {
+        "id": 26,
+        "seatNumber": "D15",
+        "fullName": "Lê Phương Lan",
+        "position": "Ủy viên BCH Đảng bộ NHCTVN,\r\nPhó Giám đốc Khối Nhân sự",
+        "phone": "0912661422",
+        "row": "D",
+        "seatPosition": 15
+    },
+    {
+        "id": 27,
+        "seatNumber": "D13",
+        "fullName": "Lê Minh Hương",
+        "position": "Uỷ viên BCH Đảng bộ NHCTVN,\r\n Phó Giám đốc Khối Vận hành",
+        "phone": "0904981468",
+        "row": "D",
+        "seatPosition": 13
+    },
+    {
+        "id": 28,
+        "seatNumber": "C7",
+        "fullName": "Lê Việt Đức",
+        "position": "Ủy viên BCH Đảng bộ NHCTVN,\r\nGiám đốc Khối Bán lẻ",
+        "phone": "0967596666",
+        "row": "C",
+        "seatPosition": 7
+    },
+    {
+        "id": 29,
+        "seatNumber": "D12",
+        "fullName": "Nguyễn Thị Hoa",
+        "position": "Uỷ viên BCH Đảng bộ NHCTVN,\r\nGiám đốc Chi nhánh Hoàn Kiếm",
+        "phone": "0915525888",
+        "row": "D",
+        "seatPosition": 12
+    },
+    {
+        "id": 30,
+        "seatNumber": "D14",
+        "fullName": "Nguyễn Thị Hương",
+        "position": "Ủy Viên BCH Đảng bộ NHCTVN,\r\nPhó Chánh Văn phòng Hội đồng Quản trị NHCTVN",
+        "phone": "0913012866",
+        "row": "D",
+        "seatPosition": 14
+    },
+    {
+        "id": 31,
+        "seatNumber": "C8",
+        "fullName": "Nguyễn Thanh Tùng",
+        "position": "Uỷ viên BCH Đảng bộ NHCTVN,\r\nGiám đốc Khối KHDN",
+        "phone": "0989899268",
+        "row": "C",
+        "seatPosition": 8
+    },
+    {
+        "id": 32,
+        "seatNumber": "D10",
+        "fullName": "Đỗ Trọng Nghĩa",
+        "position": "Ủy viên BCH Đảng bộ NHCTVN,\r\nGiám đốc Chi nhánh Hai Bà Trưng",
+        "phone": "0945336999",
+        "row": "D",
+        "seatPosition": 10
+    },
+    {
+        "id": 33,
+        "seatNumber": "D9",
+        "fullName": "Đỗ Trần Quý",
+        "position": "Ủy viên BCH Đảng bộ,\r\nPhó Chủ tịch Công đoàn NHCTVN",
+        "phone": "0902089768",
+        "row": "D",
+        "seatPosition": 9
+    },
+    {
+        "id": 34,
+        "seatNumber": "D11",
+        "fullName": "Đàm Hồng Tiến",
+        "position": "Ủy viên BCH Đảng bộ NHCTVN,\r\nGiám đốc chi nhánh Nam Thăng Long",
+        "phone": "0904309888",
+        "row": "D",
+        "seatPosition": 11
+    },
+    {
+        "id": 35,
+        "seatNumber": "C9",
+        "fullName": "Nguyễn Anh Tuấn",
+        "position": "Ủy viên BCH Đảng bộ NHCTVN,\r\nGiám đốc Khối Kinh doanh vốn & Thị trường",
+        "phone": "0903421636",
+        "row": "C",
+        "seatPosition": 9
+    },
+    {
+        "id": 36,
+        "seatNumber": "D8",
+        "fullName": "Lê Anh Hùng",
+        "position": "Ủy viên BCH Đảng bộ NHCTVN,\r\nThư ký Chủ tịch Công ty TM - DV - ĐT VietinBank",
+        "phone": "0903252590",
+        "row": "D",
+        "seatPosition": 8
+    },
+    {
+        "id": 37,
+        "seatNumber": "D24",
+        "fullName": "Trần Minh Đức",
+        "position": "Q. Bí thư Đảng ủy,\r\nChánh Văn phòng Hội đồng Quản trị NHCTVN",
+        "phone": "0902118198",
+        "row": "D",
+        "seatPosition": 24
+    },
+    {
+        "id": 38,
+        "seatNumber": "D7",
+        "fullName": "Nguyễn Mạnh Toàn",
+        "position": "Bí thư Chi bộ,\r\nPhó Chủ tịch Thường trực Công Đoàn NHCTVN",
+        "phone": "0912288272",
+        "row": "D",
+        "seatPosition": 7
+    },
+    {
+        "id": 39,
+        "seatNumber": "E24",
+        "fullName": "Phạm Thị Nguyệt Thanh",
+        "position": "Phó Bí thư Chi bộ, \r\nPhó Chánh Văn phòng Đảng ủy NHCTVN",
+        "phone": "0987888009",
+        "row": "E",
+        "seatPosition": 24
+    },
+    {
+        "id": 40,
+        "seatNumber": "E22",
+        "fullName": "Nguyễn Thanh Hùng",
+        "position": "Phó Chánh Văn phòng NHCTVN",
+        "phone": "0912200643",
+        "row": "E",
+        "seatPosition": 22
+    },
+    {
+        "id": 41,
+        "seatNumber": "E8",
+        "fullName": "Nguyễn Thái Dung",
+        "position": "Phó Bí thư Chi bộ,\r\n Phó phòng Kiểm toán nội bộ NHCTVN",
+        "phone": "0982334136",
+        "row": "E",
+        "seatPosition": 8
+    },
+    {
+        "id": 42,
+        "seatNumber": "E9",
+        "fullName": "Nguyễn Thị Thắng",
+        "position": "Ủy viên BCH Chi bộ KTKSNB,\r\nPhó phòng KTKSNB TSC",
+        "phone": "0946821909",
+        "row": "E",
+        "seatPosition": 9
+    },
+    {
+        "id": 43,
+        "seatNumber": "E3",
+        "fullName": "Đinh Thị Kim Ngân",
+        "position": "Bí thư Đảng ủy,\r\n Trưởng Văn phòng đại diện tại Đà Nẵng",
+        "phone": "0905200299",
+        "row": "E",
+        "seatPosition": 3
+    },
+    {
+        "id": 44,
+        "seatNumber": "E4",
+        "fullName": "Đỗ Hồng Thái",
+        "position": "Phó Bí thư Đảng ủy, \r\nPhó trưởng Văn phòng đại diện tại TP.HCM",
+        "phone": "0903670145",
+        "row": "E",
+        "seatPosition": 4
+    },
+    {
+        "id": 45,
+        "seatNumber": "E21",
+        "fullName": "Bùi Thu Trang",
+        "position": "Ủy viên BCH Đảng bộ, \r\nPhó Giám đốc Khối Tài chính",
+        "phone": "0988362843",
+        "row": "E",
+        "seatPosition": 21
+    },
+    {
+        "id": 46,
+        "seatNumber": "E7",
+        "fullName": "Trần Thị Thu Huyền",
+        "position": "Ủy viên BCH Đảng bộ Khối Nhân sự,\r\nTrưởng phòng CSNS & PTTC",
+        "phone": "0987401022",
+        "row": "E",
+        "seatPosition": 7
+    },
+    {
+        "id": 47,
+        "seatNumber": "E18",
+        "fullName": "Trần Hoài Nam",
+        "position": "Phó Bí thư Đảng ủy,\r\nPhó Giám đốc Khối Khách hàng Doanh nghiệp",
+        "phone": "0936931979",
+        "row": "E",
+        "seatPosition": 18
+    },
+    {
+        "id": 48,
+        "seatNumber": "E17",
+        "fullName": "Nguyễn Tuấn Hải",
+        "position": "Ủy viên BCH Đảng bộ, \r\nGiám đốc Ban KHDN lớn",
+        "phone": "0904324555",
+        "row": "E",
+        "seatPosition": 17
+    },
+    {
+        "id": 49,
+        "seatNumber": "D22",
+        "fullName": "Hồ Thị Thu Hiền",
+        "position": "Phó Bí thư Đảng ủy Khối KDV&TT, \r\nTrưởng phòng Thị trường vốn",
+        "phone": "0936154525",
+        "row": "D",
+        "seatPosition": 22
+    },
+    {
+        "id": 50,
+        "seatNumber": "E16",
+        "fullName": "Nguyễn Thùy Dương",
+        "position": "Phó Bí thư Đảng bộ Khối Bán lẻ,\r\nTrưởng phòng PTKD bán lẻ, Khối Bán lẻ",
+        "phone": "0903480919",
+        "row": "E",
+        "seatPosition": 16
+    },
+    {
+        "id": 51,
+        "seatNumber": "E15",
+        "fullName": "Quách Thị Thúy Hà",
+        "position": "Ủy viên BCH Đảng bộ Khối Bán lẻ,\r\nPhó phòng Phát triển sản phẩm bán lẻ",
+        "phone": "0961675599",
+        "row": "E",
+        "seatPosition": 15
+    },
+    {
+        "id": 52,
+        "seatNumber": "E19",
+        "fullName": "Phạm Thị Thanh Xuân",
+        "position": "Bí thư Đảng ủy, \r\nGiám đốc Khối Phê duyệt tín dụng",
+        "phone": "0982779688",
+        "row": "E",
+        "seatPosition": 19
+    },
+    {
+        "id": 53,
+        "seatNumber": "E20",
+        "fullName": "Trần Quốc Bình",
+        "position": "Ủy viên BCH Đảng bộ,\r\nPhó Giám đốc Khối Phê duyệt tín dụng",
+        "phone": "0912289669",
+        "row": "E",
+        "seatPosition": 20
+    },
+    {
+        "id": 54,
+        "seatNumber": "D18",
+        "fullName": "Nguyễn Văn Thụ",
+        "position": "Q. Bí thư Đảng ủy,\r\nGiám đốc Khối Quản lý rủi ro",
+        "phone": "0907746688",
+        "row": "D",
+        "seatPosition": 18
+    },
+    {
+        "id": 55,
+        "seatNumber": "D17",
+        "fullName": "Bùi Thị Thanh Thúy",
+        "position": "Ủy viên BCH Đảng bộ Khối QLRR,\r\nPhó Giám đốc Khối QLRR",
+        "phone": "0989308517",
+        "row": "D",
+        "seatPosition": 17
+    },
+    {
+        "id": 56,
+        "seatNumber": "E5",
+        "fullName": "Phạm Thị Hằng",
+        "position": "Ủy viên UBKT Đảng ủy Khối QLRR,\r\nPhó phòng Kiểm tra kiểm soát nội bộ KV 10",
+        "phone": "0912373681",
+        "row": "E",
+        "seatPosition": 5
+    },
+    {
+        "id": 57,
+        "seatNumber": "E6",
+        "fullName": "Phạm Bảo Khuê",
+        "position": "Ủy viên BCH Đảng bộ Khối QLRR,\r\nTrưởng phòng Quản lý rủi ro Thị trường",
+        "phone": "0905698288",
+        "row": "E",
+        "seatPosition": 6
+    },
+    {
+        "id": 58,
+        "seatNumber": "D16",
+        "fullName": "Nguyễn Thế Thịnh",
+        "position": "Ủy viên BCH Đảng bộ Khối CNTT,\r\nPhó Giám đốc Khối CNTT",
+        "phone": "0912150802",
+        "row": "D",
+        "seatPosition": 16
+    },
+    {
+        "id": 59,
+        "seatNumber": "D6",
+        "fullName": "Nguyễn Hồng Anh",
+        "position": "Ủy viên BCH Đảng bộ Khối CNTT,\r\nPhó Giám đốc Trung tâm nền tảng dữ liệu",
+        "phone": "0913597061",
+        "row": "D",
+        "seatPosition": 6
+    },
+    {
+        "id": 60,
+        "seatNumber": "D5",
+        "fullName": "Trịnh Quốc Bảo",
+        "position": "Ủy viên BCH Đảng bộ Khối CNTT,\r\nPhó Giám đốc Trung tâm Quản lý hạ tầng",
+        "phone": "0834268199",
+        "row": "D",
+        "seatPosition": 5
+    },
+    {
+        "id": 61,
+        "seatNumber": "D23",
+        "fullName": "Hà Xuân Trường",
+        "position": "Bí thư Đảng ủy, \r\nGiám đốc Khối Pháp chế và Tuân thủ",
+        "phone": "0915357777",
+        "row": "D",
+        "seatPosition": 23
+    },
+    {
+        "id": 62,
+        "seatNumber": "D20",
+        "fullName": "Nguyễn Thành Xuân",
+        "position": "Bí thư Đảng ủy, \r\nGiám đốc Khối Mua sắm & Quản lý tài sản",
+        "phone": "0902754799",
+        "row": "D",
+        "seatPosition": 20
+    },
+    {
+        "id": 63,
+        "seatNumber": "D21",
+        "fullName": "Trịnh Đức Quang",
+        "position": "Ủy viên BCH Đảng bộ Khối Mua sắm & Quản lý tài sản, Phó phụ trách phòng QT&DVTS",
+        "phone": "0968233377",
+        "row": "D",
+        "seatPosition": 21
+    },
+    {
+        "id": 64,
+        "seatNumber": "E10",
+        "fullName": "Trương Minh Hoàng",
+        "position": "Bí thư Đảng ủy,\r\nGiám đốc Khối Vận hành",
+        "phone": "0913946611",
+        "row": "E",
+        "seatPosition": 10
+    },
+    {
+        "id": 65,
+        "seatNumber": "E11",
+        "fullName": "Lê Thanh Hà",
+        "position": "Giám đốc Trung tâm Dịch vụ khách hàng",
+        "phone": "0989665122",
+        "row": "E",
+        "seatPosition": 11
+    },
+    {
+        "id": 66,
+        "seatNumber": "E12",
+        "fullName": "Nguyễn Minh Phương",
+        "position": "Ủy viên BCH Đảng bộ Khối Vận hành,\r\nTrưởng phòng Quản lý Vận hành thẻ",
+        "phone": "0989337736",
+        "row": "E",
+        "seatPosition": 12
+    },
+    {
+        "id": 67,
+        "seatNumber": "E13",
+        "fullName": "Trương Thúy Anh",
+        "position": "Ủy viên BCH Đảng bộ Khối Vận hành,\r\nGiám đốc TTQLTM Hà Nội",
+        "phone": "0912009867",
+        "row": "E",
+        "seatPosition": 13
+    },
+    {
+        "id": 68,
+        "seatNumber": "E14",
+        "fullName": "Nguyễn Thu Hà",
+        "position": "Ủy viên BCH Đảng bộ Khối Vận hành,\r\n Phó Trưởng phòng Quản lý chất lượng",
+        "phone": "0904599279",
+        "row": "E",
+        "seatPosition": 14
+    },
+    {
+        "id": 69,
+        "seatNumber": "E23",
+        "fullName": "Nguyễn Sỹ Nam Hiệp",
+        "position": "Chuyên viên cao cấp\r\nBan Tuyên giáo Đảng ủy NHCTVN",
+        "phone": "0903247189",
+        "row": "E",
+        "seatPosition": 23
+    },
+    {
+        "id": 70,
+        "seatNumber": "D2",
+        "fullName": "Bùi Thị Thanh Xuân",
+        "position": "Ủy viên BTV Đảng ủy,\r\nPhó Tổng Giám đốc phụ trách Ban Điều hành Tổng công ty Cổ phần Bảo hiểm VietinBank",
+        "phone": "0968221177",
+        "row": "D",
+        "seatPosition": 2
+    },
+    {
+        "id": 71,
+        "seatNumber": "D1",
+        "fullName": "Trần Tiến Dũng",
+        "position": "Ủy viên BTV Đảng ủy, Phó Tổng Giám đốc Tổng công ty Cổ phần Bảo hiểm VietinBank",
+        "phone": "0932728666",
+        "row": "D",
+        "seatPosition": 1
+    },
+    {
+        "id": 72,
+        "seatNumber": "E1",
+        "fullName": "Lê Thị Quỳnh Hoa",
+        "position": "Ủy viên BCH Đảng bộ, Phó Tổng Giám đốc\r\nTổng công ty Cổ phần Bảo hiểm VietinBank",
+        "phone": "0989322455",
+        "row": "E",
+        "seatPosition": 1
+    },
+    {
+        "id": 73,
+        "seatNumber": "F1",
+        "fullName": "Phan Tiến Dũng",
+        "position": "Bí thư Chi bộ, Tổng Giám đốc \r\nCông ty TNHH TM - DV - ĐT VietinBank",
+        "phone": "0906178688",
+        "row": "F",
+        "seatPosition": 1
+    },
+    {
+        "id": 74,
+        "seatNumber": "F5",
+        "fullName": "Trần Phúc Vinh",
+        "position": "Bí thư Đảng ủy, \r\nChủ tịch Hội đồng Quản trị Công ty Cổ phần \r\nChứng khoán công thương Việt Nam",
+        "phone": "0936890619",
+        "row": "F",
+        "seatPosition": 5
+    },
+    {
+        "id": 75,
+        "seatNumber": "F4",
+        "fullName": "Lê Đình Luật",
+        "position": "Bí thư Đảng ủy,\r\nTổng Giám đốc Công ty TNHH MTV Quản lý Nợ và Khai thác Tài sản",
+        "phone": "0913366722",
+        "row": "F",
+        "seatPosition": 4
+    },
+    {
+        "id": 76,
+        "seatNumber": "D3",
+        "fullName": "Ngô Quốc Tưởng",
+        "position": "Phó Bí thư phụ trách Đảng bộ,\r\nPhó Tổng Giám đốc phụ trách Ban Điều hành Công ty TNHH Cho thuê tài chính",
+        "phone": "0983020898",
+        "row": "D",
+        "seatPosition": 3
+    },
+    {
+        "id": 77,
+        "seatNumber": "F3",
+        "fullName": "Phan Thị Hồng Điệp",
+        "position": "Q. Bí thư Chi bộ, Chủ tịch Công ty TNHH MTV Vàng bạc đá quý",
+        "phone": "0901055858",
+        "row": "F",
+        "seatPosition": 3
+    },
+    {
+        "id": 78,
+        "seatNumber": "E2",
+        "fullName": "Nguyễn Hồng Đức",
+        "position": "Q. Bí thư Chi bộ, Thành viên HĐTV kiêm   \r\nQ. Tổng Giám đốc Công ty Quản lý Quỹ",
+        "phone": "0903450005",
+        "row": "E",
+        "seatPosition": 2
+    },
+    {
+        "id": 79,
+        "seatNumber": "F2",
+        "fullName": "Trần Thị Tuyết Mai",
+        "position": "Bí thư Chi bộ,\r\nChủ tịch Công ty Chuyển tiền toàn cầu",
+        "phone": "0915668588",
+        "row": "F",
+        "seatPosition": 2
+    },
+    {
+        "id": 80,
+        "seatNumber": "F6",
+        "fullName": "Chu Văn Hào",
+        "position": "Ủy viên BTV Đảng ủy,\r\nPhó Giám đốc Chi nhánh TP Hà Nội",
+        "phone": "0989065968",
+        "row": "F",
+        "seatPosition": 6
+    },
+    {
+        "id": 81,
+        "seatNumber": "F7",
+        "fullName": "Phạm Lê Ngọc",
+        "position": "Ủy viên BTV Đảng ủy,\r\nPhó Giám đốc Chi nhánh TP Hà Nội",
+        "phone": "0912485010",
+        "row": "F",
+        "seatPosition": 7
+    },
+    {
+        "id": 82,
+        "seatNumber": "F8",
+        "fullName": "Võ Thị Thanh Nhung",
+        "position": "Ủy viên BCH Đảng bộ,\r\nPhó Giám đốc Chi nhánh TP Hà Nội",
+        "phone": "0912249288",
+        "row": "F",
+        "seatPosition": 8
+    },
+    {
+        "id": 83,
+        "seatNumber": "F9",
+        "fullName": "Lê Ngọc Diệp",
+        "position": "Ủy viên BCH Đảng bộ,\r\nPhó Giám đốc Chi nhánh TP Hà Nội",
+        "phone": "0946200555",
+        "row": "F",
+        "seatPosition": 9
+    },
+    {
+        "id": 84,
+        "seatNumber": "F10",
+        "fullName": "Nguyễn Thị Vân Trang",
+        "position": "Ủy viên BCH Đảng bộ,\r\nPhó Giám đốc Chi nhánh Hoàn Kiếm",
+        "phone": "0912237971",
+        "row": "F",
+        "seatPosition": 10
+    },
+    {
+        "id": 85,
+        "seatNumber": "F11",
+        "fullName": "Lê Thị Hải Yến",
+        "position": "Ủy viên BCH Đảng bộ,\r\nPhó Giám đốc Chi nhánh Hoàn Kiếm",
+        "phone": "0983692028",
+        "row": "F",
+        "seatPosition": 11
+    },
+    {
+        "id": 86,
+        "seatNumber": "F18",
+        "fullName": "Nguyễn Như Dương",
+        "position": "Bí thư Đảng ủy,\r\nGiám đốc Chi nhánh Ba Đình",
+        "phone": "0983888883",
+        "row": "F",
+        "seatPosition": 18
+    },
+    {
+        "id": 87,
+        "seatNumber": "F17",
+        "fullName": "Lưu Thùy Linh",
+        "position": "Phó Bí thư Đảng ủy,\r\nPhó Giám đốc Chi nhánh Ba Đình",
+        "phone": "0915586686",
+        "row": "F",
+        "seatPosition": 17
+    },
+    {
+        "id": 88,
+        "seatNumber": "F12",
+        "fullName": "Đào Thị Thu Hiền",
+        "position": "Phó Bí thư Đảng ủy,\r\nPhó Giám đốc Chi nhánh Đống Đa",
+        "phone": "0912179967",
+        "row": "F",
+        "seatPosition": 12
+    },
+    {
+        "id": 89,
+        "seatNumber": "F13",
+        "fullName": "Nguyễn Thanh Tùng",
+        "position": "Ủy viên BTV Đảng ủy,\r\nPhó Giám đốc Chi nhánh Đống Đa",
+        "phone": "0904991858",
+        "row": "F",
+        "seatPosition": 13
+    },
+    {
+        "id": 90,
+        "seatNumber": "F14",
+        "fullName": "Phạm Tuấn Thắng",
+        "position": "Bí thư Đảng ủy,\r\nGiám đốc Chi nhánh Thanh Xuân",
+        "phone": "0946977777",
+        "row": "F",
+        "seatPosition": 14
+    },
+    {
+        "id": 91,
+        "seatNumber": "F15",
+        "fullName": "Phạm Trọng Nhàn",
+        "position": "Phó Bí thư Đảng ủy,\r\nPhó Giám đốc Chi nhánh Thanh Xuân",
+        "phone": "0915153435",
+        "row": "F",
+        "seatPosition": 15
+    },
+    {
+        "id": 92,
+        "seatNumber": "G6",
+        "fullName": "Nguyễn Thị Thu Huyền",
+        "position": "Bí thư Đảng ủy,\r\nGiám đốc Chi nhánh Chương Dương",
+        "phone": "0936536688",
+        "row": "G",
+        "seatPosition": 6
+    },
+    {
+        "id": 93,
+        "seatNumber": "H6",
+        "fullName": "Cát Huy Long",
+        "position": "Phó Bí thư Đảng ủy, \r\nPhó Giám đốc Chi nhánh Chương Dương",
+        "phone": "0935266868",
+        "row": "H",
+        "seatPosition": 6
+    },
+    {
+        "id": 94,
+        "seatNumber": "G7",
+        "fullName": "Nguyễn Thị Hồng Liên",
+        "position": "Bí thư Đảng ủy,\r\nGiám đốc Chi nhánh Bắc Hà Nội",
+        "phone": "0972655186",
+        "row": "G",
+        "seatPosition": 7
+    },
+    {
+        "id": 95,
+        "seatNumber": "G8",
+        "fullName": "Đỗ Tuấn Anh",
+        "position": "Ủy viên BCH Đảng bộ,\r\nPhó Giám đốc Chi nhánh Bắc Hà Nội",
+        "phone": "0912179692",
+        "row": "G",
+        "seatPosition": 8
+    },
+    {
+        "id": 96,
+        "seatNumber": "G9",
+        "fullName": "Tạ Việt Bắc",
+        "position": "Bí thư Đảng ủy,\r\nGiám đốc Chi nhánh Đông Hà Nội",
+        "phone": "0943939669",
+        "row": "G",
+        "seatPosition": 9
+    },
+    {
+        "id": 97,
+        "seatNumber": "G10",
+        "fullName": "Bùi Minh Hải",
+        "position": "Phó Bí thư Đảng ủy,\r\nPhó Giám đốc Chi nhánh Đông Hà Nội",
+        "phone": "0912005606",
+        "row": "G",
+        "seatPosition": 10
+    },
+    {
+        "id": 98,
+        "seatNumber": "G11",
+        "fullName": "Đào Phan Vũ Phong",
+        "position": "Ủy viên BCH Đảng bộ,\r\nPhó Giám đốc Chi nhánh Đông Hà Nội",
+        "phone": "0932259559",
+        "row": "G",
+        "seatPosition": 11
+    },
+    {
+        "id": 99,
+        "seatNumber": "G18",
+        "fullName": "Nguyễn Thị Bích Hạnh",
+        "position": "Bí thư Đảng ủy,\r\nGiám đốc Chi nhánh Hoàng Mai",
+        "phone": "0983800105",
+        "row": "G",
+        "seatPosition": 18
+    },
+    {
+        "id": 100,
+        "seatNumber": "H18",
+        "fullName": "Dương Quang Trung",
+        "position": "Phó Bí thư Đảng ủy,\r\nPhó Giám đốc Chi nhánh Hoàng Mai",
+        "phone": "0913598385",
+        "row": "H",
+        "seatPosition": 18
+    },
+    {
+        "id": 101,
+        "seatNumber": "G12",
+        "fullName": "Trần Thùy Linh",
+        "position": "Phó Bí thư Đảng ủy, Phó Giám đốc \r\nChi nhánh Nam Thăng Long",
+        "phone": "0914838588",
+        "row": "G",
+        "seatPosition": 12
+    },
+    {
+        "id": 102,
+        "seatNumber": "G13",
+        "fullName": "Đỗ Thị Hải Nhạn",
+        "position": "Ủy viên BCH Đảng bộ, Phó Giám đốc Chi nhánh Nam Thăng Long",
+        "phone": "0976083888",
+        "row": "G",
+        "seatPosition": 13
+    },
+    {
+        "id": 103,
+        "seatNumber": "G14",
+        "fullName": "Lê Vương Tuệ",
+        "position": "Phó Bí thư Đảng ủy, \r\nPhó Giám đốc Chi nhánh Hai Bà Trưng",
+        "phone": "0916756636",
+        "row": "G",
+        "seatPosition": 14
+    },
+    {
+        "id": 104,
+        "seatNumber": "G15",
+        "fullName": "Trần Thanh Sơn",
+        "position": "Ủy viên BCH Đảng bộ, \r\nPhó Giám đốc Chi nhánh Hai Bà Trưng",
+        "phone": "0904768999",
+        "row": "G",
+        "seatPosition": 15
+    },
+    {
+        "id": 105,
+        "seatNumber": "G16",
+        "fullName": "Nguyễn Đức Hùng",
+        "position": "Bí thư Đảng ủy,\r\nGiám đốc Chi nhánh Đông Anh",
+        "phone": "0913247845",
+        "row": "G",
+        "seatPosition": 16
+    },
+    {
+        "id": 106,
+        "seatNumber": "G17",
+        "fullName": "Đào Thị Thu Hằng",
+        "position": "Ủy viên BCH Đảng bộ,\r\nPhó Giám đốc Chi nhánh Đông Anh",
+        "phone": "0982967368",
+        "row": "G",
+        "seatPosition": 17
+    },
+    {
+        "id": 107,
+        "seatNumber": "F19",
+        "fullName": "Nguyễn Hoàng Quân",
+        "position": "Bí thư Đảng ủy,\r\nGiám đốc Chi nhánh Bắc Thăng Long",
+        "phone": "0988019986",
+        "row": "F",
+        "seatPosition": 19
+    },
+    {
+        "id": 108,
+        "seatNumber": "H7",
+        "fullName": "Nguyễn Thị Anh Đào",
+        "position": "Bí thư Đảng ủy,\r\nGiám đốc Chi nhánh Tây Hà Nội",
+        "phone": "0912904171",
+        "row": "H",
+        "seatPosition": 7
+    },
+    {
+        "id": 109,
+        "seatNumber": "H8",
+        "fullName": "Nguyễn Thị Huệ",
+        "position": "Ủy viên BCH Đảng bộ,\r\nPhó Giám đốc Chi nhánh Tây Hà Nội",
+        "phone": "0973076868",
+        "row": "H",
+        "seatPosition": 8
+    },
+    {
+        "id": 110,
+        "seatNumber": "G1",
+        "fullName": "Lê Văn Giang",
+        "position": "Q. Bí thư Đảng ủy,\r\nGiám đốc Chi nhánh Hải Phòng",
+        "phone": "0915331171",
+        "row": "G",
+        "seatPosition": 1
+    },
+    {
+        "id": 111,
+        "seatNumber": "G2",
+        "fullName": "Đỗ Mạnh Quân",
+        "position": "Q. Bí thư Chi bộ,\r\nGiám đốc Chi nhánh Bắc Hải Phòng",
+        "phone": "0912484037",
+        "row": "G",
+        "seatPosition": 2
+    },
+    {
+        "id": 112,
+        "seatNumber": "G3",
+        "fullName": "Đỗ Hồng Giang",
+        "position": "Q. Bí thư Chi bộ,\r\nGiám đốc Chi nhánh Đông Hải Phòng",
+        "phone": "0984898401",
+        "row": "G",
+        "seatPosition": 3
+    },
+    {
+        "id": 113,
+        "seatNumber": "H1",
+        "fullName": "Nguyễn Quang Tâm",
+        "position": "Bí thư Đảng ủy,\r\nGiám đốc Chi nhánh Lê Chân",
+        "phone": "0912235685",
+        "row": "H",
+        "seatPosition": 1
+    },
+    {
+        "id": 114,
+        "seatNumber": "H2",
+        "fullName": "Phạm Thị Thúy",
+        "position": "Bí thư Đảng uỷ,\r\nGiám đốc Chi nhánh Hồng Bàng",
+        "phone": "0985814094",
+        "row": "H",
+        "seatPosition": 2
+    },
+    {
+        "id": 115,
+        "seatNumber": "H3",
+        "fullName": "Nguyễn Văn Lợi",
+        "position": "Q. Bí thư Đảng ủy,\r\nGiám đốc Chi nhánh Ngô Quyền",
+        "phone": "0961689169",
+        "row": "H",
+        "seatPosition": 3
+    },
+    {
+        "id": 116,
+        "seatNumber": "I2",
+        "fullName": "Nguyễn Thị Kim Thanh",
+        "position": "Q. Bí thư Chi bộ,\r\nGiám đốc Chi nhánh Kiến An",
+        "phone": "0912841893",
+        "row": "I",
+        "seatPosition": 2
+    },
+    {
+        "id": 117,
+        "seatNumber": "K1",
+        "fullName": "Nguyễn Thanh Tuấn",
+        "position": "Q. Bí thư Chi bộ,\r\nQ. Giám đốc Chi nhánh Yên Bái",
+        "phone": "0973199555",
+        "row": "K",
+        "seatPosition": 1
+    },
+    {
+        "id": 118,
+        "seatNumber": "K2",
+        "fullName": "Hà Thị Lê",
+        "position": "Bí thư Chi bộ,\r\nGiám đốc Chi nhánh Bắc Kạn",
+        "phone": "0946728999",
+        "row": "K",
+        "seatPosition": 2
+    },
+    {
+        "id": 119,
+        "seatNumber": "K3",
+        "fullName": "Nguyễn Anh Tuấn",
+        "position": "Q. Bí thư Đảng ủy,\r\nGiám đốc Chi nhánh Tuyên Quang",
+        "phone": "0911123999",
+        "row": "K",
+        "seatPosition": 3
+    },
+    {
+        "id": 120,
+        "seatNumber": "K4",
+        "fullName": "Dương Tuấn Nguyên",
+        "position": "Phó Bí thư Đảng ủy,\r\nPhó Giám đốc Chi nhánh Tuyên Quang",
+        "phone": "0972088999",
+        "row": "K",
+        "seatPosition": 4
+    },
+    {
+        "id": 121,
+        "seatNumber": "K5",
+        "fullName": "Vũ Văn Hưng",
+        "position": "Bí thư Chi bộ,\r\nGiám đốc Chi nhánh Lào Cai",
+        "phone": "0912032279",
+        "row": "K",
+        "seatPosition": 5
+    },
+    {
+        "id": 122,
+        "seatNumber": "K6",
+        "fullName": "Hoàng Tuấn Vũ",
+        "position": "Bí thư Chi bộ,\r\nGiám đốc Chi nhánh Lai Châu",
+        "phone": "0948689996",
+        "row": "K",
+        "seatPosition": 6
+    },
+    {
+        "id": 123,
+        "seatNumber": "M1",
+        "fullName": "Nguyễn Bình Tường",
+        "position": "Bí thư Chi bộ,\r\nPhó Giám đốc phụ trách Chi nhánh Cao Bằng",
+        "phone": "0913271338",
+        "row": "M",
+        "seatPosition": 1
+    },
+    {
+        "id": 124,
+        "seatNumber": "H9",
+        "fullName": "Nguyễn Thúy Hằng",
+        "position": "Bí thư Đảng ủy,\r\nGiám đốc Chi nhánh Hà Thành",
+        "phone": "0913505736",
+        "row": "H",
+        "seatPosition": 9
+    },
+    {
+        "id": 125,
+        "seatNumber": "H10",
+        "fullName": "Đỗ Thị Thúy Vân",
+        "position": "Bí thư Chi bộ,\r\nGiám đốc Chi nhánh Tràng An",
+        "phone": "0982770734",
+        "row": "H",
+        "seatPosition": 10
+    },
+    {
+        "id": 126,
+        "seatNumber": "L1",
+        "fullName": "Nguyễn Đức Huy",
+        "position": "Bí thư Chi bộ,\r\nGiám đốc Chi nhánh Sơn La",
+        "phone": "0988718182",
+        "row": "L",
+        "seatPosition": 1
+    },
+    {
+        "id": 127,
+        "seatNumber": "L5",
+        "fullName": "Trương Quý Hào",
+        "position": "Q. Bí thư Đảng ủy,\r\nQ. Giám đốc Chi nhánh Hà Giang",
+        "phone": "0901599866",
+        "row": "L",
+        "seatPosition": 5
+    },
+    {
+        "id": 128,
+        "seatNumber": "L4",
+        "fullName": "Nguyễn Thị Thu",
+        "position": "Phó Bí thư Đảng ủy,\r\nPhó Giám đốc Chi nhánh Hà Giang",
+        "phone": "0984176176",
+        "row": "L",
+        "seatPosition": 4
+    },
+    {
+        "id": 129,
+        "seatNumber": "L2",
+        "fullName": "Nguyễn Hồng Quân",
+        "position": "Bí thư Đảng ủy,\r\nGiám đốc Chi nhánh Lạng Sơn",
+        "phone": "0977931999",
+        "row": "L",
+        "seatPosition": 2
+    },
+    {
+        "id": 130,
+        "seatNumber": "L6",
+        "fullName": "Phan Việt Phương",
+        "position": "Q. Bí thư Đảng ủy,\r\nGiám đốc Chi nhánh Thái Nguyên",
+        "phone": "0983280680",
+        "row": "L",
+        "seatPosition": 6
+    },
+    {
+        "id": 131,
+        "seatNumber": "K7",
+        "fullName": "Nguyễn Đình Đức",
+        "position": "Phó Bí thư Đảng ủy,\r\nPhó Giám đốc Chi nhánh Thái Nguyên",
+        "phone": "0904392611",
+        "row": "K",
+        "seatPosition": 7
+    },
+    {
+        "id": 132,
+        "seatNumber": "L3",
+        "fullName": "Nguyễn Thị Minh Phương",
+        "position": "Bí thư Đảng ủy,\r\nGiám đốc Chi nhánh Nam Thái Nguyên",
+        "phone": "0912710186",
+        "row": "L",
+        "seatPosition": 3
+    },
+    {
+        "id": 133,
+        "seatNumber": "N2",
+        "fullName": "Đỗ Văn Phi",
+        "position": "Bí thư Đảng ủy,\r\nGiám đốc Chi nhánh Lưu Xá",
+        "phone": "0912054225",
+        "row": "N",
+        "seatPosition": 2
+    },
+    {
+        "id": 134,
+        "seatNumber": "M3",
+        "fullName": "Phạm Đức Thuận",
+        "position": "Bí thư Đảng ủy,\r\nGiám đốc Chi nhánh Phú Thọ",
+        "phone": "0914790799",
+        "row": "M",
+        "seatPosition": 3
+    },
+    {
+        "id": 135,
+        "seatNumber": "M4",
+        "fullName": "Nguyễn Quốc Cẩn",
+        "position": "Phó Bí thư Đảng ủy,\r\nPhó Giám đốc Chi nhánh Phú Thọ",
+        "phone": "0915315939",
+        "row": "M",
+        "seatPosition": 4
+    },
+    {
+        "id": 136,
+        "seatNumber": "M5",
+        "fullName": "Nguyễn Vĩnh Tân",
+        "position": "Bí thư Đảng ủy,\r\nGiám đốc Chi nhánh Hùng Vương",
+        "phone": "0912244584",
+        "row": "M",
+        "seatPosition": 5
+    },
+    {
+        "id": 137,
+        "seatNumber": "M6",
+        "fullName": "Phan Ngọc Hải",
+        "position": "Bí thư Đảng ủy,\r\nGiám đốc Chi nhánh Thị xã Phú Thọ",
+        "phone": "0912474456",
+        "row": "M",
+        "seatPosition": 6
+    },
+    {
+        "id": 138,
+        "seatNumber": "L7",
+        "fullName": "Nguyễn Trung Kiên",
+        "position": "Bí thư Đảng ủy,\r\nGiám đốc Chi nhánh Vĩnh Phúc",
+        "phone": "0913589929",
+        "row": "L",
+        "seatPosition": 7
+    },
+    {
+        "id": 139,
+        "seatNumber": "L8",
+        "fullName": "Nguyễn Văn Đức",
+        "position": "Phó Bí thư Đảng ủy,\r\nPhó Giám đốc Chi nhánh Vĩnh Phúc",
+        "phone": "0982615185",
+        "row": "L",
+        "seatPosition": 8
+    },
+    {
+        "id": 140,
+        "seatNumber": "N3",
+        "fullName": "Nguyễn Quốc Duy",
+        "position": "Bí thư Đảng ủy,\r\nGiám đốc Chi nhánh Bắc Phú Thọ",
+        "phone": "0917123888",
+        "row": "N",
+        "seatPosition": 3
+    },
+    {
+        "id": 141,
+        "seatNumber": "N4",
+        "fullName": "Nguyễn Hồng Thọ",
+        "position": "Phó Bí thư Đảng ủy, \r\nPhó Giám đốc Chi nhánh Bắc Phú Thọ",
+        "phone": "0919386899",
+        "row": "N",
+        "seatPosition": 4
+    },
+    {
+        "id": 142,
+        "seatNumber": "M2",
+        "fullName": "Nguyễn Khắc Hiếu",
+        "position": "Bí thư Đảng ủy,\r\nGiám đốc Chi nhánh Hòa Bình",
+        "phone": "0902220110",
+        "row": "M",
+        "seatPosition": 2
+    },
+    {
+        "id": 143,
+        "seatNumber": "N6",
+        "fullName": "Nguyễn Thị Tuyết",
+        "position": "Bí thư Đảng ủy,\r\nGiám đốc Chi nhánh Phúc Yên",
+        "phone": "0983042799",
+        "row": "N",
+        "seatPosition": 6
+    },
+    {
+        "id": 144,
+        "seatNumber": "N5",
+        "fullName": "Sái Thị Thu Hà",
+        "position": "Ủy viên BCH Đảng bộ,\r\nPhó Giám đốc Chi nhánh Phúc Yên",
+        "phone": "0989287964",
+        "row": "N",
+        "seatPosition": 5
+    },
+    {
+        "id": 145,
+        "seatNumber": "M7",
+        "fullName": "Nguyễn Văn Trường",
+        "position": "Bí thư Đảng ủy,\r\nGiám đốc Chi nhánh Bình Xuyên",
+        "phone": "0969065555",
+        "row": "M",
+        "seatPosition": 7
+    },
+    {
+        "id": 146,
+        "seatNumber": "M8",
+        "fullName": "Nguyễn Viết Phương",
+        "position": "Phó Bí thư Đảng ủy,\r\nPhó Giám đốc Chi nhánh Bình Xuyên",
+        "phone": "0912817999",
+        "row": "M",
+        "seatPosition": 8
+    },
+    {
+        "id": 147,
+        "seatNumber": "H11",
+        "fullName": "Hoàng Xuân Phong",
+        "position": "Bí thư Đảng ủy,\r\nGiám đốc Chi nhánh Quang Minh",
+        "phone": "0913395885",
+        "row": "H",
+        "seatPosition": 11
+    },
+    {
+        "id": 148,
+        "seatNumber": "H12",
+        "fullName": "Trần Quý Sơn",
+        "position": "Phó Bí thư Đảng ủy,\r\nPhó Giám đốc Chi nhánh Quang Minh",
+        "phone": "0913342112",
+        "row": "H",
+        "seatPosition": 12
+    },
+    {
+        "id": 149,
+        "seatNumber": "N1",
+        "fullName": "Thân Văn Hùng",
+        "position": "Bí thư Đảng uỷ,\r\nGiám đốc Chi nhánh Bắc Giang",
+        "phone": "0943923668",
+        "row": "N",
+        "seatPosition": 1
+    },
+    {
+        "id": 150,
+        "seatNumber": "N10",
+        "fullName": "Phan Diệu Tiên",
+        "position": "Bí thư Chi bộ,\r\nGiám đốc Chi nhánh Bắc Ninh",
+        "phone": "0904317264",
+        "row": "N",
+        "seatPosition": 10
+    },
+    {
+        "id": 151,
+        "seatNumber": "N9",
+        "fullName": "Nguyễn Thị Hường",
+        "position": "Bí thư Đảng uỷ,\r\nGiám đốc Chi nhánh Tiên Sơn",
+        "phone": "0944756888",
+        "row": "N",
+        "seatPosition": 9
+    },
+    {
+        "id": 152,
+        "seatNumber": "N8",
+        "fullName": "Nguyễn Tuấn Cương",
+        "position": "Ủy viên BCH Chi bộ,\r\nPhó Giám đốc Chi nhánh KCN Tiên Sơn",
+        "phone": "0912557599",
+        "row": "N",
+        "seatPosition": 8
+    },
+    {
+        "id": 153,
+        "seatNumber": "N7",
+        "fullName": "Phạm Anh Dũng",
+        "position": "Bí thư Chi bộ,\r\nGiám đốc Chi nhánh KCN Quế Võ",
+        "phone": "0976988888",
+        "row": "N",
+        "seatPosition": 7
+    },
+    {
+        "id": 154,
+        "seatNumber": "G5",
+        "fullName": "Trần Hồng Quang",
+        "position": "Bí thư Đảng ủy,\r\nGiám đốc Chi nhánh Quảng Ninh",
+        "phone": "0913089646",
+        "row": "G",
+        "seatPosition": 5
+    },
+    {
+        "id": 155,
+        "seatNumber": "G4",
+        "fullName": "Lương Bích Huyền",
+        "position": "Phó Bí thư Đảng ủy,\r\nPhó Giám đốc Chi nhánh Quảng Ninh",
+        "phone": "0904910679",
+        "row": "G",
+        "seatPosition": 4
+    },
+    {
+        "id": 156,
+        "seatNumber": "I3",
+        "fullName": "Nguyễn Anh Tuấn",
+        "position": "Bí thư Đảng ủy,\r\nGiám đốc Chi nhánh Cẩm Phả",
+        "phone": "0913268987",
+        "row": "I",
+        "seatPosition": 3
+    },
+    {
+        "id": 157,
+        "seatNumber": "I4",
+        "fullName": "Nguyễn Thanh Phương",
+        "position": "Bí thư Chi bộ,\r\nGiám đốc Chi nhánh Uông Bí",
+        "phone": "0913336699",
+        "row": "I",
+        "seatPosition": 4
+    },
+    {
+        "id": 158,
+        "seatNumber": "J2",
+        "fullName": "Nguyễn Ngọc Lan Anh",
+        "position": "Ủy viên Ban Chấp hành Đảng bộ,\r\nPhó phòng Phòng Tổ chức tổng hợp, \r\nChi nhánh Tây Quảng Ninh",
+        "phone": "0904402041",
+        "row": "J",
+        "seatPosition": 2
+    },
+    {
+        "id": 159,
+        "seatNumber": "J3",
+        "fullName": "Nguyễn Quang Hưng",
+        "position": "Bí thư Chi bộ,\r\nGiám đốc Chi nhánh Móng Cái",
+        "phone": "0913227943",
+        "row": "J",
+        "seatPosition": 3
+    },
+    {
+        "id": 160,
+        "seatNumber": "H13",
+        "fullName": "Nguyễn Khoa Đức Anh",
+        "position": "Bí thư Đảng ủy,\r\nGiám đốc Chi nhánh Thành An",
+        "phone": "0918981800",
+        "row": "H",
+        "seatPosition": 13
+    },
+    {
+        "id": 161,
+        "seatNumber": "H14",
+        "fullName": "Lương Thế Việt",
+        "position": "Ủy viên BCH Đảng bộ,\r\nPhó Giám đốc Chi nhánh Thành An",
+        "phone": "0976828959",
+        "row": "H",
+        "seatPosition": 14
+    },
+    {
+        "id": 162,
+        "seatNumber": "H16",
+        "fullName": "Lê Hồng Tuyên",
+        "position": "Bí thư Đảng ủy,\r\nGiám đốc Chi nhánh Đô Thành",
+        "phone": "0936085999",
+        "row": "H",
+        "seatPosition": 16
+    },
+    {
+        "id": 163,
+        "seatNumber": "H17",
+        "fullName": "Lê Thế Mạnh",
+        "position": "Bí thư Đảng ủy,\r\nGiám đốc Chi nhánh Quang Trung",
+        "phone": "0912220888",
+        "row": "H",
+        "seatPosition": 17
+    },
+    {
+        "id": 164,
+        "seatNumber": "H15",
+        "fullName": "Nguyễn Thu Thủy",
+        "position": "Bí thư Đảng ủy,\r\nGiám đốc Chi nhánh Thăng Long",
+        "phone": "0936389698",
+        "row": "H",
+        "seatPosition": 15
+    },
+    {
+        "id": 165,
+        "seatNumber": "F16",
+        "fullName": "Lê Xuân Quyền",
+        "position": "Q. Bí thư Đảng ủy,\r\nGiám đốc Chi nhánh Tây Thăng Long",
+        "phone": "0904410088",
+        "row": "F",
+        "seatPosition": 16
+    },
+    {
+        "id": 166,
+        "seatNumber": "H5",
+        "fullName": "Nguyễn Thị Mỹ Linh",
+        "position": "Q. Bí thư Đảng ủy,\r\nGiám đốc Chi nhánh Hải Dương",
+        "phone": "0983626656",
+        "row": "H",
+        "seatPosition": 5
+    },
+    {
+        "id": 167,
+        "seatNumber": "H4",
+        "fullName": "Chu Thị Bích Nga",
+        "position": "Phó Bí thư Đảng ủy,\r\nPhó Giám đốc Chi nhánh Hải Dương",
+        "phone": "0983023172",
+        "row": "H",
+        "seatPosition": 4
+    },
+    {
+        "id": 168,
+        "seatNumber": "J4",
+        "fullName": "Trần Ngọc Anh",
+        "position": "Bí thư Đảng ủy,\r\nGiám đốc Chi nhánh Hưng Yên",
+        "phone": "0912056589",
+        "row": "J",
+        "seatPosition": 4
+    },
+    {
+        "id": 169,
+        "seatNumber": "J5",
+        "fullName": "Trần Đức Anh",
+        "position": "Bí thư Đảng ủy,\r\nGiám đốc Chi nhánh Bắc Hưng Yên",
+        "phone": "0979756888",
+        "row": "J",
+        "seatPosition": 5
+    },
+    {
+        "id": 170,
+        "seatNumber": "J6",
+        "fullName": "Nguyễn Văn Trưởng",
+        "position": "Bí thư Đảng ủy,\r\nGiám đốc Chi nhánh Đông Hải Dương",
+        "phone": "0986414788",
+        "row": "J",
+        "seatPosition": 6
+    },
+    {
+        "id": 171,
+        "seatNumber": "I6",
+        "fullName": "Nguyễn Văn Khang",
+        "position": "Bí thư Đảng ủy,\r\nGiám đốc Chi nhánh KCN Hải Dương",
+        "phone": "0913141105",
+        "row": "I",
+        "seatPosition": 6
+    },
+    {
+        "id": 172,
+        "seatNumber": "I5",
+        "fullName": "Phạm Văn Tiến",
+        "position": "Ủy viên BCH Đảng bộ,\r\nPhó Giám đốc Chi nhánh KCN Hải Dương",
+        "phone": "0913511102",
+        "row": "I",
+        "seatPosition": 5
+    },
+    {
+        "id": 173,
+        "seatNumber": "F20",
+        "fullName": "Nguyễn Quang Thiện",
+        "position": "Bí thư Đảng ủy,\r\nGiám đốc Chi nhánh Thái Bình",
+        "phone": "0983843596",
+        "row": "F",
+        "seatPosition": 20
+    },
+    {
+        "id": 174,
+        "seatNumber": "F21",
+        "fullName": "Phạm Thị Việt",
+        "position": "Phó Bí thư Đảng ủy,\r\nPhó Giám đốc Chi nhánh Thái Bình",
+        "phone": "0982087535",
+        "row": "F",
+        "seatPosition": 21
+    },
+    {
+        "id": 175,
+        "seatNumber": "F22",
+        "fullName": "Đỗ Thị Bích Thủy",
+        "position": "UV BCH Đảng bộ,\r\nTrưởng PGD Minh Khai - CN Thái Bình",
+        "phone": "0914838058",
+        "row": "F",
+        "seatPosition": 22
+    },
+    {
+        "id": 176,
+        "seatNumber": "F24",
+        "fullName": "Đinh Ngọc Sơn",
+        "position": "Bí thư Đảng ủy,\r\nGiám đốc Chi nhánh Nam Định",
+        "phone": "0913287376",
+        "row": "F",
+        "seatPosition": 24
+    },
+    {
+        "id": 177,
+        "seatNumber": "F23",
+        "fullName": "Đặng Văn Hải",
+        "position": "Phó Bí thư Đảng ủy,\r\nPhó Giám đốc Chi nhánh Nam Định",
+        "phone": "0904307709",
+        "row": "F",
+        "seatPosition": 23
+    },
+    {
+        "id": 178,
+        "seatNumber": "G19",
+        "fullName": "Dương Quang Chung",
+        "position": "Bí thư Đảng ủy,\r\nGiám đốc Chi nhánh Bắc Nam Định",
+        "phone": "0912366330",
+        "row": "G",
+        "seatPosition": 19
+    },
+    {
+        "id": 179,
+        "seatNumber": "G20",
+        "fullName": "Mai Thanh Tuấn",
+        "position": "Ủy viên BCH Đảng bộ,\r\nPhó Giám đốc Chi nhánh Bắc Nam Định",
+        "phone": "0973826886",
+        "row": "G",
+        "seatPosition": 20
+    },
+    {
+        "id": 180,
+        "seatNumber": "G21",
+        "fullName": "Nguyễn Quang Duy",
+        "position": "Bí thư Đảng ủy,\r\nGiám đốc Chi nhánh Hà Nam",
+        "phone": "0913004413",
+        "row": "G",
+        "seatPosition": 21
+    },
+    {
+        "id": 181,
+        "seatNumber": "G22",
+        "fullName": "Nguyễn Đình Hùng",
+        "position": "Phó Bí thư Đảng ủy,\r\nPhó Giám đốc Chi nhánh Hà Nam",
+        "phone": "0797575268",
+        "row": "G",
+        "seatPosition": 22
+    },
+    {
+        "id": 182,
+        "seatNumber": "G24",
+        "fullName": "Đinh Xuân Thắng",
+        "position": "Bí thư Đảng ủy,\r\nGiám đốc Chi nhánh Ninh Bình",
+        "phone": "0979792099",
+        "row": "G",
+        "seatPosition": 24
+    },
+    {
+        "id": 183,
+        "seatNumber": "G23",
+        "fullName": "Lý Hoàng Hà",
+        "position": "Phó Bí thư Đảng ủy,\r\nPhó Giám đốc Chi nhánh Ninh Bình",
+        "phone": "0912773043",
+        "row": "G",
+        "seatPosition": 23
+    },
+    {
+        "id": 184,
+        "seatNumber": "J24",
+        "fullName": "Nguyễn Huy Hưng",
+        "position": "Bí thư Đảng ủy,\r\nGiám đốc Chi nhánh Tam Điệp",
+        "phone": "0912348677",
+        "row": "J",
+        "seatPosition": 24
+    },
+    {
+        "id": 185,
+        "seatNumber": "H19",
+        "fullName": "Phạm Văn Nam",
+        "position": "Bí thư Đảng ủy,\r\nGiám đốc Chi nhánh Thanh Hóa",
+        "phone": "0915951266",
+        "row": "H",
+        "seatPosition": 19
+    },
+    {
+        "id": 186,
+        "seatNumber": "H20",
+        "fullName": "Mai Thị Phương Thảo",
+        "position": "Phó Bí thư Đảng ủy,\r\nPhó Giám đốc Chi nhánh Thanh Hóa",
+        "phone": "0915585591",
+        "row": "H",
+        "seatPosition": 20
+    },
+    {
+        "id": 187,
+        "seatNumber": "H21",
+        "fullName": "Trần Đức Thịnh",
+        "position": "Bí thư Đảng ủy,\r\nGiám đốc Chi nhánh Sầm Sơn",
+        "phone": "0936023405",
+        "row": "H",
+        "seatPosition": 21
+    },
+    {
+        "id": 188,
+        "seatNumber": "H22",
+        "fullName": "Nguyễn Văn Thiện",
+        "position": "Phó Bí thư Đảng ủy,\r\nPhó Giám đốc Chi nhánh Sầm Sơn",
+        "phone": "0914536458",
+        "row": "H",
+        "seatPosition": 22
+    },
+    {
+        "id": 189,
+        "seatNumber": "H24",
+        "fullName": "Lê Văn Dũng",
+        "position": "Bí thư Đảng ủy,\r\nGiám đốc Chi nhánh Bắc Thanh Hóa",
+        "phone": "0913293820",
+        "row": "H",
+        "seatPosition": 24
+    },
+    {
+        "id": 190,
+        "seatNumber": "H23",
+        "fullName": "Phạm Việt Dũng",
+        "position": "Phó Bí thư Đảng ủy,\r\nPhó Giám đốc Chi nhánh Bắc Thanh Hóa",
+        "phone": "0989192477",
+        "row": "H",
+        "seatPosition": 23
+    },
+    {
+        "id": 191,
+        "seatNumber": "I19",
+        "fullName": "Trần Xuân Giáp Cường",
+        "position": "Bí thư Đảng ủy,\r\nGiám đốc Chi nhánh Hà Tĩnh",
+        "phone": "0915444577",
+        "row": "I",
+        "seatPosition": 19
+    },
+    {
+        "id": 192,
+        "seatNumber": "I20",
+        "fullName": "Lê Thị Ngọc Quỳnh",
+        "position": "Phó Bí thư Đảng ủy,\r\nPhó Giám đốc Chi nhánh Hà Tĩnh",
+        "phone": "0975668669",
+        "row": "I",
+        "seatPosition": 20
+    },
+    {
+        "id": 193,
+        "seatNumber": "I21",
+        "fullName": "Trần Hoài Nam",
+        "position": "Bí thư Đảng ủy,\r\nGiám đốc Chi nhánh Nghệ An",
+        "phone": "0913323480",
+        "row": "I",
+        "seatPosition": 21
+    },
+    {
+        "id": 194,
+        "seatNumber": "I22",
+        "fullName": "Nguyễn Thị Thủy",
+        "position": "Phó Bí thư Đảng ủy,\r\nPhó Giám đốc Chi nhánh Nghệ An",
+        "phone": "0915488299",
+        "row": "I",
+        "seatPosition": 22
+    },
+    {
+        "id": 195,
+        "seatNumber": "J23",
+        "fullName": "Bùi Xuân Phúc",
+        "position": "Phó Bí thư Đảng ủy,\r\nPhó Giám đốc Chi nhánh Cửa Lò",
+        "phone": "0983214482",
+        "row": "J",
+        "seatPosition": 23
+    },
+    {
+        "id": 196,
+        "seatNumber": "I24",
+        "fullName": "Bùi Xuân Đông",
+        "position": "Giám đốc Chi nhánh Vinh",
+        "phone": "0913275025",
+        "row": "I",
+        "seatPosition": 24
+    },
+    {
+        "id": 197,
+        "seatNumber": "I23",
+        "fullName": "Nguyễn Văn Bình",
+        "position": "Phó Bí thư Đảng ủy,\r\nPhó Giám đốc Chi nhánh Vinh",
+        "phone": "0913294276",
+        "row": "I",
+        "seatPosition": 23
+    },
+    {
+        "id": 198,
+        "seatNumber": "J19",
+        "fullName": "Dương Minh Tân",
+        "position": "Bí thư Đảng ủy,\r\nGiám đốc Chi nhánh Bắc Nghệ An",
+        "phone": "0913048989",
+        "row": "J",
+        "seatPosition": 19
+    },
+    {
+        "id": 199,
+        "seatNumber": "J20",
+        "fullName": "Lê Khắc Kiên",
+        "position": "Phó Bí thư Đảng ủy,\r\nPhó Giám đốc Chi nhánh Bắc Nghệ An",
+        "phone": "0986240226",
+        "row": "J",
+        "seatPosition": 20
+    },
+    {
+        "id": 200,
+        "seatNumber": "J21",
+        "fullName": "Nguyễn Đính",
+        "position": "Bí thư Đảng ủy,\r\nGiám đốc Chi nhánh Quảng Trị",
+        "phone": "0905090937",
+        "row": "J",
+        "seatPosition": 21
+    },
+    {
+        "id": 201,
+        "seatNumber": "J22",
+        "fullName": "Trần Quang Thanh",
+        "position": "Phó Bí thư Đảng ủy,\r\nPhó Giám đốc Chi nhánh Quảng Trị",
+        "phone": "0947259555",
+        "row": "J",
+        "seatPosition": 22
+    },
+    {
+        "id": 202,
+        "seatNumber": "L9",
+        "fullName": "Lê Phan Quỳnh Hương",
+        "position": "Bí thư Đảng ủy,\r\nGiám đốc Chi nhánh Huế",
+        "phone": "0905516099",
+        "row": "L",
+        "seatPosition": 9
+    },
+    {
+        "id": 203,
+        "seatNumber": "L10",
+        "fullName": "Trần Thị Tâm Thanh",
+        "position": "Bí thư Chi bộ,\r\nGiám đốc Chi nhánh Nam Huế",
+        "phone": "0914145545",
+        "row": "L",
+        "seatPosition": 10
+    },
+    {
+        "id": 204,
+        "seatNumber": "L11",
+        "fullName": "Đặng Việt Hà",
+        "position": "Bí thư Đảng ủy,\r\nGiám đốc Chi nhánh Quảng Bình",
+        "phone": "0905800085",
+        "row": "L",
+        "seatPosition": 11
+    },
+    {
+        "id": 205,
+        "seatNumber": "L12",
+        "fullName": "Phan Thế Minh",
+        "position": "Ủy viên BTV Đảng ủy,\r\nPhó Giám đốc Chi nhánh Quảng Bình",
+        "phone": "0987369279",
+        "row": "L",
+        "seatPosition": 12
+    },
+    {
+        "id": 206,
+        "seatNumber": "L13",
+        "fullName": "Nguyễn Tuấn Anh",
+        "position": "Bí thư Đảng ủy,\r\nGiám đốc Chi nhánh Đà Nẵng",
+        "phone": "0902124282",
+        "row": "L",
+        "seatPosition": 13
+    },
+    {
+        "id": 207,
+        "seatNumber": "L14",
+        "fullName": "Lê Thu Đông",
+        "position": "Bí thư Đảng ủy,\r\nGiám đốc Chi nhánh Quảng Nam",
+        "phone": "0906181916",
+        "row": "L",
+        "seatPosition": 14
+    },
+    {
+        "id": 208,
+        "seatNumber": "L18",
+        "fullName": "Trần Thị Mỹ Hạnh",
+        "position": "Bí thư Đảng ủy,\r\nGiám đốc Chi nhánh Hội An",
+        "phone": "0905271712",
+        "row": "L",
+        "seatPosition": 18
+    },
+    {
+        "id": 209,
+        "seatNumber": "L15",
+        "fullName": "Nguyễn Thị Nga",
+        "position": "Bí thư Chi bộ,\r\nGiám đốc Chi nhánh Ngũ Hành Sơn",
+        "phone": "0914042199",
+        "row": "L",
+        "seatPosition": 15
+    },
+    {
+        "id": 210,
+        "seatNumber": "L16",
+        "fullName": "Nguyễn Thành Vinh",
+        "position": "Bí thư Đảng ủy,\r\nGiám đốc Chi nhánh Bắc Đà Nẵng",
+        "phone": "0977575859",
+        "row": "L",
+        "seatPosition": 16
+    },
+    {
+        "id": 211,
+        "seatNumber": "L17",
+        "fullName": "Đinh Xuân Nha",
+        "position": "Bí thư Chi bộ,\r\nGiám đốc Chi nhánh Sông Hàn",
+        "phone": "0913403559",
+        "row": "L",
+        "seatPosition": 17
+    },
+    {
+        "id": 212,
+        "seatNumber": "M9",
+        "fullName": "Đặng Quốc Thịnh",
+        "position": "Bí thư Đảng ủy,\r\nGiám đốc Chi nhánh Gia Lai",
+        "phone": "0919337379",
+        "row": "M",
+        "seatPosition": 9
+    },
+    {
+        "id": 213,
+        "seatNumber": "M10",
+        "fullName": "Nguyễn Trần Thu Hào",
+        "position": "Ủy viên BTV Đảng ủy,\r\nPhó Giám đốc Chi nhánh Gia Lai",
+        "phone": "0903516982",
+        "row": "M",
+        "seatPosition": 10
+    },
+    {
+        "id": 214,
+        "seatNumber": "M18",
+        "fullName": "Lê Phúc Đông",
+        "position": "Bí thư Đảng ủy,\r\nGiám đốc Chi nhánh nhánh Đắk Lắk",
+        "phone": "0914090199",
+        "row": "M",
+        "seatPosition": 18
+    },
+    {
+        "id": 215,
+        "seatNumber": "M17",
+        "fullName": "Hoàng Tùng",
+        "position": "Phó Bí thư Đảng ủy,\r\nPhó Giám đốc nhánh Đắk Lắk",
+        "phone": "0962913456",
+        "row": "M",
+        "seatPosition": 17
+    },
+    {
+        "id": 216,
+        "seatNumber": "I7",
+        "fullName": "Nguyễn Quang Anh Quyền",
+        "position": "Bí thư Đảng ủy,\r\nGiám đốc Chi nhánh Bình Phước",
+        "phone": "0933500287",
+        "row": "I",
+        "seatPosition": 7
+    },
+    {
+        "id": 217,
+        "seatNumber": "I8",
+        "fullName": "Nguyễn Văn Toán",
+        "position": "Ủy viên BCH Đảng bộ,\r\nPhó Giám đốc Chi nhánh Bình Phước",
+        "phone": "0933006339",
+        "row": "I",
+        "seatPosition": 8
+    },
+    {
+        "id": 218,
+        "seatNumber": "M11",
+        "fullName": "Hoàng Thị Hằng",
+        "position": "Phó Bí thư Chi bộ,\r\nPhó giám đốc Chi nhánh Đắk Nông",
+        "phone": "0964544411",
+        "row": "M",
+        "seatPosition": 11
+    },
+    {
+        "id": 219,
+        "seatNumber": "M12",
+        "fullName": "Nguyễn Cư",
+        "position": "Bí thư Đảng ủy,\r\nGiám đốc Chi nhánh Kon Tum",
+        "phone": "0914173957",
+        "row": "M",
+        "seatPosition": 12
+    },
+    {
+        "id": 220,
+        "seatNumber": "M13",
+        "fullName": "Đỗ Thị Thủy",
+        "position": "Bí thư Đảng ủy,\r\nGiám đốc Chi nhánh Quảng Ngãi",
+        "phone": "0905402127",
+        "row": "M",
+        "seatPosition": 13
+    },
+    {
+        "id": 221,
+        "seatNumber": "M14",
+        "fullName": "Võ Hoàng Anh",
+        "position": "Phó Bí thư Đảng ủy,\r\nPhó Giám đốc Chi nhánh Quảng Ngãi",
+        "phone": "0905200357",
+        "row": "M",
+        "seatPosition": 14
+    },
+    {
+        "id": 222,
+        "seatNumber": "M15",
+        "fullName": "Hồ Đức Hồng",
+        "position": "Bí thư Đảng ủy,\r\nPhó Giám đốc Thường trực Chi nhánh Bình Định",
+        "phone": "0905144798",
+        "row": "M",
+        "seatPosition": 15
+    },
+    {
+        "id": 223,
+        "seatNumber": "M16",
+        "fullName": "Bành Thị Xuân Hương",
+        "position": "Phó Bí thư Đảng ủy,\r\nPhó Giám đốc Chi nhánh Bình Định",
+        "phone": "0985968936",
+        "row": "M",
+        "seatPosition": 16
+    },
+    {
+        "id": 224,
+        "seatNumber": "N11",
+        "fullName": "Nguyễn Nguyên Ngọc",
+        "position": "Bí thư Đảng ủy,\r\nPhó Giám đốc phụ trách Chi nhánh KCN Phú Tài",
+        "phone": "0983932709",
+        "row": "N",
+        "seatPosition": 11
+    },
+    {
+        "id": 225,
+        "seatNumber": "N12",
+        "fullName": "Phạm Công Minh",
+        "position": "Phó Giám đốc Chi nhánh Bắc Đà Nẵng",
+        "phone": "0905061821",
+        "row": "N",
+        "seatPosition": 12
+    },
+    {
+        "id": 226,
+        "seatNumber": "N13",
+        "fullName": "Hoàng Anh Minh",
+        "position": "Bí thư Đảng ủy,\r\nGiám đốc Chi nhánh Phú Yên",
+        "phone": "0936382390",
+        "row": "N",
+        "seatPosition": 13
+    },
+    {
+        "id": 227,
+        "seatNumber": "N14",
+        "fullName": "Đỗ Thị Bích Phương",
+        "position": "Q. Bí thư Đảng ủy,\r\nPhó Giám đốc phụ trách Chi nhánh Khánh Hòa",
+        "phone": "0916871068",
+        "row": "N",
+        "seatPosition": 14
+    },
+    {
+        "id": 228,
+        "seatNumber": "N15",
+        "fullName": "Nguyễn Tấn Việt",
+        "position": "Bí thư Chi bộ,\r\nGiám đốc Chi nhánh Bình Thuận",
+        "phone": "0914006111",
+        "row": "N",
+        "seatPosition": 15
+    },
+    {
+        "id": 229,
+        "seatNumber": "N16",
+        "fullName": "Ngô Đình Quảng Phúc",
+        "position": "Bí thư Chi bộ,\r\nGiám đốc Chi nhánh Ninh Thuận",
+        "phone": "0913183529",
+        "row": "N",
+        "seatPosition": 16
+    },
+    {
+        "id": 230,
+        "seatNumber": "N17",
+        "fullName": "Huỳnh Thị Kim Dung",
+        "position": "Bí thư Đảng uỷ,\r\nGiám đốc Chi nhánh Lâm Đồng",
+        "phone": "0914044735",
+        "row": "N",
+        "seatPosition": 17
+    },
+    {
+        "id": 231,
+        "seatNumber": "N18",
+        "fullName": "Trần Văn Chỉnh",
+        "position": "Bí thư Đảng ủy,\r\nGiám đốc Chi nhánh Bảo Lộc",
+        "phone": "0933119368",
+        "row": "N",
+        "seatPosition": 18
+    },
+    {
+        "id": 232,
+        "seatNumber": "I9",
+        "fullName": "Bùi Bình Khánh",
+        "position": "Bí thư Đảng ủy,\r\nGiám đốc Chi nhánh Bình Dương",
+        "phone": "0903688565",
+        "row": "I",
+        "seatPosition": 9
+    },
+    {
+        "id": 233,
+        "seatNumber": "I10",
+        "fullName": "Vũ Trung Thành",
+        "position": "Bí thư Đảng ủy,\r\nGiám đốc Chi nhánh Tây Ninh",
+        "phone": "0985256886",
+        "row": "I",
+        "seatPosition": 10
+    },
+    {
+        "id": 234,
+        "seatNumber": "I11",
+        "fullName": "Nguyễn Văn Châu",
+        "position": "Bí thư Chi bộ,\r\nGiám đốc Chi nhánh Hòa Thành",
+        "phone": "0918360018",
+        "row": "I",
+        "seatPosition": 11
+    },
+    {
+        "id": 235,
+        "seatNumber": "I12",
+        "fullName": "Phan Thị Diễm Lệ",
+        "position": "Bí thư Chi bộ,\r\nGiám đốc Chi nhánh KCN Trảng Bàng",
+        "phone": "0918224060",
+        "row": "I",
+        "seatPosition": 12
+    },
+    {
+        "id": 236,
+        "seatNumber": "I13",
+        "fullName": "Nguyễn Thị Hằng",
+        "position": "Bí thư Đảng ủy,\r\nGiám đốc Chi nhánh Đồng Nai",
+        "phone": "0933697799",
+        "row": "I",
+        "seatPosition": 13
+    },
+    {
+        "id": 237,
+        "seatNumber": "I14",
+        "fullName": "Võ Thanh Tùng",
+        "position": "Bí thư Chi bộ,\r\nGiám đốc Chi nhánh Nhơn Trạch",
+        "phone": "0911910144",
+        "row": "I",
+        "seatPosition": 14
+    },
+    {
+        "id": 238,
+        "seatNumber": "I15",
+        "fullName": "Bùi Đức Trình",
+        "position": "Bí thư Đảng ủy,\r\nGiám đốc Chi nhánh KCN Biên Hòa",
+        "phone": "0913162299",
+        "row": "I",
+        "seatPosition": 15
+    },
+    {
+        "id": 239,
+        "seatNumber": "K19",
+        "fullName": "Phạm Thành Lộc",
+        "position": "Bí thư Đảng ủy,\r\nGiám đốc Chi nhánh Long An",
+        "phone": "0913960523",
+        "row": "K",
+        "seatPosition": 19
+    },
+    {
+        "id": 240,
+        "seatNumber": "K20",
+        "fullName": "Lê Hữu Khanh",
+        "position": "Bí thư Chi bộ,\r\nGiám đốc Chi nhánh Bến Lức",
+        "phone": "0918501999",
+        "row": "K",
+        "seatPosition": 20
+    },
+    {
+        "id": 241,
+        "seatNumber": "K21",
+        "fullName": "Nguyễn Thanh Hùng",
+        "position": "Bí thư Đảng ủy,\r\nGiám đốc Chi nhánh Đồng Tháp",
+        "phone": "0918088444",
+        "row": "K",
+        "seatPosition": 21
+    },
+    {
+        "id": 242,
+        "seatNumber": "K22",
+        "fullName": "Võ Phước Hậu",
+        "position": "Bí thư Chi bộ,\r\nGiám đốc Chi nhánh Sa Đéc",
+        "phone": "0913975595",
+        "row": "K",
+        "seatPosition": 22
+    },
+    {
+        "id": 243,
+        "seatNumber": "K24",
+        "fullName": "Lâm Tấn Phước",
+        "position": "Bí thư Đảng ủy,\r\nGiám đốc Chi nhánh An Giang",
+        "phone": "0913783383",
+        "row": "K",
+        "seatPosition": 24
+    },
+    {
+        "id": 244,
+        "seatNumber": "K23",
+        "fullName": "Trần Minh Trung",
+        "position": "Phó Bí thư Đảng ủy,\r\nPhó Giám đốc Chi nhánh An Giang",
+        "phone": "0918493986",
+        "row": "K",
+        "seatPosition": 23
+    },
+    {
+        "id": 245,
+        "seatNumber": "L21",
+        "fullName": "Bùi Thành Kỉnh",
+        "position": "Bí thư Chi bộ,\r\nGiám đốc Chi nhánh Châu Đốc",
+        "phone": "0918002034",
+        "row": "L",
+        "seatPosition": 21
+    },
+    {
+        "id": 246,
+        "seatNumber": "L22",
+        "fullName": "Từ Thiên Toàn",
+        "position": "Q. Bí thư Đảng ủy,\r\nGiám đốc Chi nhánh Tiền Giang",
+        "phone": "0908046556",
+        "row": "L",
+        "seatPosition": 22
+    },
+    {
+        "id": 247,
+        "seatNumber": "M22",
+        "fullName": "Trần Thị Thanh Thủy",
+        "position": "Phó Bí thư Chi bộ \r\nChi nhánh Tây Tiền Giang,\r\nTrưởng phòng DVKH",
+        "phone": "0989601828",
+        "row": "M",
+        "seatPosition": 22
+    },
+    {
+        "id": 248,
+        "seatNumber": "L19",
+        "fullName": "Nguyễn Thanh Trường",
+        "position": "Bí thư Đảng ủy,\r\nGiám đốc Chi nhánh Bến Tre",
+        "phone": "0816868168",
+        "row": "L",
+        "seatPosition": 19
+    },
+    {
+        "id": 249,
+        "seatNumber": "L20",
+        "fullName": "Trần Anh Tuấn Long",
+        "position": "Phó Bí thư Đảng ủy,\r\nPhó Giám đốc Chi nhánh Bến Tre",
+        "phone": "0946824777",
+        "row": "L",
+        "seatPosition": 20
+    },
+    {
+        "id": 250,
+        "seatNumber": "L24",
+        "fullName": "Võ Thanh Tùng",
+        "position": "Bí thư Đảng ủy,\r\nGiám đốc Chi nhánh Vĩnh Long",
+        "phone": "0913648775",
+        "row": "L",
+        "seatPosition": 24
+    },
+    {
+        "id": 251,
+        "seatNumber": "L23",
+        "fullName": "Nguyễn Trọng Luật",
+        "position": "Ủy viên BTV Đảng ủy,\r\nPhó Giám đốc Chi nhánh Vĩnh Long",
+        "phone": "0918654495",
+        "row": "L",
+        "seatPosition": 23
+    },
+    {
+        "id": 252,
+        "seatNumber": "M23",
+        "fullName": "Nguyễn Hữu Trung",
+        "position": "Bí thư Đảng ủy,\r\nGiám đốc Chi nhánh Cần Thơ",
+        "phone": "0918241222",
+        "row": "M",
+        "seatPosition": 23
+    },
+    {
+        "id": 253,
+        "seatNumber": "M24",
+        "fullName": "Nguyễn Hoàng Phúc",
+        "position": "Bí thư Chi bộ,\r\nQ. Giám đốc Chi nhánh Hậu Giang",
+        "phone": "0918785828",
+        "row": "M",
+        "seatPosition": 24
+    },
+    {
+        "id": 254,
+        "seatNumber": "N19",
+        "fullName": "Lê Ngọc Trương",
+        "position": "Bí thư Chi bộ,\r\nGiám đốc Chi nhánh Sóc Trăng",
+        "phone": "0914002787",
+        "row": "N",
+        "seatPosition": 19
+    },
+    {
+        "id": 255,
+        "seatNumber": "N20",
+        "fullName": "Nguyễn Thị Thúy An",
+        "position": "Phó Bí thư Đảng ủy,\r\nPhó Giám đốc Chi nhánh Tây Cần Thơ",
+        "phone": "0939766389",
+        "row": "N",
+        "seatPosition": 20
+    },
+    {
+        "id": 256,
+        "seatNumber": "M19",
+        "fullName": "Lê Minh Kha",
+        "position": "Bí thư Đảng ủy,\r\nGiám đốc Chi nhánh Kiên Giang",
+        "phone": "0908247998",
+        "row": "M",
+        "seatPosition": 19
+    },
+    {
+        "id": 257,
+        "seatNumber": "M20",
+        "fullName": "Nguyễn Hồng Linh",
+        "position": "Ủy viên Ban Chấp hành Đảng bộ,\r\nPhó Giám đốc Chi nhánh Kiên Giang",
+        "phone": "0919362200",
+        "row": "M",
+        "seatPosition": 20
+    },
+    {
+        "id": 258,
+        "seatNumber": "M21",
+        "fullName": "Mã Thành Tân",
+        "position": "Phó Giám đốc Chi nhánh Kiên Giang",
+        "phone": "0919808284",
+        "row": "M",
+        "seatPosition": 21
+    },
+    {
+        "id": 259,
+        "seatNumber": "N21",
+        "fullName": "Lê Trường Giang",
+        "position": "Bí thư Chi bộ, \r\nGiám đốc Chi nhánh Phú Quốc",
+        "phone": "0913710252",
+        "row": "N",
+        "seatPosition": 21
+    },
+    {
+        "id": 260,
+        "seatNumber": "N22",
+        "fullName": "Nguyễn Tú",
+        "position": "Bí thư Đảng ủy,\r\nGiám đốc Chi nhánh Cà Mau",
+        "phone": "0977999968",
+        "row": "N",
+        "seatPosition": 22
+    },
+    {
+        "id": 261,
+        "seatNumber": "N23",
+        "fullName": "Nguyễn Mạnh Hà",
+        "position": "Bí thư Đảng ủy,\r\nGiám đốc Chi nhánh Bạc Liêu",
+        "phone": "0913778507",
+        "row": "N",
+        "seatPosition": 23
+    },
+    {
+        "id": 262,
+        "seatNumber": "I16",
+        "fullName": "Bùi Thị Thu Hà",
+        "position": "Bí thư Đảng ủy, \r\nGiám đốc Chi nhánh Bà Rịa - Vũng Tàu",
+        "phone": "0919489792",
+        "row": "I",
+        "seatPosition": 16
+    },
+    {
+        "id": 263,
+        "seatNumber": "I17",
+        "fullName": "Huỳnh Thanh Nghĩa",
+        "position": "Phó Bí thư Đảng ủy,\r\nPhó Giám đốc Chi nhánh Bà Rịa - Vũng Tàu",
+        "phone": "0917203205",
+        "row": "I",
+        "seatPosition": 17
+    },
+    {
+        "id": 264,
+        "seatNumber": "I18",
+        "fullName": "Phạm Thị Nhật Thu",
+        "position": "Ủy viên BCH Đảng bộ \r\nChi nhánh TP Hồ Chí Minh,\r\nTrưởng phòng Dịch vụ khách hàng",
+        "phone": "0938181891",
+        "row": "I",
+        "seatPosition": 18
+    },
+    {
+        "id": 265,
+        "seatNumber": "J7",
+        "fullName": "Lê Việt Dũng",
+        "position": "Bí thư Chi bộ,\r\nGiám đốc Chi nhánh KCN Bình Dương",
+        "phone": "0913076316",
+        "row": "J",
+        "seatPosition": 7
+    },
+    {
+        "id": 266,
+        "seatNumber": "J8",
+        "fullName": "Lê Văn Hào",
+        "position": "Bí thư Đảng ủy,\r\nGiám đốc Chi nhánh 1 - TP.HCM",
+        "phone": "0913269228",
+        "row": "J",
+        "seatPosition": 8
+    },
+    {
+        "id": 267,
+        "seatNumber": "J9",
+        "fullName": "Dương Minh Hạnh",
+        "position": "Bí thư Chi bộ,\r\nGiám đốc Chi nhánh Thủ Thiêm",
+        "phone": "0936868117",
+        "row": "J",
+        "seatPosition": 9
+    },
+    {
+        "id": 268,
+        "seatNumber": "J10",
+        "fullName": "Nguyễn Thị Hải Yến",
+        "position": "Bí thư Chi bộ,\r\nGiám đốc Chi nhánh 2 - TP.HCM",
+        "phone": "0988740077",
+        "row": "J",
+        "seatPosition": 10
+    },
+    {
+        "id": 269,
+        "seatNumber": "J11",
+        "fullName": "Nguyễn Kim Hùng",
+        "position": "Bí thư Đảng ủy,\r\nGiám đốc Chi nhánh 3 - TP.HCM",
+        "phone": "0911098188",
+        "row": "J",
+        "seatPosition": 11
+    },
+    {
+        "id": 270,
+        "seatNumber": "J12",
+        "fullName": "Phạm Hồng Tuyên",
+        "position": "Bí thư Đảng ủy,\r\nGiám đốc Chi nhánh 4 - TP. HCM",
+        "phone": "0908891417",
+        "row": "J",
+        "seatPosition": 12
+    },
+    {
+        "id": 271,
+        "seatNumber": "J13",
+        "fullName": "Phạm Thị Vạn Thanh",
+        "position": "Bí thư Chi bộ,\r\nGiám đốc Chi nhánh Nam Sài Gòn",
+        "phone": "0918220989",
+        "row": "J",
+        "seatPosition": 13
+    },
+    {
+        "id": 272,
+        "seatNumber": "J14",
+        "fullName": "Phạm Thị Bạch Huệ",
+        "position": "Phó Giám đốc phụ trách\r\nChi nhánh Sài Gòn",
+        "phone": "0988258235",
+        "row": "J",
+        "seatPosition": 14
+    },
+    {
+        "id": 273,
+        "seatNumber": "J15",
+        "fullName": "Vũ Anh Đức",
+        "position": "Bí thư Chi bộ,\r\nGiám đốc Chi nhánh 5 - TP.HCM",
+        "phone": "0903465223",
+        "row": "J",
+        "seatPosition": 15
+    },
+    {
+        "id": 274,
+        "seatNumber": "J16",
+        "fullName": "Lâm Ngọc Thu",
+        "position": "Bí thư Chi bộ,\r\nGiám đốc Chi nhánh 6 - TP.HCM",
+        "phone": "0908110743",
+        "row": "J",
+        "seatPosition": 16
+    },
+    {
+        "id": 275,
+        "seatNumber": "J17",
+        "fullName": "Phan Huỳnh Tuấn",
+        "position": "Bí thư Chi bộ,\r\nGiám đốc Chi nhánh Tây Sài Gòn",
+        "phone": "0903101043",
+        "row": "J",
+        "seatPosition": 17
+    },
+    {
+        "id": 276,
+        "seatNumber": "J18",
+        "fullName": "Nguyễn Trần Linh",
+        "position": "Bí thư Chi bộ,\r\nGiám đốc Chi nhánh 7 - TP.HCM",
+        "phone": "0904900889",
+        "row": "J",
+        "seatPosition": 18
+    },
+    {
+        "id": 277,
+        "seatNumber": "K8",
+        "fullName": "Bùi Văn Bé Sáu",
+        "position": "Bí thư Chi bộ,\r\nGiám đốc Chi nhánh 8 - TP.HCM",
+        "phone": "0913686337",
+        "row": "K",
+        "seatPosition": 8
+    },
+    {
+        "id": 278,
+        "seatNumber": "K9",
+        "fullName": "Lê Thị Tuyên",
+        "position": "Bí thư Chi bộ,\r\nGiám đốc Chi nhánh 9 - TP.HCM",
+        "phone": "0979652768",
+        "row": "K",
+        "seatPosition": 9
+    },
+    {
+        "id": 279,
+        "seatNumber": "K10",
+        "fullName": "Khúc Thị Thu",
+        "position": "Bí thư Chi bộ,\r\nGiám đốc Chi nhánh Gia Định",
+        "phone": "0982779790",
+        "row": "K",
+        "seatPosition": 10
+    },
+    {
+        "id": 280,
+        "seatNumber": "K11",
+        "fullName": "Võ Hồng Vẹn",
+        "position": "Q. Bí thư Chi bộ,\r\nGiám đốc Chi nhánh Chợ Lớn",
+        "phone": "0917531115",
+        "row": "K",
+        "seatPosition": 11
+    },
+    {
+        "id": 281,
+        "seatNumber": "K12",
+        "fullName": "Trương Minh Tiến",
+        "position": "Bí thư Chi bộ,\r\nGiám đốc Chi nhánh 10 - TP.HCM",
+        "phone": "0906211860",
+        "row": "K",
+        "seatPosition": 12
+    },
+    {
+        "id": 282,
+        "seatNumber": "K13",
+        "fullName": "Nguyễn Mạnh Hải",
+        "position": "Bí thư Chi bộ,\r\nGiám đốc Chi nhánh 11 - TP.HCM",
+        "phone": "0918339979",
+        "row": "K",
+        "seatPosition": 13
+    },
+    {
+        "id": 283,
+        "seatNumber": "K14",
+        "fullName": "Phạm Thị Ngọc Lan",
+        "position": "Bí thư Chi bộ,\r\nGiám đốc Chi nhánh 12 - TP.HCM",
+        "phone": "0975515568",
+        "row": "K",
+        "seatPosition": 14
+    },
+    {
+        "id": 284,
+        "seatNumber": "K15",
+        "fullName": "Dương Thanh Bình",
+        "position": "Bí thư Chi bộ,\r\nGiám đốc Chi nhánh Tân Bình",
+        "phone": "0916272131",
+        "row": "K",
+        "seatPosition": 15
+    },
+    {
+        "id": 285,
+        "seatNumber": "K16",
+        "fullName": "Trần Thị Hạnh Nhung",
+        "position": "Bí thư chi bộ,\r\nGiám đốc Chi nhánh Đông Sài Gòn",
+        "phone": "0982908848",
+        "row": "K",
+        "seatPosition": 16
+    },
+    {
+        "id": 286,
+        "seatNumber": "K17",
+        "fullName": "Vũ Quốc Việt",
+        "position": "Bí thư Chi bộ,\r\nGiám đốc Chi nhánh Thủ Đức",
+        "phone": "0983376588",
+        "row": "K",
+        "seatPosition": 17
+    },
+    {
+        "id": 287,
+        "seatNumber": "K18",
+        "fullName": "Trương Xuân Quang",
+        "position": "Bí thư Chi bộ,\r\nGiám đốc Chi nhánh Bắc Sài Gòn",
+        "phone": "0918044544",
+        "row": "K",
+        "seatPosition": 18
+    },
+    {
+        "id": 288,
+        "seatNumber": "N24",
+        "fullName": "Nguyễn Minh Cần",
+        "position": "Phó Bí thư Chi bộ Chi nhánh Trà Vinh,\r\nTrưởng PGD Duyên Hải",
+        "phone": "0919011366",
+        "row": "N",
+        "seatPosition": 24
+    },
+    {
+        "id": 289,
+        "seatNumber": "B22",
+        "fullName": "Nguyễn Vân Anh",
+        "position": "Thành viên Hội đồng Quản trị NHCTVN",
+        "phone": "0903458089",
+        "row": "B",
+        "seatPosition": 22
+    },
+    {
+        "id": 290,
+        "seatNumber": "B11",
+        "fullName": "Đặng Thị Việt Hà",
+        "position": "Phó Tổng Giám đốc NHCTVN",
+        "phone": "0913095308",
+        "row": "B",
+        "seatPosition": 11
+    },
+    {
+        "id": 291,
+        "seatNumber": "B8",
+        "fullName": "Cát Quang Dương",
+        "position": "Thành viên Hội đồng Quản trị NHCTVN",
+        "phone": "0988082258",
+        "row": "B",
+        "seatPosition": 8
+    },
+    {
+        "id": 292,
+        "seatNumber": "B9",
+        "fullName": "Nguyễn Thị Bắc",
+        "position": "Chuyên gia cao cấp HĐQT NHCTVN",
+        "phone": "0913270712",
+        "row": "B",
+        "seatPosition": 9
+    },
+    {
+        "id": 293,
+        "seatNumber": "B10",
+        "fullName": "Bùi Như Ý",
+        "position": "Chuyên gia cao cấp HĐQT NHCTVN",
+        "phone": "0912012230",
+        "row": "B",
+        "seatPosition": 10
+    },
+    {
+        "id": 294,
+        "seatNumber": "D4",
+        "fullName": "Hoàng Mạnh Hải",
+        "position": "Tổng Giám đốc Công ty Cho thuê tài chính VietinBank",
+        "phone": "0913522899",
+        "row": "D",
+        "seatPosition": 4
+    }
+];
+
+    realDelegates.forEach(function(delegate) {
+        delegates.set(delegate.id, delegate);
+        seatIndex.set(delegate.seatNumber.toLowerCase(), delegate);
+    });
+}
+
+function createSeatingChart() {
+    if (seatingChartCreated) return;
+    
+    var seatingRows = document.getElementById('seatingRows');
+    var rows = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N'];
+    var seatsPerRow = 24;
+    
+    rows.forEach(function(rowLabel) {
+        var rowDiv = document.createElement('div');
+        rowDiv.className = 'row';
+        
+        if (rowLabel === 'A') {
+            var removedPositions = [7, 12, 13, 18];
+            var newSeatNumber = 1;
+            
+            for (var i = 1; i <= seatsPerRow; i++) {
+                if (removedPositions.indexOf(i) === -1) {
+                    var seatDiv = document.createElement('div');
+                    var seatId = rowLabel + newSeatNumber;
+                    
+                    seatDiv.className = 'seat vip-area';
+                    seatDiv.id = 'seat-' + seatId;
+                    seatDiv.textContent = seatId;
+                    seatDiv.onclick = function(seatNumber) {
+                        return function() { selectSeat(seatNumber); };
+                    }(seatId);
+                    
+                    if (i === 6) seatDiv.style.marginRight = '15px';
+                    if (i === 18) seatDiv.style.marginRight = '15px';
+                    
+                    rowDiv.appendChild(seatDiv);
+                    newSeatNumber++;
                 } else {
-                    alert('❌ Mã không đúng! Bạn sẽ được chuyển về trang chính.');
-                    window.location.href = 'index.html';
-                    return;
+                    var emptyDiv = document.createElement('div');
+                    emptyDiv.className = 'seat';
+                    emptyDiv.style.visibility = 'hidden';
+                    emptyDiv.style.pointerEvents = 'none';
+                    
+                    if (i === 6) emptyDiv.style.marginRight = '15px';
+                    if (i === 18) emptyDiv.style.marginRight = '15px';
+                    
+                    rowDiv.appendChild(emptyDiv);
                 }
             }
+        } else {
+            for (var i = 1; i <= seatsPerRow; i++) {
+                var seatDiv = document.createElement('div');
+                var seatId = rowLabel + i;
+                
+                seatDiv.className = rowLabel === 'B' ? 'seat vip-area' : 'seat';
+                seatDiv.id = 'seat-' + seatId;
+                seatDiv.textContent = seatId;
+                seatDiv.onclick = function(seatNumber) {
+                    return function() { selectSeat(seatNumber); };
+                }(seatId);
+                
+                if (i === 6) seatDiv.style.marginRight = '15px';
+                if (i === 18) seatDiv.style.marginRight = '15px';
+                
+                rowDiv.appendChild(seatDiv);
+            }
         }
-    </script>
+        
+        if (rowLabel === 'A') rowDiv.style.marginBottom = '9px';
+        if (rowLabel === 'F') rowDiv.style.marginBottom = '15px';
+        seatingRows.appendChild(rowDiv);
+    });
+    
+    seatingChartCreated = true;
+}
+
+function findDelegateBySeat(seatNumber) {
+    return seatIndex.get(seatNumber.toLowerCase());
+}
+
+function isValidSeatNumber(seatNumber) {
+    var pattern = /^[A-N]\d{1,2}$/i;
+    return pattern.test(seatNumber);
+}
+
+function displayDelegateInfo(delegate) {
+    document.getElementById('fullName').textContent = delegate.fullName;
+    document.getElementById('position').textContent = delegate.position;
+    
+    var phoneElement = document.getElementById('phoneNumber');
+    phoneElement.innerHTML = '<a href="tel:' + delegate.phone + '" class="phone-link">' + delegate.phone + '</a>';
+    
+    document.getElementById('seatNumber').textContent = delegate.seatNumber;
+    
+    var seatHighlight = document.getElementById('seatHighlight');
+    var vipText = (delegate.row === 'A' || delegate.row === 'B') ? ' (Khu vực VIP)' : '';
+    seatHighlight.textContent = 'Ghế ' + delegate.seatNumber + ' - Hàng ' + delegate.row + vipText;
+    
+    document.getElementById('resultSection').classList.remove('hidden');
+}
+
+function resetHighlight() {
+    var selectedSeats = document.querySelectorAll('.seat.selected');
+    selectedSeats.forEach(function(seat) {
+        seat.classList.remove('selected');
+    });
+}
+
+function highlightSeat(seatNumber) {
+    var seatElement = document.getElementById('seat-' + seatNumber);
+    if (seatElement) {
+        seatElement.classList.add('selected');
+    }
+}
+
+function showError(message) {
+    var errorMessage = document.getElementById('errorMessage');
+    errorMessage.innerHTML = message;
+    errorMessage.classList.remove('hidden');
+}
+
+function toggleClearButton() {
+    var searchInput = document.getElementById('searchInput');
+    var clearBtn = document.getElementById('clearBtn');
+    
+    if (clearBtn && searchInput) {
+        clearBtn.style.display = searchInput.value.trim() ? 'flex' : 'none';
+    }
+}
+
+function initializeApp() {
+    console.log('Admin logged in, initializing app...');
+    
+    initializeDelegateData();
+    createSeatingChart();
+    
+    var searchInput = document.getElementById('searchInput');
+    
+    searchInput.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            searchBySeat();
+        }
+    });
+
+    searchInput.addEventListener('input', function(e) {
+        e.target.value = e.target.value.toUpperCase();
+        toggleClearButton();
+    });
+    
+    searchInput.focus();
+    
+    console.log('App initialization complete');
+}
+
+// === EVENT LISTENERS ===
+document.addEventListener('DOMContentLoaded', function() {
+    var passwordInput = document.getElementById('passwordInput');
+    var loginBtn = document.getElementById('loginBtn');
+    var searchBtn = document.getElementById('searchBtn');
+    var clearBtn = document.getElementById('clearBtn');
+    
+    // Password input enter key
+    if (passwordInput) {
+        passwordInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                loginAdmin();
+            }
+        });
+        passwordInput.focus();
+    }
+    
+    // Login button click
+    if (loginBtn) {
+        loginBtn.addEventListener('click', loginAdmin);
+    }
+    
+    // Search button click
+    if (searchBtn) {
+        searchBtn.addEventListener('click', searchBySeat);
+    }
+    
+    // Clear button click
+    if (clearBtn) {
+        clearBtn.addEventListener('click', clearInput);
+    }
+});
+</script>
 </body>
 </html>
