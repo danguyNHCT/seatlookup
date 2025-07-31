@@ -231,7 +231,7 @@
             color: white;
             text-align: center;
             padding: 10px;
-            margin: 0 0 20px 0;
+            margin: 0 0 40px 0;
             border-radius: 8px;
             width: calc(24 * 38px + 23 * 3px + 30px);
             font-weight: bold;
@@ -382,65 +382,62 @@
             font-size: 14px;
         }
 
-        /* Debug console for mobile */
-        .debug-console {
-            position: fixed;
-            bottom: 10px;
-            left: 10px;
-            right: 10px;
-            background: rgba(0, 0, 0, 0.9);
-            color: #00ff00;
-            padding: 10px;
-            border-radius: 8px;
-            font-family: monospace;
-            font-size: 12px;
-            max-height: 150px;
-            overflow-y: auto;
-            z-index: 10000;
-            display: none;
+        .lotus-row {
+            display: flex;
+            align-items: center;
+            gap: 3px;
+            flex-wrap: nowrap;
+            margin-bottom: 15px;
+            height: 20px;
         }
 
-        .debug-toggle {
-            position: fixed;
-            bottom: 10px;
-            right: 10px;
-            background: #dc2626;
-            color: white;
-            border: none;
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            cursor: pointer;
-            font-size: 12px;
-            z-index: 10001;
-            display: none;
+        .lotus-segment {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 20px;
+            background: linear-gradient(135deg, #fce7f3 0%, #fbcfe8 100%);
+            border: 1px solid #f9a8d4;
+            border-radius: 10px;
+            color: #be185d;
+            font-size: 10px;
+            font-weight: 600;
+            text-align: center;
+            box-shadow: 0 1px 3px rgba(190, 24, 93, 0.2);
+            animation: lotusGlow 3s ease-in-out infinite alternate;
+            flex-shrink: 0;
+            position: relative;
+            overflow: hidden;
         }
 
-        /* Admin Button Styles */
-        .admin-button {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            z-index: 9999;
-            padding: 12px 20px;
-            background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: bold;
-            font-size: 14px;
-            box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);
-            transition: all 0.3s ease;
-            text-decoration: none;
-            display: none;
+        .lotus-icon {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            margin: 0 4px;
+            position: relative;
         }
 
-        .admin-button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 16px rgba(220, 38, 38, 0.4);
-            color: white;
-            text-decoration: none;
+        .lotus-icon svg {
+            width: 100%;
+            height: 100%;
+            fill: #be185d;
+            filter: drop-shadow(0 1px 2px rgba(190, 24, 93, 0.3));
+            animation: lotusFloat 4s ease-in-out infinite alternate;
+        }
+
+        .lotus-segment:nth-child(1) {
+            width: calc(6 * 38px + 5 * 3px);
+            margin-right: 15px;
+        }
+
+        .lotus-segment:nth-child(2) {
+            width: calc(12 * 38px + 11 * 3px);
+            margin-right: 15px;
+        }
+
+        .lotus-segment:nth-child(3) {
+            width: calc(6 * 38px + 5 * 3px);
         }
 
         @keyframes vipGlow {
@@ -475,8 +472,6 @@
             .username-suggestion { padding: 8px 12px; }
             .username-text { font-size: 13px; }
             .copy-btn { padding: 4px 8px; font-size: 11px; }
-            .admin-button { top: 10px; right: 10px; padding: 8px 12px; font-size: 12px; }
-            .debug-toggle { display: block; }
         }
 
         @media (max-width: 480px) {
@@ -547,97 +542,7 @@
         </div>
     </div>
 
-    <!-- Debug Console for Mobile -->
-    <button class="debug-toggle" onclick="toggleDebugConsole()">🐛</button>
-    <div class="debug-console" id="debugConsole"></div>
-
     <script>
-        // ==================== ENHANCED DEBUG SYSTEM ====================
-        let debugMessages = [];
-        let debugEnabled = false;
-
-        function debugLog(message, type = 'info') {
-            const timestamp = new Date().toLocaleTimeString('vi-VN');
-            const logMessage = `[${timestamp}] ${type.toUpperCase()}: ${message}`;
-            
-            debugMessages.push(logMessage);
-            console.log(logMessage);
-            
-            // Keep only last 50 messages
-            if (debugMessages.length > 50) {
-                debugMessages = debugMessages.slice(-50);
-            }
-            
-            updateDebugConsole();
-        }
-
-        function updateDebugConsole() {
-            const debugConsole = document.getElementById('debugConsole');
-            if (debugConsole && debugEnabled) {
-                debugConsole.innerHTML = debugMessages.slice(-10).join('<br>');
-                debugConsole.scrollTop = debugConsole.scrollHeight;
-            }
-        }
-
-        function toggleDebugConsole() {
-            debugEnabled = !debugEnabled;
-            const debugConsole = document.getElementById('debugConsole');
-            debugConsole.style.display = debugEnabled ? 'block' : 'none';
-            
-            if (debugEnabled) {
-                updateDebugConsole();
-            }
-        }
-
-        // ==================== ENHANCED STORAGE FUNCTIONS ====================
-        function safeLocalStorageSet(key, value) {
-            try {
-                const stringValue = JSON.stringify(value);
-                localStorage.setItem(key, stringValue);
-                debugLog(`✅ LocalStorage SET successful: ${key}`, 'success');
-                return true;
-            } catch (error) {
-                debugLog(`❌ LocalStorage SET failed: ${key} - ${error.message}`, 'error');
-                console.error('LocalStorage error:', error);
-                
-                // Fallback to sessionStorage
-                try {
-                    sessionStorage.setItem(key, JSON.stringify(value));
-                    debugLog(`⚠️ Fallback to SessionStorage: ${key}`, 'warning');
-                    return true;
-                } catch (sessionError) {
-                    debugLog(`❌ SessionStorage also failed: ${sessionError.message}`, 'error');
-                    return false;
-                }
-            }
-        }
-
-        function safeLocalStorageGet(key) {
-            try {
-                let value = localStorage.getItem(key);
-                if (value === null) {
-                    // Try sessionStorage as fallback
-                    value = sessionStorage.getItem(key);
-                    if (value !== null) {
-                        debugLog(`📱 Using SessionStorage fallback: ${key}`, 'info');
-                    }
-                }
-                
-                if (value === null) {
-                    debugLog(`📝 Key not found: ${key}`, 'info');
-                    return null;
-                }
-                
-                const parsed = JSON.parse(value);
-                debugLog(`✅ LocalStorage GET successful: ${key}`, 'success');
-                return parsed;
-            } catch (error) {
-                debugLog(`❌ LocalStorage GET failed: ${key} - ${error.message}`, 'error');
-                console.error('LocalStorage parse error:', error);
-                return null;
-            }
-        }
-
         // ==================== DATA STRUCTURES ====================
         const delegates = new Map();
         const phoneIndex = new Map();
@@ -645,328 +550,2661 @@
         const usernameList = [];
         
         function initializeDelegateData() {
-            debugLog('🔄 Initializing delegate data...', 'info');
-            
             const realDelegates = [
-                { id: 1, username: "binhtm", phone: "0987654321", fullName: "Trần Minh Bình", seatNumber: "A18", row: "A", position: 18 },
-                { id: 2, username: "nh.quang", phone: "0912345678", fullName: "Nguyễn Hoàng Quang", seatNumber: "C6", row: "C", position: 6 },
-                { id: 3, username: "xuanbtt", phone: "0923456789", fullName: "Bùi Thị Thu Xuân", seatNumber: "B19", row: "B", position: 19 },
+               
+  {
+    "id": 1,
+    "username": "binhtm",
+    "phone": "0913588832",
+    "fullName": "Trần Minh Bình",
+    "seatNumber": "A17",
+    "row": "A",
+    "position": 17
+  },
+  {
+    "id": 2,
+    "username": "cuongtk",
+    "phone": "0913260131",
+    "fullName": "Trần Kiên Cường",
+    "seatNumber": "A1",
+    "row": "A",
+    "position": 1
+  },
+  {
+    "id": 3,
+    "username": "trungntm",
+    "phone": "0983832109",
+    "fullName": "Nguyễn Trần Mạnh Trung",
+    "seatNumber": "A19",
+    "row": "A",
+    "position": 19
+  },
+  {
+    "id": 4,
+    "username": "tan.tv",
+    "phone": "0912171372",
+    "fullName": "Trần Văn Tần",
+    "seatNumber": "B7",
+    "row": "B",
+    "position": 7
+  },
+  {
+    "id": 5,
+    "username": "huannt",
+    "phone": "0913538811",
+    "fullName": "Nguyễn Thế Huân",
+    "seatNumber": "B6",
+    "row": "B",
+    "position": 6
+  },
+  {
+    "id": 6,
+    "username": "dungnv7",
+    "phone": "0935588888",
+    "fullName": "Nguyễn Việt Dũng",
+    "seatNumber": "B19",
+    "row": "B",
+    "position": 19
+  },
+  {
+    "id": 7,
+    "username": "haild",
+    "phone": "0902190669",
+    "fullName": "Lê Duy Hải",
+    "seatNumber": "B18",
+    "row": "B",
+    "position": 18
+  },
+  {
+    "id": 8,
+    "username": "dtson",
+    "phone": "0908687868",
+    "fullName": "Đỗ Thanh Sơn",
+    "seatNumber": "B5",
+    "row": "B",
+    "position": 5
+  },
+  {
+    "id": 9,
+    "username": "quandv",
+    "phone": "0913008558",
+    "fullName": "Dương Văn Quân",
+    "seatNumber": "B17",
+    "row": "B",
+    "position": 17
+  },
+  {
+    "id": 10,
+    "username": "giangnq",
+    "phone": "0913297191",
+    "fullName": "Nguyễn Quốc Giang",
+    "seatNumber": "B24",
+    "row": "B",
+    "position": 24
+  },
+  {
+    "id": 11,
+    "username": "hoaiptt",
+    "phone": "0912323239",
+    "fullName": "Phạm Thị Thanh Hoài",
+    "seatNumber": "B22",
+    "row": "B",
+    "position": 22
+  },
+  {
+    "id": 12,
+    "username": "lethanhtung",
+    "phone": "0904107810",
+    "fullName": "Lê Thanh Tùng",
+    "seatNumber": "B21",
+    "row": "B",
+    "position": 21
+  },
+  {
+    "id": 13,
+    "username": "nh.quang",
+    "phone": "0912000656",
+    "fullName": "Nguyễn Huy Quang",
+    "seatNumber": "C10",
+    "row": "C",
+    "position": 10
+  },
+  {
+    "id": 14,
+    "username": "vyvt",
+    "phone": "0913580004",
+    "fullName": "Vũ Trung Vỹ",
+    "seatNumber": "C11",
+    "row": "C",
+    "position": 11
+  },
+  {
+    "id": 15,
+    "username": "vunx",
+    "phone": "0913937136",
+    "fullName": "Nguyễn Xuân Vũ",
+    "seatNumber": "C12",
+    "row": "C",
+    "position": 12
+  },
+  {
+    "id": 16,
+    "username": "hala",
+    "phone": "0904021866",
+    "fullName": "Lê Anh Hà",
+    "seatNumber": "C13",
+    "row": "C",
+    "position": 13
+  },
+  {
+    "id": 17,
+    "username": "hung.nh",
+    "phone": "0904252732",
+    "fullName": "Nguyễn Hải Hưng",
+    "seatNumber": "C14",
+    "row": "C",
+    "position": 14
+  },
+  {
+    "id": 18,
+    "username": "hoaln",
+    "phone": "0913312827",
+    "fullName": "Lê Như Hoa",
+    "seatNumber": "C15",
+    "row": "C",
+    "position": 15
+  },
+  {
+    "id": 19,
+    "username": "nguyenducthanh",
+    "phone": "0913201274",
+    "fullName": "Nguyễn Đức Thành",
+    "seatNumber": "C16",
+    "row": "C",
+    "position": 16
+  },
+  {
+    "id": 20,
+    "username": "vannbt",
+    "phone": "0913153027",
+    "fullName": "Nguyễn Bảo Thanh Vân",
+    "seatNumber": "C17",
+    "row": "C",
+    "position": 17
+  },
+  {
+    "id": 21,
+    "username": "lantcq",
+    "phone": "0982512513",
+    "fullName": "Trần Công Quỳnh Lân",
+    "seatNumber": "C18",
+    "row": "C",
+    "position": 18
+  },
+  {
+    "id": 22,
+    "username": "tuyendx",
+    "phone": "0906112359",
+    "fullName": "Đào Xuân Tuyên",
+    "seatNumber": "C21",
+    "row": "C",
+    "position": 21
+  },
+  {
+    "id": 23,
+    "username": "huongdtk",
+    "phone": "0984339558",
+    "fullName": "Đoàn Thị Kiều Hương",
+    "seatNumber": "C22",
+    "row": "C",
+    "position": 22
+  },
+  {
+    "id": 24,
+    "username": "phuonglt106",
+    "phone": "0988532555",
+    "fullName": "Lê Thị Phượng",
+    "seatNumber": "C23",
+    "row": "C",
+    "position": 23
+  },
+  {
+    "id": 25,
+    "username": "thaolt2",
+    "phone": "0913366353",
+    "fullName": "Lý Thanh Thảo",
+    "seatNumber": "C24",
+    "row": "C",
+    "position": 24
+  },
+  {
+    "id": 26,
+    "username": "lanlp",
+    "phone": "0912661422",
+    "fullName": "Lê Phương Lan",
+    "seatNumber": "D15",
+    "row": "D",
+    "position": 15
+  },
+  {
+    "id": 27,
+    "username": "huonglm",
+    "phone": "0904981468",
+    "fullName": "Lê Minh Hương",
+    "seatNumber": "D13",
+    "row": "D",
+    "position": 13
+  },
+  {
+    "id": 28,
+    "username": "duclv",
+    "phone": "0967596666",
+    "fullName": "Lê Việt Đức",
+    "seatNumber": "C7",
+    "row": "C",
+    "position": 7
+  },
+  {
+    "id": 29,
+    "username": "nt.hoa",
+    "phone": "0915525888",
+    "fullName": "Nguyễn Thị Hoa",
+    "seatNumber": "D12",
+    "row": "D",
+    "position": 12
+  },
+  {
+    "id": 30,
+    "username": "huongnguyen",
+    "phone": "0913012866",
+    "fullName": "Nguyễn Thị Hương",
+    "seatNumber": "D14",
+    "row": "D",
+    "position": 14
+  },
+  {
+    "id": 31,
+    "username": "nttung",
+    "phone": "0989899268",
+    "fullName": "Nguyễn Thanh Tùng",
+    "seatNumber": "C8",
+    "row": "C",
+    "position": 8
+  },
+  {
+    "id": 32,
+    "username": "nghia.dt",
+    "phone": "0945336999",
+    "fullName": "Đỗ Trọng Nghĩa",
+    "seatNumber": "D10",
+    "row": "D",
+    "position": 10
+  },
+  {
+    "id": 33,
+    "username": "quydt",
+    "phone": "0902089768",
+    "fullName": "Đỗ Trần Quý",
+    "seatNumber": "D9",
+    "row": "D",
+    "position": 9
+  },
+  {
+    "id": 34,
+    "username": "tiendh",
+    "phone": "0904309888",
+    "fullName": "Đàm Hồng Tiến",
+    "seatNumber": "D11",
+    "row": "D",
+    "position": 11
+  },
+  {
+    "id": 35,
+    "username": "ng.a.tuan",
+    "phone": "0903421636",
+    "fullName": "Nguyễn Anh Tuấn",
+    "seatNumber": "C9",
+    "row": "C",
+    "position": 9
+  },
+  {
+    "id": 36,
+    "username": "hungla",
+    "phone": "0903252590",
+    "fullName": "Lê Anh Hùng",
+    "seatNumber": "D8",
+    "row": "D",
+    "position": 8
+  },
+  {
+    "id": 37,
+    "username": "duc.tm",
+    "phone": "0902118198",
+    "fullName": "Trần Minh Đức",
+    "seatNumber": "D24",
+    "row": "D",
+    "position": 24
+  },
+  {
+    "id": 38,
+    "username": "nmtoan",
+    "phone": "0912288272",
+    "fullName": "Nguyễn Mạnh Toàn",
+    "seatNumber": "D7",
+    "row": "D",
+    "position": 7
+  },
+  {
+    "id": 39,
+    "username": "thanhptn",
+    "phone": "0987888009",
+    "fullName": "Phạm Thị Nguyệt Thanh",
+    "seatNumber": "E24",
+    "row": "E",
+    "position": 24
+  },
+  {
+    "id": 40,
+    "username": "nguyenthanh.hung",
+    "phone": "0912200643",
+    "fullName": "Nguyễn Thanh Hùng",
+    "seatNumber": "E22",
+    "row": "E",
+    "position": 22
+  },
+  {
+    "id": 41,
+    "username": "dung.nguyenthai",
+    "phone": "0982334136",
+    "fullName": "Nguyễn Thái Dung",
+    "seatNumber": "E8",
+    "row": "E",
+    "position": 8
+  },
+  {
+    "id": 42,
+    "username": "thangnt2",
+    "phone": "0946821909",
+    "fullName": "Nguyễn Thị Thắng",
+    "seatNumber": "E9",
+    "row": "E",
+    "position": 9
+  },
+  {
+    "id": 43,
+    "username": "ngandtk",
+    "phone": "0905200299",
+    "fullName": "Đinh Thị Kim Ngân",
+    "seatNumber": "E3",
+    "row": "E",
+    "position": 3
+  },
+  {
+    "id": 44,
+    "username": "thaidh",
+    "phone": "0903670145",
+    "fullName": "Đỗ Hồng Thái",
+    "seatNumber": "E4",
+    "row": "E",
+    "position": 4
+  },
+  {
+    "id": 45,
+    "username": "trangbt",
+    "phone": "0988362843",
+    "fullName": "Bùi Thu Trang",
+    "seatNumber": "E21",
+    "row": "E",
+    "position": 21
+  },
+  {
+    "id": 46,
+    "username": "tt.thuhuyen",
+    "phone": "0987401022",
+    "fullName": "Trần Thị Thu Huyền",
+    "seatNumber": "E7",
+    "row": "E",
+    "position": 7
+  },
+  {
+    "id": 47,
+    "username": "th.nam",
+    "phone": "0936931979",
+    "fullName": "Trần Hoài Nam",
+    "seatNumber": "E18",
+    "row": "E",
+    "position": 18
+  },
+  {
+    "id": 48,
+    "username": "hai.nguyentuan",
+    "phone": "0904324555",
+    "fullName": "Nguyễn Tuấn Hải",
+    "seatNumber": "E17",
+    "row": "E",
+    "position": 17
+  },
+  {
+    "id": 49,
+    "username": "hienhtt",
+    "phone": "0936154525",
+    "fullName": "Hồ Thị Thu Hiền",
+    "seatNumber": "D22",
+    "row": "D",
+    "position": 22
+  },
+  {
+    "id": 50,
+    "username": "nguyenthuy.duong",
+    "phone": "0903480919",
+    "fullName": "Nguyễn Thùy Dương",
+    "seatNumber": "E16",
+    "row": "E",
+    "position": 16
+  },
+  {
+    "id": 51,
+    "username": "haqtt",
+    "phone": "0961675599",
+    "fullName": "Quách Thị Thúy Hà",
+    "seatNumber": "E15",
+    "row": "E",
+    "position": 15
+  },
+  {
+    "id": 52,
+    "username": "xuanptt",
+    "phone": "0982779688",
+    "fullName": "Phạm Thị Thanh Xuân",
+    "seatNumber": "E19",
+    "row": "E",
+    "position": 19
+  },
+  {
+    "id": 53,
+    "username": "binhtq",
+    "phone": "0912289669",
+    "fullName": "Trần Quốc Bình",
+    "seatNumber": "E20",
+    "row": "E",
+    "position": 20
+  },
+  {
+    "id": 54,
+    "username": "thunv2",
+    "phone": "0907746688",
+    "fullName": "Nguyễn Văn Thụ",
+    "seatNumber": "D18",
+    "row": "D",
+    "position": 18
+  },
+  {
+    "id": 55,
+    "username": "thuybtt",
+    "phone": "0989308517",
+    "fullName": "Bùi Thị Thanh Thúy",
+    "seatNumber": "D17",
+    "row": "D",
+    "position": 17
+  },
+  {
+    "id": 56,
+    "username": "hang.phamthi",
+    "phone": "0912373681",
+    "fullName": "Phạm Thị Hằng",
+    "seatNumber": "E5",
+    "row": "E",
+    "position": 5
+  },
+  {
+    "id": 57,
+    "username": "khuepb",
+    "phone": "0905698288",
+    "fullName": "Phạm Bảo Khuê",
+    "seatNumber": "E6",
+    "row": "E",
+    "position": 6
+  },
+  {
+    "id": 58,
+    "username": "thinhnt",
+    "phone": "0912150802",
+    "fullName": "Nguyễn Thế Thịnh",
+    "seatNumber": "D16",
+    "row": "D",
+    "position": 16
+  },
+  {
+    "id": 59,
+    "username": "anhnh",
+    "phone": "0913597061",
+    "fullName": "Nguyễn Hồng Anh",
+    "seatNumber": "D6",
+    "row": "D",
+    "position": 6
+  },
+  {
+    "id": 60,
+    "username": "baotq",
+    "phone": "0834268199",
+    "fullName": "Trịnh Quốc Bảo",
+    "seatNumber": "D5",
+    "row": "D",
+    "position": 5
+  },
+  {
+    "id": 61,
+    "username": "truonghx",
+    "phone": "0915357777",
+    "fullName": "Hà Xuân Trường",
+    "seatNumber": "D23",
+    "row": "D",
+    "position": 23
+  },
+  {
+    "id": 62,
+    "username": "thanhxuannguyen",
+    "phone": "0902754799",
+    "fullName": "Nguyễn Thành Xuân",
+    "seatNumber": "D20",
+    "row": "D",
+    "position": 20
+  },
+  {
+    "id": 63,
+    "username": "quangtd1",
+    "phone": "0968233377",
+    "fullName": "Trịnh Đức Quang",
+    "seatNumber": "D21",
+    "row": "D",
+    "position": 21
+  },
+  {
+    "id": 64,
+    "username": "tm.hoang",
+    "phone": "0913946611",
+    "fullName": "Trương Minh Hoàng",
+    "seatNumber": "E10",
+    "row": "E",
+    "position": 10
+  },
+  {
+    "id": 65,
+    "username": "halt",
+    "phone": "0989665122",
+    "fullName": "Lê Thanh Hà",
+    "seatNumber": "E11",
+    "row": "E",
+    "position": 11
+  },
+  {
+    "id": 66,
+    "username": "phuongnm",
+    "phone": "0989337736",
+    "fullName": "Nguyễn Minh Phương",
+    "seatNumber": "E12",
+    "row": "E",
+    "position": 12
+  },
+  {
+    "id": 67,
+    "username": "anh.tt",
+    "phone": "0912009867",
+    "fullName": "Trương Thúy Anh",
+    "seatNumber": "E13",
+    "row": "E",
+    "position": 13
+  },
+  {
+    "id": 68,
+    "username": "hant1",
+    "phone": "0904599279",
+    "fullName": "Nguyễn Thu Hà",
+    "seatNumber": "E14",
+    "row": "E",
+    "position": 14
+  },
+  {
+    "id": 69,
+    "username": "hiepnsn",
+    "phone": "0903247189",
+    "fullName": "Nguyễn Sỹ Nam Hiệp",
+    "seatNumber": "E23",
+    "row": "E",
+    "position": 23
+  },
+  {
+    "id": 70,
+    "username": "xuanbtt",
+    "phone": "0968221177",
+    "fullName": "Bùi Thị Thanh Xuân",
+    "seatNumber": "D2",
+    "row": "D",
+    "position": 2
+  },
+  {
+    "id": 71,
+    "username": "dungtt",
+    "phone": "0932728666",
+    "fullName": "Trần Tiến Dũng",
+    "seatNumber": "D1",
+    "row": "D",
+    "position": 1
+  },
+  {
+    "id": 72,
+    "username": "hoaltq",
+    "phone": "0989322455",
+    "fullName": "Lê Thị Quỳnh Hoa",
+    "seatNumber": "E1",
+    "row": "E",
+    "position": 1
+  },
+  {
+    "id": 73,
+    "username": "phantiendung",
+    "phone": "0906178688",
+    "fullName": "Phan Tiến Dũng",
+    "seatNumber": "F1",
+    "row": "F",
+    "position": 1
+  },
+  {
+    "id": 74,
+    "username": "vinhtp",
+    "phone": "0936890619",
+    "fullName": "Trần Phúc Vinh",
+    "seatNumber": "F5",
+    "row": "F",
+    "position": 5
+  },
+  {
+    "id": 75,
+    "username": "luatld",
+    "phone": "0913366722",
+    "fullName": "Lê Đình Luật",
+    "seatNumber": "F4",
+    "row": "F",
+    "position": 4
+  },
+  {
+    "id": 76,
+    "username": "tuongnq",
+    "phone": "0983020898",
+    "fullName": "Ngô Quốc Tưởng",
+    "seatNumber": "D3",
+    "row": "D",
+    "position": 3
+  },
+  {
+    "id": 77,
+    "username": "diep.pth",
+    "phone": "0901055858",
+    "fullName": "Phan Thị Hồng Điệp",
+    "seatNumber": "F3",
+    "row": "F",
+    "position": 3
+  },
+  {
+    "id": 78,
+    "username": "ducnh",
+    "phone": "0903450005",
+    "fullName": "Nguyễn Hồng Đức",
+    "seatNumber": "E2",
+    "row": "E",
+    "position": 2
+  },
+  {
+    "id": 79,
+    "username": "maittt",
+    "phone": "0915668588",
+    "fullName": "Trần Thị Tuyết Mai",
+    "seatNumber": "F2",
+    "row": "F",
+    "position": 2
+  },
+  {
+    "id": 80,
+    "username": "haocv",
+    "phone": "0989065968",
+    "fullName": "Chu Văn Hào",
+    "seatNumber": "F6",
+    "row": "F",
+    "position": 6
+  },
+  {
+    "id": 81,
+    "username": "ngocpl",
+    "phone": "0912485010",
+    "fullName": "Phạm Lê Ngọc",
+    "seatNumber": "F7",
+    "row": "F",
+    "position": 7
+  },
+  {
+    "id": 82,
+    "username": "nhung.vtt",
+    "phone": "0912249288",
+    "fullName": "Võ Thị Thanh Nhung",
+    "seatNumber": "F8",
+    "row": "F",
+    "position": 8
+  },
+  {
+    "id": 83,
+    "username": "diepln",
+    "phone": "0946200555",
+    "fullName": "Lê Ngọc Diệp",
+    "seatNumber": "F9",
+    "row": "F",
+    "position": 9
+  },
+  {
+    "id": 84,
+    "username": "trangntv",
+    "phone": "0912237971",
+    "fullName": "Nguyễn Thị Vân Trang",
+    "seatNumber": "F10",
+    "row": "F",
+    "position": 10
+  },
+  {
+    "id": 85,
+    "username": "yen.lethihai",
+    "phone": "0983692028",
+    "fullName": "Lê Thị Hải Yến",
+    "seatNumber": "F11",
+    "row": "F",
+    "position": 11
+  },
+  {
+    "id": 86,
+    "username": "duong.nn",
+    "phone": "0983888883",
+    "fullName": "Nguyễn Như Dương",
+    "seatNumber": "F18",
+    "row": "F",
+    "position": 18
+  },
+  {
+    "id": 87,
+    "username": "linh.lt",
+    "phone": "0915586686",
+    "fullName": "Lưu Thùy Linh",
+    "seatNumber": "F17",
+    "row": "F",
+    "position": 17
+  },
+  {
+    "id": 88,
+    "username": "hiendtt",
+    "phone": "0912179967",
+    "fullName": "Đào Thị Thu Hiền",
+    "seatNumber": "F12",
+    "row": "F",
+    "position": 12
+  },
+  {
+    "id": 89,
+    "username": "tung.nguyenthanh",
+    "phone": "0904991858",
+    "fullName": "Nguyễn Thanh Tùng",
+    "seatNumber": "F13",
+    "row": "F",
+    "position": 13
+  },
+  {
+    "id": 90,
+    "username": "pt.thang",
+    "phone": "0946977777",
+    "fullName": "Phạm Tuấn Thắng",
+    "seatNumber": "F14",
+    "row": "F",
+    "position": 14
+  },
+  {
+    "id": 91,
+    "username": "nhanpt",
+    "phone": "0915153435",
+    "fullName": "Phạm Trọng Nhàn",
+    "seatNumber": "F15",
+    "row": "F",
+    "position": 15
+  },
+  {
+    "id": 92,
+    "username": "nguyenthithu.huyen",
+    "phone": "0936536688",
+    "fullName": "Nguyễn Thị Thu Huyền",
+    "seatNumber": "G6",
+    "row": "G",
+    "position": 6
+  },
+  {
+    "id": 93,
+    "username": "longch",
+    "phone": "0935266868",
+    "fullName": "Cát Huy Long",
+    "seatNumber": "H6",
+    "row": "H",
+    "position": 6
+  },
+  {
+    "id": 94,
+    "username": "lien.nth",
+    "phone": "0972655186",
+    "fullName": "Nguyễn Thị Hồng Liên",
+    "seatNumber": "G7",
+    "row": "G",
+    "position": 7
+  },
+  {
+    "id": 95,
+    "username": "dtanh",
+    "phone": "0912179692",
+    "fullName": "Đỗ Tuấn Anh",
+    "seatNumber": "G8",
+    "row": "G",
+    "position": 8
+  },
+  {
+    "id": 96,
+    "username": "bac.tv",
+    "phone": "0943939669",
+    "fullName": "Tạ Việt Bắc",
+    "seatNumber": "G9",
+    "row": "G",
+    "position": 9
+  },
+  {
+    "id": 97,
+    "username": "haibm",
+    "phone": "0912005606",
+    "fullName": "Bùi Minh Hải",
+    "seatNumber": "G10",
+    "row": "G",
+    "position": 10
+  },
+  {
+    "id": 98,
+    "username": "phongdpv",
+    "phone": "0932259559",
+    "fullName": "Đào Phan Vũ Phong",
+    "seatNumber": "G11",
+    "row": "G",
+    "position": 11
+  },
+  {
+    "id": 99,
+    "username": "ntb.hanh",
+    "phone": "0983800105",
+    "fullName": "Nguyễn Thị Bích Hạnh",
+    "seatNumber": "G18",
+    "row": "G",
+    "position": 18
+  },
+  {
+    "id": 100,
+    "username": "dqtrung",
+    "phone": "0913598385",
+    "fullName": "Dương Quang Trung",
+    "seatNumber": "H18",
+    "row": "H",
+    "position": 18
+  },
+  {
+    "id": 101,
+    "username": "linhtt",
+    "phone": "0914838588",
+    "fullName": "Trần Thùy Linh",
+    "seatNumber": "G12",
+    "row": "G",
+    "position": 12
+  },
+  {
+    "id": 102,
+    "username": "nhandth",
+    "phone": "0976083888",
+    "fullName": "Đỗ Thị Hải Nhạn",
+    "seatNumber": "G13",
+    "row": "G",
+    "position": 13
+  },
+  {
+    "id": 103,
+    "username": "tuelv",
+    "phone": "0916756636",
+    "fullName": "Lê Vương Tuệ",
+    "seatNumber": "G14",
+    "row": "G",
+    "position": 14
+  },
+  {
+    "id": 104,
+    "username": "sontt",
+    "phone": "0904768999",
+    "fullName": "Trần Thanh Sơn",
+    "seatNumber": "G15",
+    "row": "G",
+    "position": 15
+  },
+  {
+    "id": 105,
+    "username": "nd.hung",
+    "phone": "0913247845",
+    "fullName": "Nguyễn Đức Hùng",
+    "seatNumber": "G16",
+    "row": "G",
+    "position": 16
+  },
+  {
+    "id": 106,
+    "username": "dtthang",
+    "phone": "0982967368",
+    "fullName": "Đào Thị Thu Hằng",
+    "seatNumber": "G17",
+    "row": "G",
+    "position": 17
+  },
+  {
+    "id": 107,
+    "username": "quannh6",
+    "phone": "0988019986",
+    "fullName": "Nguyễn Hoàng Quân",
+    "seatNumber": "F19",
+    "row": "F",
+    "position": 19
+  },
+  {
+    "id": 108,
+    "username": "daonta",
+    "phone": "0912904171",
+    "fullName": "Nguyễn Thị Anh Đào",
+    "seatNumber": "H7",
+    "row": "H",
+    "position": 7
+  },
+  {
+    "id": 109,
+    "username": "hue.nguyenthi",
+    "phone": "0973076868",
+    "fullName": "Nguyễn Thị Huệ",
+    "seatNumber": "H8",
+    "row": "H",
+    "position": 8
+  },
+  {
+    "id": 110,
+    "username": "gianglv",
+    "phone": "0915331171",
+    "fullName": "Lê Văn Giang",
+    "seatNumber": "G1",
+    "row": "G",
+    "position": 1
+  },
+  {
+    "id": 111,
+    "username": "quandm",
+    "phone": "0912484037",
+    "fullName": "Đỗ Mạnh Quân",
+    "seatNumber": "G2",
+    "row": "G",
+    "position": 2
+  },
+  {
+    "id": 112,
+    "username": "giangdh",
+    "phone": "0984898401",
+    "fullName": "Đỗ Hồng Giang",
+    "seatNumber": "G3",
+    "row": "G",
+    "position": 3
+  },
+  {
+    "id": 113,
+    "username": "nguyenquang.tam",
+    "phone": "0912235685",
+    "fullName": "Nguyễn Quang Tâm",
+    "seatNumber": "H1",
+    "row": "H",
+    "position": 1
+  },
+  {
+    "id": 114,
+    "username": "phamthi.thuy",
+    "phone": "0985814094",
+    "fullName": "Phạm Thị Thúy",
+    "seatNumber": "H2",
+    "row": "H",
+    "position": 2
+  },
+  {
+    "id": 115,
+    "username": "loi.nv",
+    "phone": "0961689169",
+    "fullName": "Nguyễn Văn Lợi",
+    "seatNumber": "H3",
+    "row": "H",
+    "position": 3
+  },
+  {
+    "id": 116,
+    "username": "nguyenthikim.thanh",
+    "phone": "0912841893",
+    "fullName": "Nguyễn Thị Kim Thanh",
+    "seatNumber": "I2",
+    "row": "I",
+    "position": 2
+  },
+  {
+    "id": 117,
+    "username": "tuan.nt",
+    "phone": "0973199555",
+    "fullName": "Nguyễn Thanh Tuấn",
+    "seatNumber": "K1",
+    "row": "K",
+    "position": 1
+  },
+  {
+    "id": 118,
+    "username": "leht",
+    "phone": "0946728999",
+    "fullName": "Hà Thị Lê",
+    "seatNumber": "K2",
+    "row": "K",
+    "position": 2
+  },
+  {
+    "id": 119,
+    "username": "tuanna180",
+    "phone": "0911123999",
+    "fullName": "Nguyễn Anh Tuấn",
+    "seatNumber": "K3",
+    "row": "K",
+    "position": 3
+  },
+  {
+    "id": 120,
+    "username": "dt.nguyen",
+    "phone": "0972088999",
+    "fullName": "Dương Tuấn Nguyên",
+    "seatNumber": "K4",
+    "row": "K",
+    "position": 4
+  },
+  {
+    "id": 121,
+    "username": "hung.vv",
+    "phone": "0912032279",
+    "fullName": "Vũ Văn Hưng",
+    "seatNumber": "K5",
+    "row": "K",
+    "position": 5
+  },
+  {
+    "id": 122,
+    "username": "vuht",
+    "phone": "0948689996",
+    "fullName": "Hoàng Tuấn Vũ",
+    "seatNumber": "K6",
+    "row": "K",
+    "position": 6
+  },
+  {
+    "id": 123,
+    "username": "tuongnb",
+    "phone": "0913271338",
+    "fullName": "Nguyễn Bình Tường",
+    "seatNumber": "M1",
+    "row": "M",
+    "position": 1
+  },
+  {
+    "id": 124,
+    "username": "nguyen.thuy.hang",
+    "phone": "0913505736",
+    "fullName": "Nguyễn Thúy Hằng",
+    "seatNumber": "H9",
+    "row": "H",
+    "position": 9
+  },
+  {
+    "id": 125,
+    "username": "van.dtt",
+    "phone": "0982770734",
+    "fullName": "Đỗ Thị Thúy Vân",
+    "seatNumber": "H10",
+    "row": "H",
+    "position": 10
+  },
+  {
+    "id": 126,
+    "username": "huy.nd",
+    "phone": "0988718182",
+    "fullName": "Nguyễn Đức Huy",
+    "seatNumber": "L1",
+    "row": "L",
+    "position": 1
+  },
+  {
+    "id": 127,
+    "username": "haotq",
+    "phone": "0901599866",
+    "fullName": "Trương Quý Hào",
+    "seatNumber": "L5",
+    "row": "L",
+    "position": 5
+  },
+  {
+    "id": 128,
+    "username": "ng.thithu",
+    "phone": "0984176176",
+    "fullName": "Nguyễn Thị Thu",
+    "seatNumber": "L4",
+    "row": "L",
+    "position": 4
+  },
+  {
+    "id": 129,
+    "username": "nhquan",
+    "phone": "0977931999",
+    "fullName": "Nguyễn Hồng Quân",
+    "seatNumber": "L2",
+    "row": "L",
+    "position": 2
+  },
+  {
+    "id": 130,
+    "username": "phuong.pv",
+    "phone": "0983280680",
+    "fullName": "Phan Việt Phương",
+    "seatNumber": "L6",
+    "row": "L",
+    "position": 6
+  },
+  {
+    "id": 131,
+    "username": "ducnd",
+    "phone": "0904392611",
+    "fullName": "Nguyễn Đình Đức",
+    "seatNumber": "K7",
+    "row": "K",
+    "position": 7
+  },
+  {
+    "id": 132,
+    "username": "ntmphuong",
+    "phone": "0912710186",
+    "fullName": "Nguyễn Thị Minh Phương",
+    "seatNumber": "L3",
+    "row": "L",
+    "position": 3
+  },
+  {
+    "id": 133,
+    "username": "dovan.phi",
+    "phone": "0912054225",
+    "fullName": "Đỗ Văn Phi",
+    "seatNumber": "N2",
+    "row": "N",
+    "position": 2
+  },
+  {
+    "id": 134,
+    "username": "thuanpd",
+    "phone": "0914790799",
+    "fullName": "Phạm Đức Thuận",
+    "seatNumber": "M3",
+    "row": "M",
+    "position": 3
+  },
+  {
+    "id": 135,
+    "username": "cannq",
+    "phone": "0915315939",
+    "fullName": "Nguyễn Quốc Cẩn",
+    "seatNumber": "M4",
+    "row": "M",
+    "position": 4
+  },
+  {
+    "id": 136,
+    "username": "nv.tan",
+    "phone": "0912244584",
+    "fullName": "Nguyễn Vĩnh Tân",
+    "seatNumber": "M5",
+    "row": "M",
+    "position": 5
+  },
+  {
+    "id": 137,
+    "username": "haipn",
+    "phone": "0912474456",
+    "fullName": "Phan Ngọc Hải",
+    "seatNumber": "M6",
+    "row": "M",
+    "position": 6
+  },
+  {
+    "id": 138,
+    "username": "kien.nguyentrung",
+    "phone": "0913589929",
+    "fullName": "Nguyễn Trung Kiên",
+    "seatNumber": "L7",
+    "row": "L",
+    "position": 7
+  },
+  {
+    "id": 139,
+    "username": "ducnv",
+    "phone": "0982615185",
+    "fullName": "Nguyễn Văn Đức",
+    "seatNumber": "L8",
+    "row": "L",
+    "position": 8
+  },
+  {
+    "id": 140,
+    "username": "duynq",
+    "phone": "0917123888",
+    "fullName": "Nguyễn Quốc Duy",
+    "seatNumber": "N3",
+    "row": "N",
+    "position": 3
+  },
+  {
+    "id": 141,
+    "username": "tho.nh",
+    "phone": "0919386899",
+    "fullName": "Nguyễn Hồng Thọ",
+    "seatNumber": "N4",
+    "row": "N",
+    "position": 4
+  },
+  {
+    "id": 142,
+    "username": "nk.hieu",
+    "phone": "0902220110",
+    "fullName": "Nguyễn Khắc Hiếu",
+    "seatNumber": "M2",
+    "row": "M",
+    "position": 2
+  },
+  {
+    "id": 143,
+    "username": "nguyen.tuyet",
+    "phone": "0983042799",
+    "fullName": "Nguyễn Thị Tuyết",
+    "seatNumber": "N6",
+    "row": "N",
+    "position": 6
+  },
+  {
+    "id": 144,
+    "username": "hastt",
+    "phone": "0989287964",
+    "fullName": "Sái Thị Thu Hà",
+    "seatNumber": "N5",
+    "row": "N",
+    "position": 5
+  },
+  {
+    "id": 145,
+    "username": "truong.nv",
+    "phone": "0969065555",
+    "fullName": "Nguyễn Văn Trường",
+    "seatNumber": "M7",
+    "row": "M",
+    "position": 7
+  },
+  {
+    "id": 146,
+    "username": "phuong.nguyenviet",
+    "phone": "0912817999",
+    "fullName": "Nguyễn Viết Phương",
+    "seatNumber": "M8",
+    "row": "M",
+    "position": 8
+  },
+  {
+    "id": 147,
+    "username": "phonghx",
+    "phone": "0913395885",
+    "fullName": "Hoàng Xuân Phong",
+    "seatNumber": "H11",
+    "row": "H",
+    "position": 11
+  },
+  {
+    "id": 148,
+    "username": "son.tq",
+    "phone": "0913342112",
+    "fullName": "Trần Quý Sơn",
+    "seatNumber": "H12",
+    "row": "H",
+    "position": 12
+  },
+  {
+    "id": 149,
+    "username": "thanvan.hung",
+    "phone": "0943923668",
+    "fullName": "Thân Văn Hùng",
+    "seatNumber": "N1",
+    "row": "N",
+    "position": 1
+  },
+  {
+    "id": 150,
+    "username": "tienpd",
+    "phone": "0904317264",
+    "fullName": "Phan Diệu Tiên",
+    "seatNumber": "N10",
+    "row": "N",
+    "position": 10
+  },
+  {
+    "id": 151,
+    "username": "nthihuong",
+    "phone": "0944756888",
+    "fullName": "Nguyễn Thị Hường",
+    "seatNumber": "N9",
+    "row": "N",
+    "position": 9
+  },
+  {
+    "id": 152,
+    "username": "nguyentuancuong",
+    "phone": "0912557599",
+    "fullName": "Nguyễn Tuấn Cương",
+    "seatNumber": "N8",
+    "row": "N",
+    "position": 8
+  },
+  {
+    "id": 153,
+    "username": "dungpa",
+    "phone": "0976988888",
+    "fullName": "Phạm Anh Dũng",
+    "seatNumber": "N7",
+    "row": "N",
+    "position": 7
+  },
+  {
+    "id": 154,
+    "username": "quangth",
+    "phone": "0913089646",
+    "fullName": "Trần Hồng Quang",
+    "seatNumber": "G5",
+    "row": "G",
+    "position": 5
+  },
+  {
+    "id": 155,
+    "username": "huyenlb",
+    "phone": "0904910679",
+    "fullName": "Lương Bích Huyền",
+    "seatNumber": "G4",
+    "row": "G",
+    "position": 4
+  },
+  {
+    "id": 156,
+    "username": "n.anhtuan",
+    "phone": "0913268987",
+    "fullName": "Nguyễn Anh Tuấn",
+    "seatNumber": "I3",
+    "row": "I",
+    "position": 3
+  },
+  {
+    "id": 157,
+    "username": "phuongnt3",
+    "phone": "0913336699",
+    "fullName": "Nguyễn Thanh Phương",
+    "seatNumber": "I4",
+    "row": "I",
+    "position": 4
+  },
+  {
+    "id": 158,
+    "username": "anh.nnl",
+    "phone": "0904402041",
+    "fullName": "Nguyễn Ngọc Lan Anh",
+    "seatNumber": "J2",
+    "row": "J",
+    "position": 2
+  },
+  {
+    "id": 159,
+    "username": "nguyenquanghung",
+    "phone": "0913227943",
+    "fullName": "Nguyễn Quang Hưng",
+    "seatNumber": "J3",
+    "row": "J",
+    "position": 3
+  },
+  {
+    "id": 160,
+    "username": "anhnkd",
+    "phone": "0918981800",
+    "fullName": "Nguyễn Khoa Đức Anh",
+    "seatNumber": "H13",
+    "row": "H",
+    "position": 13
+  },
+  {
+    "id": 161,
+    "username": "viet.lt",
+    "phone": "0976828959",
+    "fullName": "Lương Thế Việt",
+    "seatNumber": "H14",
+    "row": "H",
+    "position": 14
+  },
+  {
+    "id": 162,
+    "username": "tuyen.lh",
+    "phone": "0936085999",
+    "fullName": "Lê Hồng Tuyên",
+    "seatNumber": "H16",
+    "row": "H",
+    "position": 16
+  },
+  {
+    "id": 163,
+    "username": "lethemanh",
+    "phone": "0912220888",
+    "fullName": "Lê Thế Mạnh",
+    "seatNumber": "H17",
+    "row": "H",
+    "position": 17
+  },
+  {
+    "id": 164,
+    "username": "thuynt22",
+    "phone": "0936389698",
+    "fullName": "Nguyễn Thu Thủy",
+    "seatNumber": "H15",
+    "row": "H",
+    "position": 15
+  },
+  {
+    "id": 165,
+    "username": "quyenlx",
+    "phone": "0904410088",
+    "fullName": "Lê Xuân Quyền",
+    "seatNumber": "F16",
+    "row": "F",
+    "position": 16
+  },
+  {
+    "id": 166,
+    "username": "linh.nguyenthimy",
+    "phone": "0983626656",
+    "fullName": "Nguyễn Thị Mỹ Linh",
+    "seatNumber": "H5",
+    "row": "H",
+    "position": 5
+  },
+  {
+    "id": 167,
+    "username": "ngactb",
+    "phone": "0983023172",
+    "fullName": "Chu Thị Bích Nga",
+    "seatNumber": "H4",
+    "row": "H",
+    "position": 4
+  },
+  {
+    "id": 168,
+    "username": "anh.tn",
+    "phone": "0912056589",
+    "fullName": "Trần Ngọc Anh",
+    "seatNumber": "J4",
+    "row": "J",
+    "position": 4
+  },
+  {
+    "id": 169,
+    "username": "anh.td",
+    "phone": "0979756888",
+    "fullName": "Trần Đức Anh",
+    "seatNumber": "J5",
+    "row": "J",
+    "position": 5
+  },
+  {
+    "id": 170,
+    "username": "truong.nv2",
+    "phone": "0986414788",
+    "fullName": "Nguyễn Văn Trưởng",
+    "seatNumber": "J6",
+    "row": "J",
+    "position": 6
+  },
+  {
+    "id": 171,
+    "username": "khangnv",
+    "phone": "0913141105",
+    "fullName": "Nguyễn Văn Khang",
+    "seatNumber": "I6",
+    "row": "I",
+    "position": 6
+  },
+  {
+    "id": 172,
+    "username": "tienpv",
+    "phone": "0913511102",
+    "fullName": "Phạm Văn Tiến",
+    "seatNumber": "I5",
+    "row": "I",
+    "position": 5
+  },
+  {
+    "id": 173,
+    "username": "thiennq",
+    "phone": "0983843596",
+    "fullName": "Nguyễn Quang Thiện",
+    "seatNumber": "F20",
+    "row": "F",
+    "position": 20
+  },
+  {
+    "id": 174,
+    "username": "vietpt",
+    "phone": "0982087535",
+    "fullName": "Phạm Thị Việt",
+    "seatNumber": "F21",
+    "row": "F",
+    "position": 21
+  },
+  {
+        "id": 175,
+        "username": "thuy.do",
+        "phone": "0914838058",
+        "fullName": "Đỗ Thị Bích Thủy",
+        "seatNumber": "F22",
+        "row": "F",
+        "seatPosition": 22
+  },
+  {
+    "id": 176,
+    "username": "sondn",
+    "phone": "0913287376",
+    "fullName": "Đinh Ngọc Sơn",
+    "seatNumber": "F24",
+    "row": "F",
+    "position": 24
+  },
+  {
+    "id": 177,
+    "username": "haidv",
+    "phone": "0904307709",
+    "fullName": "Đặng Văn Hải",
+    "seatNumber": "F23",
+    "row": "F",
+    "position": 23
+  },
+  {
+    "id": 178,
+    "username": "chungdq",
+    "phone": "0912366330",
+    "fullName": "Dương Quang Chung",
+    "seatNumber": "G19",
+    "row": "G",
+    "position": 19
+  },
+  {
+    "id": 179,
+    "username": "TuanMT",
+    "phone": "0973826886",
+    "fullName": "Mai Thanh Tuấn",
+    "seatNumber": "G20",
+    "row": "G",
+    "position": 20
+  },
+  {
+    "id": 180,
+    "username": "duy.nq",
+    "phone": "0913004413",
+    "fullName": "Nguyễn Quang Duy",
+    "seatNumber": "G21",
+    "row": "G",
+    "position": 21
+  },
+  {
+    "id": 181,
+    "username": "hungnd",
+    "phone": "0797575268",
+    "fullName": "Nguyễn Đình Hùng",
+    "seatNumber": "G22",
+    "row": "G",
+    "position": 22
+  },
+  {
+    "id": 182,
+    "username": "thangdx",
+    "phone": "0979792099",
+    "fullName": "Đinh Xuân Thắng",
+    "seatNumber": "G24",
+    "row": "G",
+    "position": 24
+  },
+  {
+    "id": 183,
+    "username": "lyhoang.ha",
+    "phone": "0912773043",
+    "fullName": "Lý Hoàng Hà",
+    "seatNumber": "G23",
+    "row": "G",
+    "position": 23
+  },
+  {
+    "id": 184,
+    "username": "hung.nguyenhuy",
+    "phone": "0912348677",
+    "fullName": "Nguyễn Huy Hưng",
+    "seatNumber": "J24",
+    "row": "J",
+    "position": 24
+  },
+  {
+    "id": 185,
+    "username": "nampv",
+    "phone": "0915951266",
+    "fullName": "Phạm Văn Nam",
+    "seatNumber": "H19",
+    "row": "H",
+    "position": 19
+  },
+  {
+    "id": 186,
+    "username": "thaomtp",
+    "phone": "0915585591",
+    "fullName": "Mai Thị Phương Thảo",
+    "seatNumber": "H20",
+    "row": "H",
+    "position": 20
+  },
+  {
+    "id": 187,
+    "username": "thinh.td",
+    "phone": "0936023405",
+    "fullName": "Trần Đức Thịnh",
+    "seatNumber": "H21",
+    "row": "H",
+    "position": 21
+  },
+  {
+    "id": 188,
+    "username": "thiennv",
+    "phone": "0914536458",
+    "fullName": "Nguyễn Văn Thiện",
+    "seatNumber": "H22",
+    "row": "H",
+    "position": 22
+  },
+  {
+    "id": 189,
+    "username": "levan.dung",
+    "phone": "0913293820",
+    "fullName": "Lê Văn Dũng",
+    "seatNumber": "H24",
+    "row": "H",
+    "position": 24
+  },
+  {
+    "id": 190,
+    "username": "dung.pv",
+    "phone": "0989192477",
+    "fullName": "Phạm Việt Dũng",
+    "seatNumber": "H23",
+    "row": "H",
+    "position": 23
+  },
+  {
+    "id": 191,
+    "username": "cuongtxg",
+    "phone": "0915444577",
+    "fullName": "Trần Xuân Giáp Cường",
+    "seatNumber": "I19",
+    "row": "I",
+    "position": 19
+  },
+  {
+    "id": 192,
+    "username": "quynhltn",
+    "phone": "0975668669",
+    "fullName": "Lê Thị Ngọc Quỳnh",
+    "seatNumber": "I20",
+    "row": "I",
+    "position": 20
+  },
+  {
+    "id": 193,
+    "username": "namth",
+    "phone": "0913323480",
+    "fullName": "Trần Hoài Nam",
+    "seatNumber": "I21",
+    "row": "I",
+    "position": 21
+  },
+  {
+    "id": 194,
+    "username": "thuynguyen",
+    "phone": "0915488299",
+    "fullName": "Nguyễn Thị Thủy",
+    "seatNumber": "I22",
+    "row": "I",
+    "position": 22
+  },
+  {
+    "id": 195,
+    "username": "phucbx",
+    "phone": "0983214482",
+    "fullName": "Bùi Xuân Phúc",
+    "seatNumber": "J23",
+    "row": "J",
+    "position": 23
+  },
+  {
+    "id": 196,
+    "username": "dongbx",
+    "phone": "0913275025",
+    "fullName": "Bùi Xuân Đông",
+    "seatNumber": "I24",
+    "row": "I",
+    "position": 24
+  },
+  {
+    "id": 197,
+    "username": "binh.nguyenvan",
+    "phone": "0913294276",
+    "fullName": "Nguyễn Văn Bình",
+    "seatNumber": "I23",
+    "row": "I",
+    "position": 23
+  },
+  {
+    "id": 198,
+    "username": "tandm",
+    "phone": "0913048989",
+    "fullName": "Dương Minh Tân",
+    "seatNumber": "J19",
+    "row": "J",
+    "position": 19
+  },
+  {
+    "id": 199,
+    "username": "kienlk",
+    "phone": "0986240226",
+    "fullName": "Lê Khắc Kiên",
+    "seatNumber": "J20",
+    "row": "J",
+    "position": 20
+  },
+  {
+    "id": 200,
+    "username": "dinhn",
+    "phone": "0905090937",
+    "fullName": "Nguyễn Đính",
+    "seatNumber": "J21",
+    "row": "J",
+    "position": 21
+  },
+  {
+    "id": 201,
+    "username": "thanhtq",
+    "phone": "0947259555",
+    "fullName": "Trần Quang Thanh",
+    "seatNumber": "J22",
+    "row": "J",
+    "position": 22
+  },
+  {
+    "id": 202,
+    "username": "huonglpq",
+    "phone": "0905516099",
+    "fullName": "Lê Phan Quỳnh Hương",
+    "seatNumber": "L9",
+    "row": "L",
+    "position": 9
+  },
+  {
+    "id": 203,
+    "username": "ttt.thanh",
+    "phone": "0914145545",
+    "fullName": "Trần Thị Tâm Thanh",
+    "seatNumber": "L10",
+    "row": "L",
+    "position": 10
+  },
+  {
+    "id": 204,
+    "username": "hadv",
+    "phone": "0905800085",
+    "fullName": "Đặng Việt Hà",
+    "seatNumber": "L11",
+    "row": "L",
+    "position": 11
+  },
+  {
+    "id": 205,
+    "username": "minh.pt",
+    "phone": "0987369279",
+    "fullName": "Phan Thế Minh",
+    "seatNumber": "L12",
+    "row": "L",
+    "position": 12
+  },
+  {
+    "id": 206,
+    "username": "tuananh.nguyen",
+    "phone": "0902124282",
+    "fullName": "Nguyễn Tuấn Anh",
+    "seatNumber": "L13",
+    "row": "L",
+    "position": 13
+  },
+  {
+    "id": 207,
+    "username": "donglt",
+    "phone": "0906181916",
+    "fullName": "Lê Thu Đông",
+    "seatNumber": "L14",
+    "row": "L",
+    "position": 14
+  },
+  {
+    "id": 208,
+    "username": "hanhttm",
+    "phone": "0905271712",
+    "fullName": "Trần Thị Mỹ Hạnh",
+    "seatNumber": "L18",
+    "row": "L",
+    "position": 18
+  },
+  {
+    "id": 209,
+    "username": "nguyenthi.nga",
+    "phone": "0914042199",
+    "fullName": "Nguyễn Thị Nga",
+    "seatNumber": "L15",
+    "row": "L",
+    "position": 15
+  },
+  {
+    "id": 210,
+    "username": "vinhnt9",
+    "phone": "0977575859",
+    "fullName": "Nguyễn Thành Vinh",
+    "seatNumber": "L16",
+    "row": "L",
+    "position": 16
+  },
+  {
+    "id": 211,
+    "username": "nhadx",
+    "phone": "0913403559",
+    "fullName": "Đinh Xuân Nha",
+    "seatNumber": "L17",
+    "row": "L",
+    "position": 17
+  },
+  {
+    "id": 212,
+    "username": "thinhdq",
+    "phone": "0919337379",
+    "fullName": "Đặng Quốc Thịnh",
+    "seatNumber": "M9",
+    "row": "M",
+    "position": 9
+  },
+  {
+    "id": 213,
+    "username": "hao.ntt",
+    "phone": "0903516982",
+    "fullName": "Nguyễn Trần Thu Hào",
+    "seatNumber": "M10",
+    "row": "M",
+    "position": 10
+  },
+  {
+    "id": 214,
+    "username": "donglp",
+    "phone": "0914090199",
+    "fullName": "Lê Phúc Đông",
+    "seatNumber": "M18",
+    "row": "M",
+    "position": 18
+  },
+  {
+    "id": 215,
+    "username": "hoang.tung",
+    "phone": "0962913456",
+    "fullName": "Hoàng Tùng",
+    "seatNumber": "M17",
+    "row": "M",
+    "position": 17
+  },
+  {
+    "id": 216,
+    "username": "quyennqa",
+    "phone": "0933500287",
+    "fullName": "Nguyễn Quang Anh Quyền",
+    "seatNumber": "I7",
+    "row": "I",
+    "position": 7
+  },
+  {
+    "id": 217,
+    "username": "nvtoan",
+    "phone": "0933006339",
+    "fullName": "Nguyễn Văn Toán",
+    "seatNumber": "I8",
+    "row": "I",
+    "position": 8
+  },
+  {
+    "id": 218,
+    "username": "hthang",
+    "phone": "0964544411",
+    "fullName": "Hoàng Thị Hằng",
+    "seatNumber": "M11",
+    "row": "M",
+    "position": 11
+  },
+  {
+    "id": 219,
+    "username": "nguyencu",
+    "phone": "0914173957",
+    "fullName": "Nguyễn Cư",
+    "seatNumber": "M12",
+    "row": "M",
+    "position": 12
+  },
+  {
+    "id": 220,
+    "username": "thuy.dt",
+    "phone": "0905402127",
+    "fullName": "Đỗ Thị Thủy",
+    "seatNumber": "M13",
+    "row": "M",
+    "position": 13
+  },
+  {
+    "id": 221,
+    "username": "anh.vh",
+    "phone": "0905200357",
+    "fullName": "Võ Hoàng Anh",
+    "seatNumber": "M14",
+    "row": "M",
+    "position": 14
+  },
+  {
+    "id": 222,
+    "username": "honghd",
+    "phone": "0905144798",
+    "fullName": "Hồ Đức Hồng",
+    "seatNumber": "M15",
+    "row": "M",
+    "position": 15
+  },
+  {
+    "id": 223,
+    "username": "huongbtx",
+    "phone": "0985968936",
+    "fullName": "Bành Thị Xuân Hương",
+    "seatNumber": "M16",
+    "row": "M",
+    "position": 16
+  },
+  {
+    "id": 224,
+    "username": "ngocnn",
+    "phone": "0983932709",
+    "fullName": "Nguyễn Nguyên Ngọc",
+    "seatNumber": "N11",
+    "row": "N",
+    "position": 11
+  },
+  {
+    "id": 225,
+    "username": "minhpc",
+    "phone": "0905061821",
+    "fullName": "Phạm Công Minh",
+    "seatNumber": "N12",
+    "row": "N",
+    "position": 12
+  },
+  {
+    "id": 226,
+    "username": "minhha",
+    "phone": "0936382390",
+    "fullName": "Hoàng Anh Minh",
+    "seatNumber": "N13",
+    "row": "N",
+    "position": 13
+  },
+  {
+    "id": 227,
+    "username": "phuong.dtb",
+    "phone": "0916871068",
+    "fullName": "Đỗ Thị Bích Phương",
+    "seatNumber": "N14",
+    "row": "N",
+    "position": 14
+  },
+  {
+    "id": 228,
+    "username": "vietnt",
+    "phone": "0914006111",
+    "fullName": "Nguyễn Tấn Việt",
+    "seatNumber": "N15",
+    "row": "N",
+    "position": 15
+  },
+  {
+    "id": 229,
+    "username": "phucndq",
+    "phone": "0913183529",
+    "fullName": "Ngô Đình Quảng Phúc",
+    "seatNumber": "N16",
+    "row": "N",
+    "position": 16
+  },
+  {
+    "id": 230,
+    "username": "dung.htk",
+    "phone": "0914044735",
+    "fullName": "Huỳnh Thị Kim Dung",
+    "seatNumber": "N17",
+    "row": "N",
+    "position": 17
+  },
+  {
+    "id": 231,
+    "username": "chinhtv",
+    "phone": "0933119368",
+    "fullName": "Trần Văn Chỉnh",
+    "seatNumber": "N18",
+    "row": "N",
+    "position": 18
+  },
+  {
+    "id": 232,
+    "username": "khanhbb",
+    "phone": "0903688565",
+    "fullName": "Bùi Bình Khánh",
+    "seatNumber": "I9",
+    "row": "I",
+    "position": 9
+  },
+  {
+    "id": 233,
+    "username": "vu.trung.thanh",
+    "phone": "0985256886",
+    "fullName": "Vũ Trung Thành",
+    "seatNumber": "I10",
+    "row": "I",
+    "position": 10
+  },
+  {
+    "id": 234,
+    "username": "nv.chau",
+    "phone": "0918360018",
+    "fullName": "Nguyễn Văn Châu",
+    "seatNumber": "I11",
+    "row": "I",
+    "position": 11
+  },
+  {
+    "id": 235,
+    "username": "leptd",
+    "phone": "0918224060",
+    "fullName": "Phan Thị Diễm Lệ",
+    "seatNumber": "I12",
+    "row": "I",
+    "position": 12
+  },
+  {
+    "id": 236,
+    "username": "ng.thang",
+    "phone": "0933697799",
+    "fullName": "Nguyễn Thị Hằng",
+    "seatNumber": "I13",
+    "row": "I",
+    "position": 13
+  },
+  {
+    "id": 237,
+    "username": "tung.vt",
+    "phone": "0911910144",
+    "fullName": "Võ Thanh Tùng",
+    "seatNumber": "I14",
+    "row": "I",
+    "position": 14
+  },
+  {
+    "id": 238,
+    "username": "trinhbd",
+    "phone": "0913162299",
+    "fullName": "Bùi Đức Trình",
+    "seatNumber": "I15",
+    "row": "I",
+    "position": 15
+  },
+  {
+    "id": 239,
+    "username": "locpt",
+    "phone": "0913960523",
+    "fullName": "Phạm Thành Lộc",
+    "seatNumber": "K19",
+    "row": "K",
+    "position": 19
+  },
+  {
+    "id": 240,
+    "username": "khanh.lh",
+    "phone": "0918501999",
+    "fullName": "Lê Hữu Khanh",
+    "seatNumber": "K20",
+    "row": "K",
+    "position": 20
+  },
+  {
+    "id": 241,
+    "username": "hung.nguyenthanh",
+    "phone": "0918088444",
+    "fullName": "Nguyễn Thanh Hùng",
+    "seatNumber": "K21",
+    "row": "K",
+    "position": 21
+  },
+  {
+    "id": 242,
+    "username": "hauvp",
+    "phone": "0913975595",
+    "fullName": "Võ Phước Hậu",
+    "seatNumber": "K22",
+    "row": "K",
+    "position": 22
+  },
+  {
+    "id": 243,
+    "username": "phuoclt",
+    "phone": "0913783383",
+    "fullName": "Lâm Tấn Phước",
+    "seatNumber": "K24",
+    "row": "K",
+    "position": 24
+  },
+  {
+    "id": 244,
+    "username": "trungtm",
+    "phone": "0918493986",
+    "fullName": "Trần Minh Trung",
+    "seatNumber": "K23",
+    "row": "K",
+    "position": 23
+  },
+  {
+    "id": 245,
+    "username": "kinhbt",
+    "phone": "0918002034",
+    "fullName": "Bùi Thành Kỉnh",
+    "seatNumber": "L21",
+    "row": "L",
+    "position": 21
+  },
+  {
+    "id": 246,
+    "username": "tt.toan",
+    "phone": "0908046556",
+    "fullName": "Từ Thiên Toàn",
+    "seatNumber": "L22",
+    "row": "L",
+    "position": 22
+  },
+  {
+    "id": 247,
+    "username": "thuy.tran",
+    "phone": "0989601828",
+    "fullName": "Trần Thị Thanh Thủy",
+    "seatNumber": "M22",
+    "row": "M",
+    "position": 22
+  },
+  {
+    "id": 248,
+    "username": "truongnt",
+    "phone": "0816868168",
+    "fullName": "Nguyễn Thanh Trường",
+    "seatNumber": "L19",
+    "row": "L",
+    "position": 19
+  },
+  {
+    "id": 249,
+    "username": "trananhtuanlong",
+    "phone": "0946824777",
+    "fullName": "Trần Anh Tuấn Long",
+    "seatNumber": "L20",
+    "row": "L",
+    "position": 20
+  },
+  {
+    "id": 250,
+    "username": "tungvt",
+    "phone": "0913648775",
+    "fullName": "Võ Thanh Tùng",
+    "seatNumber": "L24",
+    "row": "L",
+    "position": 24
+  },
+  {
+    "id": 251,
+    "username": "luatnt",
+    "phone": "0918654495",
+    "fullName": "Nguyễn Trọng Luật",
+    "seatNumber": "L23",
+    "row": "L",
+    "position": 23
+  },
+  {
+    "id": 252,
+    "username": "trung.nh",
+    "phone": "0918241222",
+    "fullName": "Nguyễn Hữu Trung",
+    "seatNumber": "M23",
+    "row": "M",
+    "position": 23
+  },
+  {
+    "id": 253,
+    "username": "nh.phuc",
+    "phone": "0918785828",
+    "fullName": "Nguyễn Hoàng Phúc",
+    "seatNumber": "M24",
+    "row": "M",
+    "position": 24
+  },
+  {
+    "id": 254,
+    "username": "truong.ln",
+    "phone": "0914002787",
+    "fullName": "Lê Ngọc Trương",
+    "seatNumber": "N19",
+    "row": "N",
+    "position": 19
+  },
+  {
+    "id": 255,
+    "username": "anntt2",
+    "phone": "0939766389",
+    "fullName": "Nguyễn Thị Thúy An",
+    "seatNumber": "N20",
+    "row": "N",
+    "position": 20
+  },
+  {
+    "id": 256,
+    "username": "khalm",
+    "phone": "0908247998",
+    "fullName": "Lê Minh Kha",
+    "seatNumber": "M19",
+    "row": "M",
+    "position": 19
+  },
+  {
+    "id": 257,
+    "username": "nhlinh",
+    "phone": "0919362200",
+    "fullName": "Nguyễn Hồng Linh",
+    "seatNumber": "M20",
+    "row": "M",
+    "position": 20
+  },
+  {
+    "id": 258,
+    "username": "tanmt",
+    "phone": "0919808284",
+    "fullName": "Mã Thành Tân",
+    "seatNumber": "M21",
+    "row": "M",
+    "position": 21
+  },
+  {
+    "id": 259,
+    "username": "letruonggiang",
+    "phone": "0913710252",
+    "fullName": "Lê Trường Giang",
+    "seatNumber": "N21",
+    "row": "N",
+    "position": 21
+  },
+  {
+    "id": 260,
+    "username": "tunguyen",
+    "phone": "0977999968",
+    "fullName": "Nguyễn Tú",
+    "seatNumber": "N22",
+    "row": "N",
+    "position": 22
+  },
+  {
+    "id": 261,
+    "username": "nm.ha",
+    "phone": "0913778507",
+    "fullName": "Nguyễn Mạnh Hà",
+    "seatNumber": "N23",
+    "row": "N",
+    "position": 23
+  },
+  {
+    "id": 262,
+    "username": "habtt",
+    "phone": "0919489792",
+    "fullName": "Bùi Thị Thu Hà",
+    "seatNumber": "I16",
+    "row": "I",
+    "position": 16
+  },
+  {
+    "id": 263,
+    "username": "nghiaht",
+    "phone": "0917203205",
+    "fullName": "Huỳnh Thanh Nghĩa",
+    "seatNumber": "I17",
+    "row": "I",
+    "position": 17
+  },
+  {
+    "id": 264,
+    "username": "thuptn",
+    "phone": "0938181891",
+    "fullName": "Phạm Thị Nhật Thu",
+    "seatNumber": "I18",
+    "row": "I",
+    "position": 18
+  },
+  {
+    "id": 265,
+    "username": "dunglv",
+    "phone": "0913076316",
+    "fullName": "Lê Việt Dũng",
+    "seatNumber": "J7",
+    "row": "J",
+    "position": 7
+  },
+  {
+    "id": 266,
+    "username": "haolv",
+    "phone": "0913269228",
+    "fullName": "Lê Văn Hào",
+    "seatNumber": "J8",
+    "row": "J",
+    "position": 8
+  },
+  {
+    "id": 267,
+    "username": "hanhdm",
+    "phone": "0936868117",
+    "fullName": "Dương Minh Hạnh",
+    "seatNumber": "J9",
+    "row": "J",
+    "position": 9
+  },
+  {
+    "id": 268,
+    "username": "nguyen.thi.haiyen",
+    "phone": "0988740077",
+    "fullName": "Nguyễn Thị Hải Yến",
+    "seatNumber": "J10",
+    "row": "J",
+    "position": 10
+  },
+  {
+    "id": 269,
+    "username": "hungnk",
+    "phone": "0911098188",
+    "fullName": "Nguyễn Kim Hùng",
+    "seatNumber": "J11",
+    "row": "J",
+    "position": 11
+  },
+  {
+    "id": 270,
+    "username": "tuyenph",
+    "phone": "0908891417",
+    "fullName": "Phạm Hồng Tuyên",
+    "seatNumber": "J12",
+    "row": "J",
+    "position": 12
+  },
+  {
+    "id": 271,
+    "username": "thanh.ptv",
+    "phone": "0918220989",
+    "fullName": "Phạm Thị Vạn Thanh",
+    "seatNumber": "J13",
+    "row": "J",
+    "position": 13
+  },
+  {
+    "id": 272,
+    "username": "hueptb",
+    "phone": "0988258235",
+    "fullName": "Phạm Thị Bạch Huệ",
+    "seatNumber": "J14",
+    "row": "J",
+    "position": 14
+  },
+  {
+    "id": 273,
+    "username": "ducva",
+    "phone": "0903465223",
+    "fullName": "Vũ Anh Đức",
+    "seatNumber": "J15",
+    "row": "J",
+    "position": 15
+  },
+  {
+    "id": 274,
+    "username": "thuln",
+    "phone": "0908110743",
+    "fullName": "Lâm Ngọc Thu",
+    "seatNumber": "J16",
+    "row": "J",
+    "position": 16
+  },
+  {
+    "id": 275,
+    "username": "ph.tuan",
+    "phone": "0903101043",
+    "fullName": "Phan Huỳnh Tuấn",
+    "seatNumber": "J17",
+    "row": "J",
+    "position": 17
+  },
+  {
+    "id": 276,
+    "username": "linh.nguyentran",
+    "phone": "0904900889",
+    "fullName": "Nguyễn Trần Linh",
+    "seatNumber": "J18",
+    "row": "J",
+    "position": 18
+  },
+  {
+    "id": 277,
+    "username": "saubvb",
+    "phone": "0913686337",
+    "fullName": "Bùi Văn Bé Sáu",
+    "seatNumber": "K8",
+    "row": "K",
+    "position": 8
+  },
+  {
+    "id": 278,
+    "username": "tuyen.lt",
+    "phone": "0979652768",
+    "fullName": "Lê Thị Tuyên",
+    "seatNumber": "K9",
+    "row": "K",
+    "position": 9
+  },
+  {
+    "id": 279,
+    "username": "thukt",
+    "phone": "0982779790",
+    "fullName": "Khúc Thị Thu",
+    "seatNumber": "K10",
+    "row": "K",
+    "position": 10
+  },
+  {
+    "id": 280,
+    "username": "venvh",
+    "phone": "0917531115",
+    "fullName": "Võ Hồng Vẹn",
+    "seatNumber": "K11",
+    "row": "K",
+    "position": 11
+  },
+  {
+    "id": 281,
+    "username": "tm.tien",
+    "phone": "0906211860",
+    "fullName": "Trương Minh Tiến",
+    "seatNumber": "K12",
+    "row": "K",
+    "position": 12
+  },
+  {
+    "id": 282,
+    "username": "hainm",
+    "phone": "0918339979",
+    "fullName": "Nguyễn Mạnh Hải",
+    "seatNumber": "K13",
+    "row": "K",
+    "position": 13
+  },
+  {
+    "id": 283,
+    "username": "lanptn",
+    "phone": "0975515568",
+    "fullName": "Phạm Thị Ngọc Lan",
+    "seatNumber": "K14",
+    "row": "K",
+    "position": 14
+  },
+  {
+    "id": 284,
+    "username": "binh.duongthanh",
+    "phone": "0916272131",
+    "fullName": "Dương Thanh Bình",
+    "seatNumber": "K15",
+    "row": "K",
+    "position": 15
+  },
+  {
+    "id": 285,
+    "username": "tth.nhung",
+    "phone": "0982908848",
+    "fullName": "Trần Thị Hạnh Nhung",
+    "seatNumber": "K16",
+    "row": "K",
+    "position": 16
+  },
+  {
+    "id": 286,
+    "username": "vietvq",
+    "phone": "0983376588",
+    "fullName": "Vũ Quốc Việt",
+    "seatNumber": "K17",
+    "row": "K",
+    "position": 17
+  },
+  {
+    "id": 287,
+    "username": "quang.tx",
+    "phone": "0918044544",
+    "fullName": "Trương Xuân Quang",
+    "seatNumber": "K18",
+    "row": "K",
+    "position": 18
+  },
+  {
+    "id": 288,
+    "username": "cannm",
+    "phone": "0919011366",
+    "fullName": "Nguyễn Minh Cần",
+    "seatNumber": "N24",
+    "row": "N",
+    "position": 24
+  },
+  {
+    "id": 289,
+    "username": "anhnv19",
+    "phone": "0903458089",
+    "fullName": "Nguyễn Vân Anh",
+    "seatNumber": "B23",
+    "row": "B",
+    "position": 23
+  },
+  {
+    "id": 290,
+    "username": "hadtv",
+    "phone": "0913095308",
+    "fullName": "Đặng Thị Việt Hà",
+    "seatNumber": "B11",
+    "row": "B",
+    "position": 11
+  },
+  {
+    "id": 291,
+    "username": "duongcq",
+    "phone": "0988082258",
+    "fullName": "Cát Quang Dương",
+    "seatNumber": "B8",
+    "row": "B",
+    "position": 8
+  },
+  {
+    "id": 292,
+    "username": "bac.nguyenthi",
+    "phone": "0913270712",
+    "fullName": "Nguyễn Thị Bắc",
+    "seatNumber": "B9",
+    "row": "B",
+    "position": 9
+  },
+  {
+    "id": 293,
+    "username": "bui.nhu.y",
+    "phone": "0912012230",
+    "fullName": "Bùi Như Ý",
+    "seatNumber": "B10",
+    "row": "B",
+    "position": 10
+  },
+  {
+    "id": 294,
+    "username": "haimanh",
+    "phone": "0913522899",
+    "fullName": "Hoàng Mạnh Hải",
+    "seatNumber": "D4",
+    "row": "D",
+    "position": 4
+  }
             ];
-
-            // ⚠️ XÓA TOÀN BỘ PHẦN TẠO DỮ LIỆU GIẢ BÊN DƯỚI KHI DÙNG DỮ LIỆU THẬT
-            // Tạo dữ liệu mẫu
-            const names = ["Nguyễn", "Trần", "Lê", "Phạm", "Hoàng", "Phan", "Vũ", "Võ", "Đặng", "Bùi"];
-            const firstNames = ["Văn", "Thị", "Minh", "Hương", "Quang", "Hải", "Thu", "Phúc", "Đức", "Hoàng"];
-            const lastNames = ["An", "Bình", "Cường", "Dung", "Em", "Giang", "Hạnh", "Khánh", "Linh", "Minh"];
-            
-            const rows = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N'];
-            const seatsPerRow = 24;
-            let seatCounter = 6;
-            
-            for (let i = 4; i <= 300; i++) {
-                const name = names[i % names.length];
-                const firstName = firstNames[i % firstNames.length];
-                const lastName = lastNames[i % lastNames.length];
-                
-                const rowIndex = Math.floor(seatCounter / seatsPerRow);
-                const seatInRow = (seatCounter % seatsPerRow) + 1;
-                const row = rows[rowIndex] || 'N';
-                
-                realDelegates.push({
-                    id: i,
-                    username: `user${i.toString().padStart(3, '0')}`,
-                    phone: `09${(10000000 + i).toString().slice(1)}`,
-                    fullName: `${name} ${firstName} ${lastName}`,
-                    seatNumber: `${row}${seatInRow}`,
-                    row: row,
-                    position: seatInRow
-                });
-                
-                seatCounter++;
-            }
-            // === HẾT PHẦN TẠO DỮ LIỆU GIẢ ===
-
-            realDelegates.forEach(delegate => {
+             realDelegates.forEach(delegate => {
                 delegates.set(delegate.id, delegate);
                 phoneIndex.set(delegate.phone, delegate.id);
                 usernameIndex.set(delegate.username.toLowerCase(), delegate.id);
                 usernameList.push(delegate.username);
             });
-            
-            debugLog(`✅ Loaded ${realDelegates.length} delegates successfully`, 'success');
-        }
-
-        // ==================== ENHANCED LOGGING SYSTEM ====================
-        function logSearchActivity(searchTerm, delegate, found = true) {
-            debugLog(`🔍 Attempting to log search: "${searchTerm}" - Found: ${found}`, 'info');
-            
-            try {
-                const STORAGE_KEY = 'seatSearchLogs';
-                
-                // Test storage capability first
-                const testKey = 'storageTest_' + Date.now();
-                const testData = { test: true };
-                
-                if (!safeLocalStorageSet(testKey, testData)) {
-                    debugLog('❌ Storage test failed, aborting log', 'error');
-                    return false;
-                }
-                
-                // Clean up test
-                try {
-                    localStorage.removeItem(testKey);
-                    sessionStorage.removeItem(testKey);
-                } catch (e) {
-                    debugLog('⚠️ Could not clean test key', 'warning');
-                }
-                
-                // Get existing logs
-                const existingLogs = safeLocalStorageGet(STORAGE_KEY) || [];
-                debugLog(`📚 Found ${existingLogs.length} existing logs`, 'info');
-                
-                // Create new log entry
-                const logEntry = {
-                    id: Date.now() + Math.random(),
-                    timestamp: new Date().toISOString(),
-                    searchTerm: searchTerm,
-                    found: found,
-                    delegate: found ? {
-                        fullName: delegate.fullName,
-                        seatNumber: delegate.seatNumber,
-                        row: delegate.row,
-                        username: delegate.username,
-                        phone: delegate.phone
-                    } : null,
-                    userAgent: navigator.userAgent.substring(0, 100),
-                    sessionId: getOrCreateSessionId(),
-                    pageUrl: window.location.href,
-                    viewport: {
-                        width: window.innerWidth,
-                        height: window.innerHeight
-                    },
-                    isMobile: /Mobi|Android/i.test(navigator.userAgent)
-                };
-                
-                debugLog(`📝 Created log entry with ID: ${logEntry.id}`, 'info');
-                
-                // Add to beginning of array
-                existingLogs.unshift(logEntry);
-                
-                // Limit storage (keep last 1000)
-                if (existingLogs.length > 1000) {
-                    existingLogs.splice(1000);
-                    debugLog('🧹 Trimmed old logs to maintain limit', 'info');
-                }
-                
-                // Save logs
-                if (safeLocalStorageSet(STORAGE_KEY, existingLogs)) {
-                    debugLog(`✅ Successfully logged search activity`, 'success');
-                    
-                    // Update general stats
-                    updateGeneralStats();
-                    return true;
-                } else {
-                    debugLog('❌ Failed to save log to storage', 'error');
-                    return false;
-                }
-                
-            } catch (error) {
-                debugLog(`❌ Critical error in logging: ${error.message}`, 'error');
-                console.error('Critical logging error:', error);
-                return false;
-            }
-        }
-
-        // Enhanced session management
-        function getOrCreateSessionId() {
-            try {
-                let sessionId = sessionStorage.getItem('searchSessionId');
-                if (!sessionId) {
-                    sessionId = 'session_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
-                    sessionStorage.setItem('searchSessionId', sessionId);
-                    debugLog(`🆔 Created new session: ${sessionId}`, 'info');
-                } else {
-                    debugLog(`🆔 Using existing session: ${sessionId}`, 'info');
-                }
-                return sessionId;
-            } catch (error) {
-                debugLog(`❌ Session ID error: ${error.message}`, 'error');
-                return 'fallback_' + Date.now();
-            }
-        }
-
-        // Enhanced stats update
-        function updateGeneralStats() {
-            try {
-                debugLog('📊 Updating general statistics...', 'info');
-                
-                const STATS_KEY = 'generalStats';
-                const stats = safeLocalStorageGet(STATS_KEY) || {};
-                
-                const today = new Date().toISOString().split('T')[0];
-                const hour = new Date().getHours();
-                
-                // Update stats
-                stats.totalSearches = (stats.totalSearches || 0) + 1;
-                stats.lastActivity = new Date().toISOString();
-                
-                // Daily stats
-                if (!stats.dailyStats) stats.dailyStats = {};
-                stats.dailyStats[today] = (stats.dailyStats[today] || 0) + 1;
-                
-                // Hourly stats
-                if (!stats.hourlyStats) stats.hourlyStats = {};
-                stats.hourlyStats[hour] = (stats.hourlyStats[hour] || 0) + 1;
-                
-                // Device stats
-                if (!stats.deviceStats) stats.deviceStats = { mobile: 0, desktop: 0 };
-                const isMobile = /Mobi|Android/i.test(navigator.userAgent);
-                stats.deviceStats[isMobile ? 'mobile' : 'desktop']++;
-                
-                // Save stats
-                if (safeLocalStorageSet(STATS_KEY, stats)) {
-                    debugLog(`✅ Stats updated - Total: ${stats.totalSearches}`, 'success');
-                } else {
-                    debugLog('❌ Failed to save stats', 'error');
-                }
-                
-            } catch (error) {
-                debugLog(`❌ Error updating stats: ${error.message}`, 'error');
-                console.error('Stats error:', error);
-            }
-        }
-
-        // Enhanced page view tracking
-        function trackPageView() {
-            try {
-                debugLog('👁️ Tracking page view...', 'info');
-                
-                const PAGE_STATS_KEY = 'pageViewStats';
-                const stats = safeLocalStorageGet(PAGE_STATS_KEY) || {};
-                
-                const today = new Date().toISOString().split('T')[0];
-                const currentTime = new Date().toISOString();
-                
-                // Update stats
-                stats.totalViews = (stats.totalViews || 0) + 1;
-                stats.lastVisit = currentTime;
-                stats.firstVisit = stats.firstVisit || currentTime;
-                
-                // Daily views
-                if (!stats.dailyViews) stats.dailyViews = {};
-                stats.dailyViews[today] = (stats.dailyViews[today] || 0) + 1;
-                
-                // Session tracking
-                if (!stats.sessions) stats.sessions = [];
-                const sessionId = getOrCreateSessionId();
-                
-                if (!stats.sessions.includes(sessionId)) {
-                    stats.sessions.push(sessionId);
-                    
-                    if (stats.sessions.length > 100) {
-                        stats.sessions.splice(0, stats.sessions.length - 100);
-                    }
-                }
-                
-                // Device info
-                const isMobile = /Mobi|Android/i.test(navigator.userAgent);
-                if (!stats.deviceInfo) stats.deviceInfo = { mobile: 0, desktop: 0 };
-                stats.deviceInfo[isMobile ? 'mobile' : 'desktop']++;
-                
-                if (safeLocalStorageSet(PAGE_STATS_KEY, stats)) {
-                    debugLog(`✅ Page view tracked - Total: ${stats.totalViews}`, 'success');
-                } else {
-                    debugLog('❌ Failed to track page view', 'error');
-                }
-                
-            } catch (error) {
-                debugLog(`❌ Error tracking page view: ${error.message}`, 'error');
-                console.error('Page tracking error:', error);
-            }
-        }
-
-        // Admin access system
-        function initAdminSystem() {
-            try {
-                debugLog('🔧 Initializing admin system...', 'info');
-                
-                const isAdmin = safeLocalStorageGet('isAdmin') === true || 
-                               new URLSearchParams(window.location.search).get('admin') === 'true';
-                
-                if (isAdmin) {
-                    createAdminButton();
-                    debugLog('✅ Admin access granted', 'success');
-                }
-                
-                // Hotkey for admin access (Ctrl + Shift + A)
-                document.addEventListener('keydown', function(e) {
-                    if (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === 'a') {
-                        e.preventDefault();
-                        requestAdminAccess();
-                    }
-                });
-                
-            } catch (error) {
-                debugLog(`❌ Admin system error: ${error.message}`, 'error');
-            }
-        }
-
-        function requestAdminAccess() {
-            try {
-                const adminCode = prompt('🔐 Nhập mã truy cập quản trị:');
-                if (adminCode === 'DAIHOI2025' || adminCode === 'admin') {
-                    safeLocalStorageSet('isAdmin', true);
-                    alert('✅ Đã cấp quyền quản trị!');
-                    createAdminButton();
-                    debugLog('✅ Admin access granted via prompt', 'success');
-                } else if (adminCode !== null) {
-                    alert('❌ Mã không đúng!');
-                    debugLog('❌ Invalid admin code entered', 'warning');
-                }
-            } catch (error) {
-                debugLog(`❌ Admin access error: ${error.message}`, 'error');
-            }
-        }
-
-        function createAdminButton() {
-            if (document.getElementById('adminButton')) return;
-            
-            try {
-                const adminBtn = document.createElement('a');
-                adminBtn.id = 'adminButton';
-                adminBtn.className = 'admin-button';
-                adminBtn.innerHTML = '🔧 Quản trị';
-                adminBtn.href = 'admin.html';
-                adminBtn.target = '_blank';
-                adminBtn.style.display = 'block';
-                
-                document.body.appendChild(adminBtn);
-                debugLog('✅ Admin button created', 'success');
-            } catch (error) {
-                debugLog(`❌ Error creating admin button: ${error.message}`, 'error');
-            }
-        }
-
-        // Data cleanup
-        function cleanOldData() {
-            try {
-                debugLog('🧹 Cleaning old data...', 'info');
-                
-                const logs = safeLocalStorageGet('seatSearchLogs') || [];
-                const oneMonthAgo = new Date();
-                oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1);
-                
-                const filteredLogs = logs.filter(log => 
-                    new Date(log.timestamp) > oneMonthAgo
-                );
-                
-                if (filteredLogs.length !== logs.length) {
-                    safeLocalStorageSet('seatSearchLogs', filteredLogs);
-                    debugLog(`🧹 Cleaned ${logs.length - filteredLogs.length} old logs`, 'info');
-                }
-            } catch (error) {
-                debugLog(`❌ Error cleaning data: ${error.message}`, 'error');
-            }
         }
 
         // ==================== INPUT PROCESSING ====================
@@ -974,71 +3212,59 @@
             let processedInput = input.trim();
             let processingNote = "";
             
-            debugLog(`🔄 Processing input: "${input}"`, 'info');
-            
-            // Handle +84 country code
+            // Xử lý số điện thoại với mã quốc gia +84
             if (processedInput.startsWith('+84')) {
                 processedInput = '0' + processedInput.substring(3);
-                debugLog('📱 Converted +84 format to local format', 'info');
+                // Không tạo processingNote để xử lý ngầm
             }
             
-            // Handle spaced phone numbers
+            // Xử lý số điện thoại có space (chạy ngầm, không hiển thị thông báo)
             if (/^\d/.test(processedInput) || /\d/.test(processedInput)) {
                 const spaceCount = (processedInput.match(/\s/g) || []).length;
                 
                 if (spaceCount > 0) {
                     processedInput = processedInput.replace(/\s+/g, '');
-                    debugLog('📱 Removed spaces from phone number', 'info');
+                    // Không tạo processingNote cho số điện thoại
                 }
             }
-            // Handle full email
+            // Xử lý email đầy đủ (chạy ngầm, không hiển thị thông báo)
             else if (processedInput.includes('@')) {
                 const atIndex = processedInput.indexOf('@');
                 processedInput = processedInput.substring(0, atIndex);
-                debugLog('📧 Extracted username from email', 'info');
+                // Không tạo processingNote cho trường hợp email
             }
             
-            debugLog(`✅ Processed input: "${processedInput}"`, 'info');
             return { processedInput, processingNote };
+        }
+
+        function showProcessingInfo(message) {
+            // Hàm này không còn sử dụng, giữ lại để tránh lỗi
         }
 
         // ==================== SEARCH FUNCTIONS ====================
         function findDelegate(searchKey) {
-            debugLog(`🔍 Searching for: "${searchKey}"`, 'info');
-            
             const lowerKey = searchKey.toLowerCase();
             
             if (/^\d/.test(searchKey)) {
-                debugLog('📱 Searching by phone number', 'info');
                 const delegateId = phoneIndex.get(searchKey);
-                const result = delegateId ? delegates.get(delegateId) : null;
-                debugLog(`📱 Phone search result: ${result ? 'Found' : 'Not found'}`, 'info');
-                return result;
+                return delegateId ? delegates.get(delegateId) : null;
             }
             
-            debugLog('👤 Searching by username', 'info');
             const delegateId = usernameIndex.get(lowerKey);
-            const result = delegateId ? delegates.get(delegateId) : null;
-            debugLog(`👤 Username search result: ${result ? 'Found' : 'Not found'}`, 'info');
-            return result;
+            return delegateId ? delegates.get(delegateId) : null;
         }
 
         function findSimilarUsernames(searchInput) {
             const searchLower = searchInput.toLowerCase();
             if (searchLower.length < 2) return [];
             
-            debugLog(`🔍 Finding similar usernames for: "${searchInput}"`, 'info');
-            
             const prefixMatches = usernameList.filter(username => 
                 username.toLowerCase().startsWith(searchLower.slice(0, 2))
             );
             
-            if (prefixMatches.length === 0) {
-                debugLog('❌ No similar usernames found', 'info');
-                return [];
-            }
+            if (prefixMatches.length === 0) return [];
             
-            const results = prefixMatches
+            return prefixMatches
                 .map(username => ({
                     username,
                     similarity: calculateSimilarity(searchLower, username.toLowerCase())
@@ -1047,9 +3273,6 @@
                 .sort((a, b) => b.similarity - a.similarity)
                 .slice(0, 3)
                 .map(item => item.username);
-                
-            debugLog(`💡 Found ${results.length} similar usernames`, 'info');
-            return results;
         }
 
         function calculateSimilarity(str1, str2) {
@@ -1084,8 +3307,6 @@
         function createSeatingChart() {
             if (seatingChartCreated) return;
             
-            debugLog('🎭 Creating seating chart...', 'info');
-            
             const seatingRows = document.getElementById('seatingRows');
             const fragment = document.createDocumentFragment();
             
@@ -1096,33 +3317,65 @@
                 const rowDiv = document.createElement('div');
                 rowDiv.className = 'row';
                 
-                for (let i = 1; i <= seatsPerRow; i++) {
-                    const seatDiv = document.createElement('div');
-                    seatDiv.className = 'seat';
-                    seatDiv.id = `seat-${rowLabel}${i}`;
-                    seatDiv.textContent = `${rowLabel}${i}`;
+                if (rowLabel === 'A') {
+                    // Hàng A đặc biệt: bỏ ghế A7, A12, A13, A18 và đánh số lại
+                    const removedPositions = [7, 12, 13, 18];
+                    let newSeatNumber = 1;
                     
-                    if (i === 6) seatDiv.style.marginRight = '15px';
-                    if (i === 18) seatDiv.style.marginRight = '15px';
-                    
-                    rowDiv.appendChild(seatDiv);
+                    for (let i = 1; i <= seatsPerRow; i++) {
+                        if (!removedPositions.includes(i)) {
+                            const seatDiv = document.createElement('div');
+                            seatDiv.className = 'seat';
+                            seatDiv.id = `seat-${rowLabel}${newSeatNumber}`;
+                            seatDiv.textContent = `${rowLabel}${newSeatNumber}`;
+                            
+                            if (i === 6) seatDiv.style.marginRight = '15px';
+                            if (i === 18) seatDiv.style.marginRight = '15px';
+                            
+                            rowDiv.appendChild(seatDiv);
+                            newSeatNumber++;
+                        } else {
+                            // Tạo ghế ẩn để giữ nguyên khoảng cách
+                            const emptyDiv = document.createElement('div');
+                            emptyDiv.className = 'seat';
+                            emptyDiv.style.visibility = 'hidden';
+                            emptyDiv.style.pointerEvents = 'none';
+                            
+                            if (i === 6) emptyDiv.style.marginRight = '15px';
+                            if (i === 18) emptyDiv.style.marginRight = '15px';
+                            
+                            rowDiv.appendChild(emptyDiv);
+                        }
+                    }
+                } else {
+                    // Các hàng khác giữ nguyên
+                    for (let i = 1; i <= seatsPerRow; i++) {
+                        const seatDiv = document.createElement('div');
+                        seatDiv.className = 'seat';
+                        seatDiv.id = `seat-${rowLabel}${i}`;
+                        seatDiv.textContent = `${rowLabel}${i}`;
+                        
+                        if (i === 6) seatDiv.style.marginRight = '15px';
+                        if (i === 18) seatDiv.style.marginRight = '15px';
+                        
+                        rowDiv.appendChild(seatDiv);
+                    }
                 }
                 
-                if (rowLabel === 'H') rowDiv.style.marginBottom = '15px';
+                // Tạo khoảng cách 9px giữa hàng A và hàng B, và khoảng cách thường giữa hàng F và hàng G
+                if (rowLabel === 'A') rowDiv.style.marginBottom = '9px';
+                if (rowLabel === 'F') rowDiv.style.marginBottom = '15px';
                 fragment.appendChild(rowDiv);
             });
             
             seatingRows.appendChild(fragment);
             seatingChartCreated = true;
-            debugLog('✅ Seating chart created successfully', 'success');
         }
 
         let isLoading = false;
         
         function searchSeat() {
             if (isLoading) return;
-            
-            debugLog('🔍 Starting search process...', 'info');
             
             const originalInput = document.getElementById('searchInput').value.trim();
             const errorMessage = document.getElementById('errorMessage');
@@ -1131,40 +3384,36 @@
 
             errorMessage.classList.add('hidden');
             resultSection.classList.add('hidden');
+            showProcessingInfo('');
             resetHighlight();
 
             if (!originalInput) {
                 showError('Vui lòng nhập username email hoặc số điện thoại!');
-                debugLog('❌ Empty input provided', 'warning');
                 return;
             }
 
             const { processedInput, processingNote } = processSearchInput(originalInput);
+            
+            if (processingNote) {
+                showProcessingInfo(processingNote);
+            }
 
             const isPhone = /^\d/.test(processedInput);
             if (!isPhone && !isValidUsername(processedInput)) {
                 showError('Username email hoặc số điện thoại không hợp lệ!');
-                debugLog('❌ Invalid input format', 'warning');
                 return;
             }
 
             isLoading = true;
             searchBtn.innerHTML = '<span class="loading"></span>Đang tra cứu...';
             searchBtn.disabled = true;
-            debugLog('🔄 Search in progress...', 'info');
 
             setTimeout(() => {
                 const delegate = findDelegate(processedInput);
                 
                 if (!delegate) {
-                    debugLog('❌ Search failed - delegate not found', 'warning');
-                    const logResult = logSearchActivity(processedInput, null, false);
-                    debugLog(`📝 Failed search logged: ${logResult}`, logResult ? 'success' : 'error');
                     handleSearchNotFound(processedInput, isPhone, processingNote);
                 } else {
-                    debugLog(`✅ Search successful - found ${delegate.fullName}`, 'success');
-                    const logResult = logSearchActivity(processedInput, delegate, true);
-                    debugLog(`📝 Successful search logged: ${logResult}`, logResult ? 'success' : 'error');
                     displaySeatInfo(delegate);
                     highlightSeatOrVIP(delegate);
                 }
@@ -1172,7 +3421,6 @@
                 isLoading = false;
                 searchBtn.innerHTML = 'Tra cứu';
                 searchBtn.disabled = false;
-                debugLog('✅ Search process completed', 'info');
             }, 100);
         }
 
@@ -1202,8 +3450,6 @@
         }
 
         function displaySeatInfo(delegate) {
-            debugLog(`📋 Displaying seat info for ${delegate.fullName}`, 'info');
-            
             document.getElementById('fullName').textContent = delegate.fullName;
             document.getElementById('seatNumber').textContent = (delegate.row === 'A' || delegate.row === 'B') ? 'VIP' : delegate.seatNumber;
             document.getElementById('rowNumber').textContent = delegate.row;
@@ -1215,10 +3461,8 @@
             
             if (delegate.row === 'A' || delegate.row === 'B') {
                 highlightVIPRow(delegate.row);
-                debugLog(`🌟 Highlighted VIP row ${delegate.row}`, 'info');
             } else {
                 highlightSeat(delegate.seatNumber);
-                debugLog(`💺 Highlighted seat ${delegate.seatNumber}`, 'info');
             }
         }
 
@@ -1230,12 +3474,23 @@
         }
 
         function highlightVIPRow(row) {
-            const seatsPerRow = 24;
-            
-            for (let i = 1; i <= seatsPerRow; i++) {
-                const seatElement = document.getElementById(`seat-${row}${i}`);
-                if (seatElement) {
-                    seatElement.classList.add('vip-area');
+            if (row === 'A') {
+                // Hàng A có 20 ghế sau khi bỏ 4 ghế
+                const totalSeatsInRowA = 20;
+                for (let i = 1; i <= totalSeatsInRowA; i++) {
+                    const seatElement = document.getElementById(`seat-${row}${i}`);
+                    if (seatElement) {
+                        seatElement.classList.add('vip-area');
+                    }
+                }
+            } else {
+                // Hàng B vẫn có 24 ghế
+                const seatsPerRow = 24;
+                for (let i = 1; i <= seatsPerRow; i++) {
+                    const seatElement = document.getElementById(`seat-${row}${i}`);
+                    if (seatElement) {
+                        seatElement.classList.add('vip-area');
+                    }
                 }
             }
 
@@ -1281,6 +3536,7 @@
             
             document.getElementById('errorMessage').classList.add('hidden');
             document.getElementById('resultSection').classList.add('hidden');
+            showProcessingInfo('');
             resetHighlight();
         }
 
@@ -1320,50 +3576,10 @@
 
         const throttledToggleClear = throttle(toggleClearButton, 100);
 
-        // ==================== UTILITY FUNCTIONS ====================
-        window.exportSearchData = function() {
-            return {
-                logs: safeLocalStorageGet('seatSearchLogs') || [],
-                stats: safeLocalStorageGet('generalStats') || {},
-                pageStats: safeLocalStorageGet('pageViewStats') || {},
-                exportTime: new Date().toISOString()
-            };
-        };
-
-        window.clearAllSearchData = function() {
-            const confirm = window.confirm('⚠️ Bạn có chắc muốn xóa toàn bộ dữ liệu tra cứu?');
-            if (confirm) {
-                try {
-                    localStorage.removeItem('seatSearchLogs');
-                    localStorage.removeItem('generalStats');
-                    localStorage.removeItem('pageViewStats');
-                    sessionStorage.removeItem('seatSearchLogs');
-                    sessionStorage.removeItem('generalStats');
-                    sessionStorage.removeItem('pageViewStats');
-                    debugLog('✅ All search data cleared', 'success');
-                    return true;
-                } catch (error) {
-                    debugLog(`❌ Error clearing data: ${error.message}`, 'error');
-                    return false;
-                }
-            }
-            return false;
-        };
-
-        window.debugLogs = function() {
-            const logs = safeLocalStorageGet('seatSearchLogs') || [];
-            console.table(logs.slice(0, 10));
-            return logs;
-        };
-
         // ==================== INITIALIZATION ====================
         document.addEventListener('DOMContentLoaded', function() {
-            debugLog('🚀 Application starting...', 'info');
-            
-            // Initialize delegate data
             initializeDelegateData();
             
-            // Setup search input
             const searchInput = document.getElementById('searchInput');
             
             searchInput.addEventListener('keypress', function(e) {
@@ -1376,7 +3592,6 @@
             searchInput.addEventListener('input', throttledToggleClear);
             searchInput.focus();
             
-            // Setup intersection observer for seating chart
             const observer = new IntersectionObserver((entries) => {
                 entries.forEach(entry => {
                     if (entry.isIntersecting) {
@@ -1388,53 +3603,6 @@
             
             const seatingChart = document.querySelector('.seating-chart');
             observer.observe(seatingChart);
-
-            // Initialize logging systems
-            trackPageView();
-            initAdminSystem();
-            
-            // Clean old data after 5 seconds
-            setTimeout(cleanOldData, 5000);
-            
-            // Test storage capabilities on load
-            setTimeout(() => {
-                const testResult = safeLocalStorageSet('initTest', { test: true });
-                debugLog(`🧪 Storage test result: ${testResult}`, testResult ? 'success' : 'error');
-                
-                try {
-                    localStorage.removeItem('initTest');
-                    sessionStorage.removeItem('initTest');
-                } catch (e) {
-                    debugLog('⚠️ Could not clean init test', 'warning');
-                }
-            }, 1000);
-            
-            debugLog('✅ Application initialized successfully', 'success');
-            console.log('🔍 Hệ thống tra cứu ghế với enhanced logging đã khởi tạo');
-            console.log('🔧 Nhấn Ctrl+Shift+A để truy cập quản trị');
-            console.log('🐛 Nhấn nút debug (mobile) để xem logs');
-            
-            // Show current stats
-            const stats = safeLocalStorageGet('generalStats') || {};
-            if (stats.totalSearches > 0) {
-                console.log(`📊 Tổng lượt tra cứu: ${stats.totalSearches}`);
-                debugLog(`📊 Current stats: ${stats.totalSearches} total searches`, 'info');
-            }
-            
-            // Log device info
-            const isMobile = /Mobi|Android/i.test(navigator.userAgent);
-            debugLog(`📱 Device type: ${isMobile ? 'Mobile' : 'Desktop'}`, 'info');
-            debugLog(`🌐 User agent: ${navigator.userAgent.substring(0, 50)}...`, 'info');
-            debugLog(`📏 Viewport: ${window.innerWidth}x${window.innerHeight}`, 'info');
-        });
-
-        // Enhanced error handling
-        window.addEventListener('error', function(e) {
-            debugLog(`❌ Global error: ${e.message} at ${e.filename}:${e.lineno}`, 'error');
-        });
-
-        window.addEventListener('unhandledrejection', function(e) {
-            debugLog(`❌ Unhandled promise rejection: ${e.reason}`, 'error');
         });
     </script>
 </body>
